@@ -20,8 +20,9 @@ export const SidebarSection = styled.div`
 
 export const RightSection = styled.div`
   width: 65%;
-  background-color: #f8f9fa;
+  background-color: #fff;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
@@ -45,7 +46,7 @@ export const InputGroupWrapper = styled.div`
     top: 50%;
     left: 1rem;
     transform: translateY(-50%);
-    color: black;
+    color: #6a380f;
     font-size: 1.2rem;
   }
 
@@ -55,9 +56,9 @@ export const InputGroupWrapper = styled.div`
 `;
 
 export const StyledInput = styled(Form.Control)`
-  background-color: #e5c367;
-  color: black;
-  font-weight: 650;
+  background-color: #f7e9d7;
+  color: #6a380f;
+  font-weight: 600;
   border: 1px solid #ccc;
   padding: 0.75rem 1rem;
   border-radius: 8px;
@@ -81,8 +82,9 @@ export const StyledButton = styled(Button)`
   margin-top: 10%;
 
   &:hover {
-    background-color: #e5c367;
-    border-color: #e5c367;
+    background-color: #f7e9d7;
+    color: #6a380f;
+    border-color: #f7e9d7;
   }
 
   &:focus {
@@ -106,9 +108,9 @@ export const RoleWrapper = styled.div`
 `;
 
 export const RoleButton = styled(Button)`
-  background-color: ${({ active }) => (active ? "#6a380f" : "#e5c367")};
+  background-color: ${({ active }) => (active ? "#6a380f" : "#f7e9d7")};
   border: 1px solid #ccc;
-  color: ${({ active }) => (active ? "white" : "black")};
+  color: ${({ active }) => (active ? "white" : "#6a380f")};
   font-weight: 600;
   padding: 0.6rem 1rem;
   border-radius: 8px;
@@ -125,4 +127,14 @@ export const RoleButton = styled(Button)`
   &:focus {
     box-shadow: none;
   }
+`;
+
+export const LogoSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const Logo = styled.img`
+  width: 20%;
 `;

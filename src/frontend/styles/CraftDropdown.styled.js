@@ -10,7 +10,7 @@ export const BootstrapDropdownWrapper = styled.div`
 
   .label {
     font-weight: 700;
-    color: #333;
+    color: #6a380f;
     font-size: 1.1rem;
     border: 3px solid #6a380f;
     padding: 0.5rem 1rem;
@@ -26,7 +26,7 @@ export const BootstrapDropdownWrapper = styled.div`
     padding: 0.5rem 0;
     margin: 0;
     font-size: 1rem;
-    color: #212529;
+    color: #6a380f;
     text-align: left;
     background-color: #fff;
     border: 1px solid rgba(0, 0, 0, 0.15);
@@ -43,7 +43,7 @@ export const BootstrapDropdownWrapper = styled.div`
     padding: 0.25rem 1rem;
     clear: both;
     font-weight: 400;
-    color: #212529;
+    color: #6a380f;
     text-align: inherit;
     white-space: nowrap;
     background-color: transparent;
@@ -52,7 +52,7 @@ export const BootstrapDropdownWrapper = styled.div`
 
     &:hover {
       background-color: #f8f9fa;
-      color: #16181b;
+      color: #6a380f;
     }
   }
 
@@ -69,7 +69,7 @@ export const BootstrapDropdownWrapper = styled.div`
     cursor: pointer;
 
     &:hover {
-      background-color: #e5c367;
+      background-color: #ecdbab;
     }
   }
 `;

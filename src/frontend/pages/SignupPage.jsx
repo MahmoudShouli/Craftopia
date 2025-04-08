@@ -4,6 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import React, { useState } from 'react';
 import { Form, Button, Dropdown } from 'react-bootstrap';
 import { FaUserAlt, FaPaintBrush } from 'react-icons/fa'; 
+import logo from '../../../public/favicon.png';
 import {
     PageWrapper,
     SidebarSection,
@@ -14,7 +15,9 @@ import {
     StyledButton,
     StyledTitle,
     RoleWrapper,
-    RoleButton
+    RoleButton,
+    LogoSection,
+    Logo,
   } from '../styles/SignupPage.styled'; 
   
 
@@ -52,8 +55,17 @@ const SignupPage = () => {
             />
       </SidebarSection>
 
-      <RightSection>
-      <FormWrapper>
+      <RightSection>  
+
+        <LogoSection>
+          <Logo src={logo} alt="Craftopia Logo" />
+        </LogoSection> 
+        
+      <FormWrapper>  
+
+       
+
+         
         <StyledTitle>Create Account</StyledTitle>
 
           <Form>

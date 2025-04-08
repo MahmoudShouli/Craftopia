@@ -31,7 +31,7 @@ export const WelcomeSubtext = styled.p`
 
 export const WelcomeButton = styled.button`
   background-color: #fff;
-  color: #000;
+  color: #6a380f;
   border: none;
   border-radius: 8px;
   padding: 0.75rem 2.5rem;
