@@ -24,6 +24,14 @@ const LoginPage = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
+  const handleNormalLogin = async (e) => {
+    e.preventDefault()
+
+    
+
+    
+  }
+
   return (
     <PageWrapper>
       <LeftPanel>
@@ -47,7 +55,7 @@ const LoginPage = () => {
 
           <SignInButton type="submit">Sign In</SignInButton>
 
-          <GoogleButton type="button">
+          <GoogleButton type="button" onSubmit={handleNormalLogin}>
             <FcGoogle size={20} />
             Sign in with Google
           </GoogleButton>
