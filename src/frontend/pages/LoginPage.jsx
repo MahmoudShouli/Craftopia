@@ -2,6 +2,7 @@
 import React from 'react';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import WelcomeCard from '../components/WelcomeCard';
 import logo from '../../../public/favicon.png';
 import { useState } from 'react';
@@ -16,13 +17,17 @@ import {
   SignInButton,
   GoogleButton,
   Logo,
-  LogoSection
+  LogoSection,
+  Eye
 } from '../styles/LoginPage.styled'
 
 const LoginPage = () => {
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePassword = () => setShowPassword(prev => !prev);
 
   const handleNormalLogin = async (e) => {
     e.preventDefault()
@@ -50,8 +55,13 @@ const LoginPage = () => {
 
           <InputGroup>
             <FaLock color="#6a380f" />
-            <StyledInput onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
+            <StyledInput onChange={(e) => setPassword(e.target.value)} type={showPassword ? 'text' : 'password'} placeholder="Password" />
+            <Eye onClick={togglePassword}>
+              {showPassword ? <AiFillEyeInvisible color="#6a380f" size={20} /> : <AiFillEye color="#6a380f" size={20} />}
+            </Eye>
+            
           </InputGroup>
+          <ForgotPassword href="#">Forgot your password?</ForgotPassword>
 
           <SignInButton type="submit">Sign In</SignInButton>
 
@@ -60,7 +70,7 @@ const LoginPage = () => {
             Sign in with Google
           </GoogleButton>
 
-          <ForgotPassword href="#">Forgot your password?</ForgotPassword>
+          
           
         </FormWrapper>
       </LeftPanel>

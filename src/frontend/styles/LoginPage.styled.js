@@ -16,7 +16,6 @@ export const LeftPanel = styled.div`
   padding: 2rem;
 `;
 
-
 export const Heading = styled.h2`
   color: #6a380f;
   font-size: 2rem;
@@ -25,7 +24,6 @@ export const Heading = styled.h2`
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 `;
 
-
 export const FormWrapper = styled.form`
   width: 100%;
   max-width: 350px;
@@ -33,12 +31,12 @@ export const FormWrapper = styled.form`
 `;
 
 export const InputGroup = styled.div`
-  background-color:rgb(236, 219, 171);
+  background-color: #f7e9d7;
   display: flex;
   align-items: center;
   padding: 0.6rem 1rem;
   border-radius: 6px;
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const StyledInput = styled.input`
@@ -46,10 +44,12 @@ export const StyledInput = styled.input`
   background: transparent;
   outline: none;
   width: 100%;
-  color: #6a380f;
+  color: #4b2e1e;
   padding-left: 0.5rem;
   font-size: 1rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 0.5rem;
+  padding-top: 0.3rem;
 
   &::placeholder {
     color: #6a380f !important;
@@ -57,15 +57,13 @@ export const StyledInput = styled.input`
   }
 `;
 
-
 export const ForgotPassword = styled.a`
   display: block;
-  text-align: center;
+  text-align: end;
   margin-bottom: 1rem;
   font-size: 1rem;
   color: #6a380f;
   text-decoration: none;
-  margin-top: 0.5rem;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 `;
 
@@ -82,7 +80,8 @@ export const SignInButton = styled.button`
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   &:hover {
-    background-color: rgb(236, 219, 171);
+    background-color: #f7e9d7;
+    color: #6a380f;
   }
 `;
 
@@ -105,7 +104,8 @@ export const GoogleButton = styled.button`
   margin-top: 0.8rem;
 
   &:hover {
-    background-color: rgb(236, 219, 171);
+    background-color: #f7e9d7;
+    color: #6a380f;
   }
 `;
 
@@ -120,3 +120,11 @@ export const Logo = styled.img`
   width: 20%;
 `;
 
+export const Eye = styled.div`
+  position: 'absolute',
+  right: 8,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  cursor: 'pointer',
+  color: '#6a380f'
+`;
