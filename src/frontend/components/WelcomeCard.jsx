@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 import {
   WelcomeContainer,
   WelcomeHeading,
@@ -11,7 +12,9 @@ const WelcomeCard = ({ mainText, subText, buttonText }) => {
     <WelcomeContainer>
       <WelcomeHeading>{mainText}</WelcomeHeading>
       <WelcomeSubtext>{subText}</WelcomeSubtext>
-      <WelcomeButton>{buttonText}</WelcomeButton>
+      <Link to='/signup'>
+        <WelcomeButton>{buttonText}</WelcomeButton>
+      </Link>
     </WelcomeContainer>
   );
 };

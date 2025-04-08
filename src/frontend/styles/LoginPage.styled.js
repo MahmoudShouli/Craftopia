@@ -21,7 +21,7 @@ export const Heading = styled.h2`
   color: #6a380f;
   font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  text-align: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 `;
 
@@ -29,7 +29,7 @@ export const Heading = styled.h2`
 export const FormWrapper = styled.form`
   width: 100%;
   max-width: 350px;
-  margin-top: 1.5rem;
+  margin-top: -10rem;
 `;
 
 export const InputGroup = styled.div`
@@ -108,3 +108,15 @@ export const GoogleButton = styled.button`
     background-color: rgb(236, 219, 171);
   }
 `;
+
+export const LogoSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(-190px);
+`;
+
+export const Logo = styled.img`
+  width: 20%;
+`;
+
