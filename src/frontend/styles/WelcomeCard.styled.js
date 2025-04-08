@@ -5,7 +5,7 @@ export const WelcomeContainer = styled.div`
   background-image: url(${brownBackground});
   background-size: cover;
   background-position: center;
-  width: 400px;
+  width: 35%;
   height: 100vh;
   color: white;
   display: flex;
@@ -31,7 +31,7 @@ export const WelcomeSubtext = styled.p`
 
 export const WelcomeButton = styled.button`
   background-color: #fff;
-  color: #000;
+  color: #6a380f;
   border: none;
   border-radius: 8px;
   padding: 0.75rem 2.5rem;
