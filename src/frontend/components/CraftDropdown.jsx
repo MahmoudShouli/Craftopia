@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { BootstrapDropdownWrapper } from "../styles/CraftDropdown.styled";
 
-
-function CraftDropdown({ crafts }) {
+function CraftDropdown({ crafts, selectedCraft, onSelectCraft }) {
   const [selectedItem, setSelectedItem] = useState('Select a Craft');
 
+  // Sync local label with selectedCraft from parent
+  useEffect(() => {
+    if (selectedCraft) {
+      setSelectedItem(selectedCraft);
+    }
+  }, [selectedCraft]);
+
   const handleSelect = (eventKey) => {
-    setSelectedItem(eventKey);
+    const lowercaseCraft = eventKey.toLowerCase();
+    setSelectedItem(eventKey);        // local label update
+    onSelectCraft(lowercaseCraft);          // update parent state
   };
 
   return (
