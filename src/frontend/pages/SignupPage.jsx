@@ -39,11 +39,13 @@ const SignupPage = () => {
   const [role, setRole] = useState('');
   const [craft, setSelectedCraft] = useState('');
   // const [error, setError] = useState('');
+  const [location, setLocation] = useState('');
+
 
   const SubmitSignUp = async (e) => {
     e.preventDefault();
 
-    const data = await register(name, email, password, role, craft);
+    const data = await register(name, email, password,location, role, craft);
     console.log("🔐 Register response:", data);
 
     if (data && data.success) {
@@ -104,6 +106,17 @@ const SignupPage = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </InputGroupWrapper>
+
+            <InputGroupWrapper>
+              <i className="bi bi-geo-alt" />
+              <StyledInput
+                type="text"
+                name="location"
+                placeholder="City, Street"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
               />
             </InputGroupWrapper>
 

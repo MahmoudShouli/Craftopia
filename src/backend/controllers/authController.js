@@ -1,8 +1,7 @@
-// controllers/authController.js
 import UserModel from "../models/UserModel.js"; // adjust path if needed
 
 export const registerUser = async (req, res) => {
-  const { name, email, password, role, craft } = req.body;
+  const { name, email, password, location, role, craft } = req.body;
 
   try {
     const existingUser = await UserModel.findOne({ email });
@@ -16,13 +15,12 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password,
+      location,
       role,
       craft: role === "crafter" ? craft : "",
     });
 
     await newUser.save();
-    console.log("✅ User saved:", newUser);
-
     res
       .status(201)
       .json({ success: true, message: "User registered", user: newUser });
