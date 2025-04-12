@@ -49,23 +49,24 @@ const SignupPage = () => {
     console.log("🔐 Register response:", data);
 
     if (data && data.success) {
-      setError("");
+      //setError("");
       alert("✅ Registered successfully!");
       // navigate("/"); // or redirect to login
     } else {
-      setError(data?.message || "Something went wrong");
+      //setError(data?.message || "Something went wrong");
     }
   };
 
   return (
     <PageWrapper>
-      <SidebarSection>
-        <WelcomeCard
+    
+      <WelcomeCard
           mainText="Start New Journey!"
           subText="Already have an account?"
           buttonText="Sign In"
-        />
-      </SidebarSection>
+          linkTo={"/"}
+      />
+    
 
       <RightSection>  
         <LogoSection>
