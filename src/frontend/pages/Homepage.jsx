@@ -1,12 +1,34 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-
 import NavbarComponent from '../components/Navbar';
+import HeroCarousel from '../components/HeroCarousel';
+import WhyCraftopia from '../components/WhyCraftopia';
+import Testimonials from '../components/Testimonials';
+import Contact from '../components/Contact';
+import Footer from '../components/Footer';
 
 const HomePage = () => {
   return (
-    <NavbarComponent/>
+    <>
+      <NavbarComponent />
+
+      <div id="home">
+        <HeroCarousel />
+      </div>
+
+      <div id="features">
+        <WhyCraftopia />
+      </div>
+
+      <div id="reviews">
+        <Testimonials />
+      </div>
+
+      <div id="contact">
+        <Contact />
+      </div>
+
+      <Footer />
+    </>
   );
 };
 

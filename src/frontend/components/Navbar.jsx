@@ -1,36 +1,55 @@
-import React from 'react';
-import { Button } from 'react-bootstrap';
-import styled from 'styled-components';
+import React, { useEffect, useState } from 'react';
 import logo from '../assets/logo.png';
 import { FaUser, FaBars } from 'react-icons/fa';
+import { Link as ScrollLink } from 'react-scroll';
 import {
-    NavWrapper,
-    LeftSection,
-    BrandText,
-    CenterLinks,
-    StyledNavLink,
-    RegisterButton
-  } from '../styles/NavBar.styled';
-  
+  NavWrapper,
+  LeftSection,
+  BrandText,
+  CenterLinks,
+  StyledNavLink,
+  RegisterButton,
+  Icon,
+} from '../styles/Navbar.styled'; 
+
 const NavbarComponent = () => {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <NavWrapper>
+    <NavWrapper scrolled={scrolled}>
       <LeftSection>
-        <img src={logo} width="75" height="75" alt="Craftopia Logo" />
+        <img src={logo} width="50" height="50" alt="Craftopia Logo" />
         <BrandText>Craftopia</BrandText>
       </LeftSection>
 
       <CenterLinks>
-        <StyledNavLink href="/">Home</StyledNavLink>
-        <StyledNavLink href="#features">Features</StyledNavLink>
-        <StyledNavLink href="#contact">Contact Us</StyledNavLink>
+        <StyledNavLink as={ScrollLink} to="home" smooth={true} duration={100}>
+          Home
+        </StyledNavLink>
+        <StyledNavLink as={ScrollLink} to="features" smooth={true} duration={100}>
+          Features
+        </StyledNavLink>
+        <StyledNavLink as={ScrollLink} to="reviews" smooth={true} duration={100}>
+          Reviews
+        </StyledNavLink>
+        <StyledNavLink as={ScrollLink} to="contact" smooth={true} duration={100}>
+          Contact Us
+        </StyledNavLink>
       </CenterLinks>
 
       <RegisterButton>
-  <span><FaUser /></span>
-  <span style={{ marginLeft: '35px' }}><FaBars /></span>
-</RegisterButton>
-
+        <Icon><FaUser /></Icon>
+        <Icon><FaBars /></Icon>
+      </RegisterButton>
     </NavWrapper>
   );
 };
