@@ -5,7 +5,11 @@ export const WelcomeContainer = styled.div`
   background-image: url(${brownBackground});
   background-size: cover;
   background-position: center;
+<<<<<<< HEAD
   width: 35%;
+=======
+  width: 100%;
+>>>>>>> feature/sign-up
   height: 100vh;
   color: white;
   display: flex;

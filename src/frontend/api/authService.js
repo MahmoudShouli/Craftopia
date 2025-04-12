@@ -12,3 +12,27 @@ export const login = async (email, password) => {
     console.error(error.message);
   }
 };
+
+export const register = async (
+  name,
+  email,
+  password,
+  location,
+  role,
+  craft
+) => {
+  try {
+    const response = await axios.post("http://localhost:3000/auth/register", {
+      name,
+      email,
+      password,
+      location,
+      role,
+      craft,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(error.message);
+  }
+};
