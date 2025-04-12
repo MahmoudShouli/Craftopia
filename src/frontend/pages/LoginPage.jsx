@@ -4,8 +4,9 @@ import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import WelcomeCard from '../components/WelcomeCard';
-import logo from '../../../public/favicon.png';
+import logo from '../assets/favicon.png';
 import { useState } from 'react';
+import { login } from '../api/authService';
 import {
   PageWrapper,
   LeftPanel,
@@ -29,9 +30,10 @@ const LoginPage = () => {
 
   const togglePassword = () => setShowPassword(prev => !prev);
 
-  const handleNormalLogin = async (e) => {
-    e.preventDefault()
+  const handleNormalLogin = () => {
+    
 
+    
     
 
     
@@ -45,7 +47,7 @@ const LoginPage = () => {
         </LogoSection>
         
         
-
+        
         <FormWrapper>
           <Heading>Sign in to Craftopia</Heading>
           <InputGroup>
@@ -63,9 +65,9 @@ const LoginPage = () => {
           </InputGroup>
           <ForgotPassword href="#">Forgot your password?</ForgotPassword>
 
-          <SignInButton type="submit">Sign In</SignInButton>
+          <SignInButton type="button" onClick={handleNormalLogin}>Sign In</SignInButton>
 
-          <GoogleButton type="button" onSubmit={handleNormalLogin}>
+          <GoogleButton type="button">
             <FcGoogle size={20} />
             Sign in with Google
           </GoogleButton>
@@ -79,6 +81,7 @@ const LoginPage = () => {
         mainText="Welcome Back!"
         subText="Don’t have an account?"
         buttonText="Sign Up"
+        linkTo={"/signup"}
       />
     </PageWrapper>
   );

@@ -7,12 +7,12 @@ import {
   WelcomeButton
 } from '../styles/WelcomeCard.styled'
 
-const WelcomeCard = ({ mainText, subText, buttonText }) => {
+const WelcomeCard = ({ mainText, subText, buttonText, linkTo }) => {
   return (
     <WelcomeContainer>
       <WelcomeHeading>{mainText}</WelcomeHeading>
       <WelcomeSubtext>{subText}</WelcomeSubtext>
-      <Link to='/signup'>
+      <Link to={linkTo}>
         <WelcomeButton>{buttonText}</WelcomeButton>
       </Link>
     </WelcomeContainer>
