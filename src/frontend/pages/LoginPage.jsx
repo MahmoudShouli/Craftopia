@@ -30,16 +30,20 @@ const LoginPage = () => {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate()
-  const { setUser } = useUser()
+  const { user, role, setUser, setRole } = useUser()
 
   const togglePassword = () => setShowPassword(prev => !prev);
 
   const handleNormalLogin = async () => {
     
     const data = await login(email, password)
-    console.log(data.name)
     setUser(data.name)
-    //navigate('homepage')
+    setRole(data.role)
+
+    // if (role == "customer")
+    //   navigate('homepage')
+    // else
+    //   navigate('crafterpage')
 
     
   }
