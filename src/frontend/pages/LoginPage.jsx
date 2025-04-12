@@ -6,7 +6,9 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import WelcomeCard from '../components/WelcomeCard';
 import logo from '../assets/favicon.png';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../api/authService';
+import { useUser } from '../context/UserContext';
 import {
   PageWrapper,
   LeftPanel,
@@ -24,17 +26,20 @@ import {
 
 const LoginPage = () => {
 
-  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate()
+  const { setUser } = useUser()
 
   const togglePassword = () => setShowPassword(prev => !prev);
 
-  const handleNormalLogin = () => {
+  const handleNormalLogin = async () => {
     
-
-    
-    
+    const data = await login(email, password)
+    console.log(data.name)
+    setUser(data.name)
+    //navigate('homepage')
 
     
   }
@@ -52,7 +57,7 @@ const LoginPage = () => {
           <Heading>Sign in to Craftopia</Heading>
           <InputGroup>
             <FaEnvelope color="#6a380f" />
-            <StyledInput onChange={(e) => setUsername(e.target.value)} type="email" placeholder="Email" />
+            <StyledInput onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email" />
           </InputGroup>
 
           <InputGroup>

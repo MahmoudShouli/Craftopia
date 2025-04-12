@@ -8,6 +8,6 @@ const UserSchema = mongoose.Schema({
   craft: { type: String, reqired: false },
 });
 
-const UserModel = mongoose.model("Users", UserSchema, "users");
+const UserModel = mongoose.model("users", UserSchema, "users");
 
 export default UserModel;

@@ -10,7 +10,7 @@ const startServer = async () => {
 
   app.use(cors({ origin: ["http://localhost:5173", "http://localhost:5174"] }));
   app.use(express.json());
-  app.use("/api", authRouter);
+  app.use("/auth", authRouter);
 
   const server = http.createServer(app);
 
