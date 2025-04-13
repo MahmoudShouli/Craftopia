@@ -16,25 +16,42 @@ import StarRating from './StarRating';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Contact = () => {
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState('');
+  const [user, setUser] = useState(null); // 👈 check for signed-in user
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false });
     AOS.refresh();
+
+    // Mock user fetch: check if 'user' is in localStorage
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    setUser(storedUser);
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!user) {
+      toast.error('You must be signed in to leave a review');
+      return;
+    }
+
+    toast.success('Review submitted successfully!');
     console.log({ rating, message });
   };
 
   return (
     <SectionWrapper>
+      <ToastContainer position="bottom-right" autoClose={3000} /> {/* ✅ Toast injected here */}
+
       <ContentWrapper>
         <ContactInfo data-aos="fade-right">
-        <ContactTitle>Contact Us</ContactTitle>
+          <ContactTitle>Contact Us</ContactTitle>
           <ContactItem>
             <FaEnvelope className="icon" />
             <strong>Email:</strong>
