@@ -7,7 +7,7 @@ export const PageWrapper = styled.div`
 `;
 
 export const LeftPanel = styled.div`
-  width: 60%;
+  width: 65%;
   background-color: #fff;
   display: flex;
   flex-direction: column;

@@ -58,7 +58,8 @@ const LoginPage = () => {
         
         
         <FormWrapper>
-          <Heading>Sign in to Craftopia</Heading>
+          <Heading style={{ marginBottom: '15px' }}>Sign in to Craftopia</Heading>
+
           <InputGroup>
             <FaEnvelope color="#6a380f" />
             <StyledInput onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Email" />

@@ -73,6 +73,7 @@ export const StyledInput = styled(Form.Control)`
 export const StyledButton = styled(Button)`
   background-color: #6a380f;
   border: 1px solid #6a380f;
+  width: 100%;
   color: white;
   font-weight: bold;
   font-size: 1.5rem;

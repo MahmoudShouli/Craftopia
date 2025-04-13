@@ -76,7 +76,7 @@ const SignupPage = () => {
         <FormWrapper>  
           <StyledTitle>Create Account</StyledTitle>
 
-          <form onSubmit={SubmitSignUp}>
+          <form onSubmit={SubmitSignUp} style={{ width: '100%' }}>
             <InputGroupWrapper>
               <i className="bi bi-person" />
               <StyledInput
