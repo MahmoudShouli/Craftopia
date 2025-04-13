@@ -31,16 +31,17 @@ export const FeaturesGrid = styled.div`
 `;
 
 export const FeatureCard = styled.div`
-  background: #f7e9d7; /* ✅ beige background */
+  background: #f7e9d7;
   border-radius: 20px;
   padding: 1.5rem;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s;
+  transition: border 0.3s ease;
   color: #6a380f;
   text-align: center;
+  border: 2px solid transparent;
 
   &:hover {
-    transform: translateY(-10px);
+    border: 2px solid #6a380f;
   }
 `;
 

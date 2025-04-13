@@ -1,23 +1,20 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   SectionWrapper,
   ContentWrapper,
   FeaturesGrid,
-  FeatureCard,
   IconCircle,
   FeatureTitle,
   FeatureDescription,
   SectionTitle,
   ImageContainer,
   ImageWrapper,
-  StyledImage
+  StyledImage,
 } from '../styles/WhyCraftopia.styled';
 
+import { motion } from 'framer-motion';
 import { FaUserShield, FaComments, FaTools, FaMapMarkerAlt } from 'react-icons/fa';
 import image from '../assets/why-craftopia.png';
-
-import AOS from 'aos';
-import 'aos/dist/aos.css';
 
 const features = [
   {
@@ -43,16 +40,9 @@ const features = [
 ];
 
 const WhyCraftopia = () => {
-  useEffect(() => {
-    AOS.init({ duration: 1000, once: false });
-    AOS.refresh(); 
-  }, []);
-
   return (
     <SectionWrapper>
-      <SectionTitle data-aos="fade-down" data-aos-delay="200">
-        Why Craftopia?
-      </SectionTitle>
+      <SectionTitle>Why Craftopia?</SectionTitle>
       <ContentWrapper>
         <div
           style={{
@@ -64,15 +54,32 @@ const WhyCraftopia = () => {
         >
           <FeaturesGrid>
             {features.map((feature, idx) => (
-              <FeatureCard
+              <motion.div
                 key={idx}
-                data-aos="fade-right"
-                data-aos-delay={idx * 100}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.2 }}
+                whileHover={{
+                  scale: 1.05,
+                  y: -10,
+                  border: '2px solid #6a380f',
+                  transition: { duration: 0.3 },
+                }}
+                style={{
+                  background: '#f7e9d7',
+                  borderRadius: '20px',
+                  padding: '1.5rem',
+                  boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+                  color: '#6a380f',
+                  textAlign: 'center',
+                  border: '2px solid transparent',
+                  cursor: 'pointer',
+                }}
               >
                 <IconCircle>{feature.icon}</IconCircle>
                 <FeatureTitle>{feature.title}</FeatureTitle>
                 <FeatureDescription>{feature.description}</FeatureDescription>
-              </FeatureCard>
+              </motion.div>
             ))}
           </FeaturesGrid>
         </div>
