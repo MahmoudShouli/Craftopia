@@ -37,8 +37,9 @@ const LoginPage = () => {
   const handleNormalLogin = async () => {
     
     const data = await login(email, password)
-    setUser(data.name)
-    setRole(data.role)
+    console.log(data)
+    setUser(data)
+  
 
     // if (role == "customer")
     //   navigate('homepage')

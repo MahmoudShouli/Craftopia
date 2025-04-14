@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
-import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import { PopupOverlay, MapWrapper, CloseButton } from '../styles/MapPopup.styled'
 
 const MapPopup = ({ onClose, onSelectCoordinates, onSelectCity }) => {
@@ -25,11 +24,11 @@ const MapPopup = ({ onClose, onSelectCoordinates, onSelectCity }) => {
     const city = address?.city || address?.town || address?.village || "";
     const street = address?.road || address?.pedestrian || address?.footway || "";
     
-    // Combine for full readable location (e.g., "Main St, Nablus")
+    
     const fullLocation = `${city} , ${street}`;
   
     onSelectCoordinates(`${lat.toFixed(4)}, ${lon.toFixed(4)}`);
-    onSelectCity(fullLocation);  // sends to SignupPage input
+    onSelectCity(fullLocation);  
     onClose();
   };
 

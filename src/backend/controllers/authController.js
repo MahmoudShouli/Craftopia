@@ -11,18 +11,7 @@ const signIn = async (req, res) => {
     const isMatch = password === user.password;
     if (!isMatch) return res.json({ message: "Invalid password" });
 
-    if (user.role == "crafter")
-      res.json({
-        name: user.name,
-        role: user.role,
-        craft: user.craft,
-      });
-    else {
-      res.json({
-        name: user.name,
-        role: user.role,
-      });
-    }
+    res.json(user);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

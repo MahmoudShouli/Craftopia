@@ -10,12 +10,6 @@ export const UserProvider = ({ children }) => {
         return savedUser ? JSON.parse(savedUser) : null;
     });
 
-    const [role, setRole] = useState(() => {
-        const savedRole = localStorage.getItem("role");
-        return savedRole ? JSON.parse(savedRole) : null;
-    });
-
-
 
     useEffect(() => {
         if (user) {
@@ -25,18 +19,10 @@ export const UserProvider = ({ children }) => {
         }
     }, [user]);
 
-    useEffect(() => {
-        if (role) {
-            localStorage.setItem("role", JSON.stringify(role));
-        } else {
-            localStorage.removeItem("role");
-        }
-    }, [role]);
-
 
     
     return (
-        <UserContext.Provider value={{ user, setUser, role, setRole }}>
+        <UserContext.Provider value={{ user, setUser}}>
             {children}
         </UserContext.Provider>
     );
