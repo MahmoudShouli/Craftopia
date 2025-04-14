@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage';
 import { UserProvider } from './context/UserContext';
 import './index.css'
+import 'leaflet/dist/leaflet.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

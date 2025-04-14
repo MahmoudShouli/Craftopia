@@ -3,8 +3,9 @@ import CraftDropdown from '../components/CraftDropdown';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import React, { useState } from 'react';
 import { FaUserAlt, FaPaintBrush } from 'react-icons/fa'; 
-import logo from '../../../public/favicon.png';
+import logo from '../assets/favicon.png';
 import { register } from '../api/authService'; 
+import MapPopup from '../components/MapPopup';
 
 import {
   PageWrapper,
@@ -40,6 +41,9 @@ const SignupPage = () => {
   const [craft, setSelectedCraft] = useState('');
   // const [error, setError] = useState('');
   const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
+  const [showMap, setShowMap] = useState(false);
+
 
 
   const SubmitSignUp = async (e) => {
@@ -111,18 +115,18 @@ const SignupPage = () => {
             </InputGroupWrapper>
 
             <InputGroupWrapper>
-              <i className="bi bi-geo-alt" />
+            <i className="bi bi-geo-alt" onClick={() => setShowMap(true)} style={{ cursor: "pointer" }} />
               <StyledInput
                 type="text"
                 name="location"
-                placeholder="City, Street"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Address"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
               />
             </InputGroupWrapper>
 
             <RoleWrapper>
-              <label className="fw-bold mb-0" style={{ fontWeight: 600 }}>
+              <label className="fw-bold mb-0" style={{ fontWeight: 600, color: "#6a380f"}}>
                 Role:
               </label>
               
@@ -157,6 +161,13 @@ const SignupPage = () => {
           </form>
         </FormWrapper>
       </RightSection>
+      {showMap && (
+        <MapPopup
+          onClose={() => setShowMap(false)}
+          onSelectCoordinates={(locationString) => setLocation(locationString)}
+          onSelectCity={(locationString) => setCity(locationString)}
+        />
+      )}
     </PageWrapper>
   );
 };
