@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 import { FaUserAlt, FaPaintBrush } from 'react-icons/fa'; 
 import logo from '../../../public/favicon.png';
 import { register } from '../api/authService'; 
+import { useNavigate } from 'react-router-dom';
+
 
 import {
   PageWrapper,
@@ -20,6 +22,11 @@ import {
   LogoSection,
   Logo,
 } from '../styles/SignupPage.styled'; 
+import { toast } from 'react-toastify';
+
+
+
+
 
 const crafts = [
   'Plasterer',
@@ -40,20 +47,31 @@ const SignupPage = () => {
   const [craft, setSelectedCraft] = useState('');
   // const [error, setError] = useState('');
   const [location, setLocation] = useState('');
+  const navigate = useNavigate();
 
 
   const SubmitSignUp = async (e) => {
     e.preventDefault();
-
-    const data = await register(name, email, password,location, role, craft);
+  
+    const data = await register(name, email, password, location, role, craft);
     console.log("🔐 Register response:", data);
-
+  
     if (data && data.success) {
-      //setError("");
-      alert("✅ Registered successfully!");
-      // navigate("/"); // or redirect to login
+      toast.success("Account created! Redirecting to Sign In...", {
+        position: "top-center",
+        autoClose: 2000,
+        pauseOnHover: true,
+        draggable: true,
+      });
+  
+      setTimeout(() => {
+        navigate("/signin");
+      }, 2000);
     } else {
-      //setError(data?.message || "Something went wrong");
+      toast.error(data?.message || "Something went wrong , try to enter another email", {
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 

@@ -6,6 +6,8 @@ import SignupPage from './pages/SignupPage';
 import Homepage from './pages/Homepage';
 import { UserProvider } from './context/UserContext';
 import './index.css'
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -16,7 +18,18 @@ createRoot(document.getElementById('root')).render(
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/signin" element={<LoginPage />} />
         </Routes>
+        <ToastContainer 
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </BrowserRouter>
     </UserProvider>
   </StrictMode>
-)
+);
