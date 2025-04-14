@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import logo from '../assets/logo.png';
 import { FaUser, FaBars } from 'react-icons/fa';
 import { Link as ScrollLink } from 'react-scroll';
@@ -11,30 +11,44 @@ import {
   RegisterButton,
   Icon,
   UserInfo,
+  MenuPopup,
 } from '../styles/Navbar.styled';
 import { useUser } from '../context/UserContext';
-import { useNavigate } from 'react-router-dom'; // ✅ navigate hook
+import { useNavigate } from 'react-router-dom';
 
 const NavbarComponent = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useUser();
-  const navigate = useNavigate(); // ✅ initialize navigation
+  const navigate = useNavigate();
+  const menuRef = useRef();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // ✅ Handle click on user icon
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleUserClick = () => {
     if (!user) {
-      navigate('/signin'); // redirect to Sign In if not logged in
+      navigate('/signin');
     }
-    // else you could show dropdown for profile/logout in the future
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
   };
 
   return (
@@ -62,7 +76,25 @@ const NavbarComponent = () => {
       <RegisterButton>
         <Icon onClick={handleUserClick}><FaUser /></Icon>
         {user && <UserInfo>Hi {user.name}</UserInfo>}
-        <Icon><FaBars /></Icon>
+        <Icon onClick={toggleMenu}><FaBars /></Icon>
+
+        {menuOpen && (
+          <MenuPopup ref={menuRef}>
+            {user ? (
+              <>
+                <div onClick={() => navigate('/profile')}>Profile</div>
+                <div onClick={() => navigate('/settings')}>Settings</div>
+                <div onClick={() => {
+                  localStorage.removeItem('user');
+                  navigate('/');
+                  window.location.reload();
+                }}>Logout</div>
+              </>
+            ) : (
+              <div onClick={() => navigate('/signin')}>Log In</div>
+            )}
+          </MenuPopup>
+        )}
       </RegisterButton>
     </NavWrapper>
   );

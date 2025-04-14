@@ -86,3 +86,26 @@ export const UserInfo = styled.span`
   font-size: 1rem;
   color: #fff8f1;
 `;
+
+export const MenuPopup = styled.div`
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 1rem;
+  z-index: 999;
+
+  div {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: #6a380f;
+    font-weight: 600;
+
+    &:hover {
+      background-color: #f2f2f2;
+    }
+  }
+`;
