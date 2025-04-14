@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   SectionWrapper,
-  SectionTitle,
   ContentWrapper,
   ContactInfo,
   ContactItem,
@@ -15,25 +14,22 @@ import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import StarRating from './StarRating';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-
-import { ToastContainer, toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import { useUser } from '../context/UserContext';
 
 const Contact = () => {
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState('');
-  const [user, setUser] = useState(null); // 👈 check for signed-in user
+  const { user } = useUser(); // ✅ get user from context
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false });
     AOS.refresh();
-
-    // Mock user fetch: check if 'user' is in localStorage
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    setUser(storedUser);
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user) {
@@ -41,14 +37,33 @@ const Contact = () => {
       return;
     }
 
-    toast.success('Review submitted successfully!');
-    console.log({ rating, message });
+    console.log({
+      email: user?.email,
+      rating,
+      message
+    });
+    
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/reviews/addReview', {
+        email: user.email,
+        rating,
+        message,
+      });
+
+      toast.success('Review submitted successfully!');
+      setRating(0);
+      setMessage('');
+    } catch (error) {
+      console.error(error);
+      toast.error('Something went wrong while saving your review.');
+    }
   };
 
   return (
-    <SectionWrapper>
-      <ToastContainer position="bottom-right" autoClose={3000} /> {/* ✅ Toast injected here */}
-
+    <SectionWrapper id="contact">
+      <ToastContainer position="bottom-right" autoClose={3000} />
+      
       <ContentWrapper>
         <ContactInfo data-aos="fade-right">
           <ContactTitle>Contact Us</ContactTitle>

@@ -11,7 +11,7 @@ const StarsWrapper = styled.div`
 
 const Star = styled.span`
   font-size: 2rem;
-  color: ${({ filled }) => (filled ? 'gold' : '#ccc')};
+  color: ${({ $filled }) => ($filled ? '#ffc107' : '#ccc')}; /* ✅ updated */
   transition: color 0.2s;
 `;
 
@@ -23,7 +23,7 @@ const StarRating = ({ rating, onRatingChange }) => {
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          filled={star <= (hovered || rating)}
+          $filled={star <= (hovered || rating)}  // ✅ use $filled here
           onClick={() => onRatingChange(star)}
           onMouseEnter={() => setHovered(star)}
           onMouseLeave={() => setHovered(0)}

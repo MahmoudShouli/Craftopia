@@ -26,13 +26,16 @@ export const CardWrapper = styled(motion.div)`
   background-color: #fff;
   border-radius: 20px;
   padding: 1.5rem;
-  width: 300px;
+  width: 100%;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   color: #6a380f;
   text-align: center;
   border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border 0.3s ease;
+
+  &:hover {
+    border: 2px solid #6a380f;
+  }
 `;
 
 export const Avatar = styled.div`
@@ -70,4 +73,57 @@ export const Rating = styled.div`
   font-size: 1.2rem;
   color: #ffcc00;
   margin-top: 0.5rem;
+`;
+
+export const Viewport = styled.div`
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  padding: 0 3rem;
+  box-sizing: border-box;
+  margin-top: 2rem;
+`;
+
+export const ScrollWrapper = styled.div`
+  display: flex;
+  transition: transform 0.5s ease;
+  transform: translateX(${({ $offset }) => `-${$offset * 100}%`});
+`;
+
+export const CardRow = styled.div`
+  display: flex;
+  width: ${({ $total }) => `calc(100% * ${$total / 4})`};
+  gap: 1rem;
+  padding: 0 3.5rem;
+  box-sizing: border-box;
+`;
+
+export const CardItem = styled.div`
+  flex: 0 0 calc((100% - 3rem) / 4);
+`;
+
+export const ArrowButton = styled.button`
+  position: absolute;
+  top: calc(50% + 20px);
+  transform: translateY(-50%);
+  background-color: #6a380f;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.9rem;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+
+  &:hover {
+    background-color: #5c320d;
+  }
+`;
+
+export const LeftArrow = styled(ArrowButton)`
+  left: 0;
+`;
+
+export const RightArrow = styled(ArrowButton)`
+  right: 0;
 `;

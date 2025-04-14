@@ -12,11 +12,11 @@ export const NavWrapper = styled.div`
   z-index: 100;
   transition: all 0.4s ease;
 
-  backdrop-filter: ${({ scrolled }) => (scrolled ? "blur(10px)" : "none")};
-  background-color: ${({ scrolled }) =>
-    scrolled ? "rgba(247, 233, 215, 0.85)" : "transparent"};
-  box-shadow: ${({ scrolled }) =>
-    scrolled ? "0 2px 10px rgba(0,0,0,0.1)" : "none"};
+  backdrop-filter: ${({ $scrolled }) => ($scrolled ? "blur(10px)" : "none")};
+  background-color: ${({ $scrolled }) =>
+    $scrolled ? "rgba(247, 233, 215, 0.85)" : "transparent"};
+  box-shadow: ${({ $scrolled }) =>
+    $scrolled ? "0 2px 10px rgba(0,0,0,0.1)" : "none"};
 `;
 
 export const LeftSection = styled.div`
@@ -73,4 +73,16 @@ export const Icon = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+export const RightSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+export const UserInfo = styled.span`
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff8f1;
 `;

@@ -1,62 +1,78 @@
-import React, { useEffect } from 'react';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import {
   SectionWrapper,
   SectionTitle,
-  CardsContainer
+  Viewport,
+  ScrollWrapper,
+  CardRow,
+  CardItem,
+  LeftArrow,
+  RightArrow,
 } from '../styles/Testimonials.styled';
 import Card from './Card';
 
-
 const Testimonials = () => {
+  const [reviews, setReviews] = useState([]);
+  const [offset, setOffset] = useState(0);
+  const maxVisible = 4;
+  const totalPages = Math.ceil(reviews.length / maxVisible);
+
   useEffect(() => {
-    AOS.init({ duration: 1000, once: false });
-    AOS.refresh();
+    const fetchReviews = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/api/reviews/getAllReviews');
+        setReviews(res.data);
+      } catch (error) {
+        console.error('Failed to fetch reviews:', error.response?.data || error.message);
+      }
+    };
+
+    fetchReviews();
   }, []);
 
-  const testimonials = [
-    {
-      name: 'Ahmad',
-      role: 'Customer',
-      message: 'Craftopia helped me find a reliable carpenter in minutes!',
-      avatar: '', // no image = first letter
-      rating: 5,
-    },
-    {
-      name: 'Rana',
-      role: 'Electrician',
-      message: 'It’s so easy to connect with new clients and grow my business.',
-      avatar: '', // can insert image path
-      rating: 4,
-    },
-    {
-      name: 'Yousef',
-      role: 'Plumber',
-      message: 'I love how professional and fast the platform is!',
-      avatar: '',
-      rating: 5,
-    },
-  ];
+  const handleNext = () => {
+    if (offset < totalPages - 1) setOffset(offset + 1);
+  };
+
+  const handlePrev = () => {
+    if (offset > 0) setOffset(offset - 1);
+  };
 
   return (
-    <SectionWrapper>
-      <SectionTitle data-aos="fade-down" data-aos-delay="200">
-             Our Reviews
-            </SectionTitle>
-      <CardsContainer>
-        {testimonials.map((t, idx) => (
-          <Card
-          key={idx}
-          name={t.name}
-          role={t.role}
-          message={t.message}
-          avatar={t.avatar}
-          rating={t.rating}
-          delay={idx * 200}
-        />
-        ))}
-      </CardsContainer>
+    <SectionWrapper id="reviews">
+      <SectionTitle>Our Reviews</SectionTitle>
+
+      <Viewport>
+        {reviews.length > maxVisible && (
+          <LeftArrow onClick={handlePrev}>
+            <FaChevronLeft />
+          </LeftArrow>
+        )}
+
+        <ScrollWrapper $offset={offset}>
+          <CardRow $total={reviews.length}>
+            {reviews.map((r, idx) => (
+              <CardItem key={idx}>
+                <Card
+                  name={r.user?.name || 'User'}
+                  role={r.user?.role || 'Customer'}
+                  message={r.message}
+                  avatar=""
+                  rating={r.rating}
+                />
+              </CardItem>
+            ))}
+          </CardRow>
+        </ScrollWrapper>
+
+        {reviews.length > maxVisible && (
+          <RightArrow onClick={handleNext}>
+            <FaChevronRight />
+          </RightArrow>
+        )}
+      </Viewport>
     </SectionWrapper>
   );
 };

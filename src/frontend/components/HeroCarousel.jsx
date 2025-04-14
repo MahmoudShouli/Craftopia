@@ -39,22 +39,22 @@ const CarouselWrapper = styled.div`
 
 const SlidesContainer = styled.div`
   display: flex;
-  width: ${({ count }) => `${count * 100}vw`};
-  transform: ${({ activeIndex }) => `translateX(-${activeIndex * 100}vw)`};
+  width: ${({ $count }) => `${$count * 100}vw`};
+  transform: ${({ $activeIndex }) => `translateX(-${$activeIndex * 100}vw)`};
   transition: transform 1s ease-in-out;
 `;
 
 const Slide = styled.div`
   flex: 0 0 100vw;
   height: 100vh;
-  background: url(${({ bg }) => bg}) center center/cover no-repeat;
+  background: url(${({ $bg }) => $bg}) center center/cover no-repeat; /* FIXED */
   position: relative;
   display: flex;
-  justify-content: ${({ position }) =>
-    position === 'top-left' ? 'flex-start' : 'center'};
-  align-items: ${({ position }) =>
-    position === 'top-left' ? 'flex-start' : 'flex-end'};
-  text-align: ${({ position }) => (position === 'top-left' ? 'left' : 'center')};
+  justify-content: ${({ $position }) =>
+    $position === 'top-left' ? 'flex-start' : 'center'}; /* FIXED */
+  align-items: ${({ $position }) =>
+    $position === 'top-left' ? 'flex-start' : 'flex-end'}; /* FIXED */
+  text-align: ${({ $position }) => ($position === 'top-left' ? 'left' : 'center')}; /* FIXED */
   padding: 4rem;
   box-sizing: border-box;
 
@@ -141,7 +141,7 @@ const Dot = styled.button`
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: ${({ active }) => (active ? '#6a380f' : '#ccc')};
+  background-color: ${({ $active }) => ($active ? '#6a380f' : '#ccc')};
   border: none;
   cursor: pointer;
 
@@ -186,9 +186,13 @@ const HeroCarousel = () => {
 
   return (
     <CarouselWrapper>
-      <SlidesContainer count={slideCount} activeIndex={activeIndex}>
+      <SlidesContainer $count={slideCount} $activeIndex={activeIndex}>
         {slides.map((slide, idx) => (
-          <Slide key={idx} bg={slide.bg} position={slide.position}>
+          <Slide
+          key={idx}
+          $bg={slide.bg}        // ✅ changed
+          $position={slide.position}  // ✅ changed
+        >
           <Content style={{ marginTop: slide.offset || '0px' }}>
             <Title>{slide.title}</Title>
             <Subtitle>{slide.subtitle}</Subtitle>
@@ -207,7 +211,7 @@ const HeroCarousel = () => {
 
       <DotsWrapper>
         {slides.map((_, idx) => (
-          <Dot key={idx} active={idx === activeIndex} onClick={() => goToSlide(idx)} />
+          <Dot key={idx} $active={idx === activeIndex} onClick={() => goToSlide(idx)} />
         ))}
       </DotsWrapper>
     </CarouselWrapper>

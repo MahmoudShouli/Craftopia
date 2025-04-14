@@ -10,10 +10,15 @@ import {
   StyledNavLink,
   RegisterButton,
   Icon,
-} from '../styles/Navbar.styled'; 
+  UserInfo,
+} from '../styles/Navbar.styled';
+import { useUser } from '../context/UserContext';
+import { useNavigate } from 'react-router-dom'; // ✅ navigate hook
 
 const NavbarComponent = () => {
   const [scrolled, setScrolled] = useState(false);
+  const { user } = useUser();
+  const navigate = useNavigate(); // ✅ initialize navigation
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,8 +29,16 @@ const NavbarComponent = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // ✅ Handle click on user icon
+  const handleUserClick = () => {
+    if (!user) {
+      navigate('/signin'); // redirect to Sign In if not logged in
+    }
+    // else you could show dropdown for profile/logout in the future
+  };
+
   return (
-    <NavWrapper scrolled={scrolled}>
+    <NavWrapper $scrolled={scrolled}>
       <LeftSection>
         <img src={logo} width="50" height="50" alt="Craftopia Logo" />
         <BrandText>Craftopia</BrandText>
@@ -47,7 +60,8 @@ const NavbarComponent = () => {
       </CenterLinks>
 
       <RegisterButton>
-        <Icon><FaUser /></Icon>
+        <Icon onClick={handleUserClick}><FaUser /></Icon>
+        {user && <UserInfo>Hi {user.name}</UserInfo>}
         <Icon><FaBars /></Icon>
       </RegisterButton>
     </NavWrapper>
