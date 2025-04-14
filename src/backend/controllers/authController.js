@@ -11,25 +11,14 @@ const signIn = async (req, res) => {
     const isMatch = password === user.password;
     if (!isMatch) return res.json({ message: "Invalid password" });
 
-    if (user.role == "crafter")
-      res.json({
-        name: user.name,
-        role: user.role,
-        craft: user.craft,
-      });
-    else {
-      res.json({
-        name: user.name,
-        role: user.role,
-      });
-    }
+    res.json({ user });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
 const registerUser = async (req, res) => {
-  const { name, email, password, location, role, craft } = req.body;
+  const { name, email, password, location, role, craft, avatarUrl } = req.body;
 
   try {
     const existingUser = await UserModel.findOne({ email });
@@ -46,6 +35,7 @@ const registerUser = async (req, res) => {
       location,
       role,
       craft: role === "crafter" ? craft : "",
+      avatarUrl,
     });
 
     await newUser.save();

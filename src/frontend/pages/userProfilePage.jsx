@@ -1,21 +1,82 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { useUser } from "../context/UserContext";
 import Dashboard from "../components/Dashboard";
+import { CiSearch } from "react-icons/ci";
+import { FaUser, FaMapMarkerAlt } from "react-icons/fa";
+import { MdEmail } from "react-icons/md";
+import { RiLockPasswordLine } from "react-icons/ri";
+import {
+  PageWrapper,
+  ProfileContainer,
+  HeaderSection,
+  HeaderLeft,
+  WelcomeText,
+  DateText,
+  HeaderRight,
+  SearchBarWrapper,
+  SearchInput,
+  IconWrapper,
+  Icon,
+  UserCard,
+  UserHeader,
+  Avatar,
+  UserDetails,
+  Name,
+  Email,
+  FormGrid,
+  Field,
+  Label,
+  InputWrapper,
+  Input,
+  EditButton,
+  SaveButton
+} from '../styles/UserProfilePage.styled';
 
 const UserProfilePage = () => {
-  const { user } = useUser();
+  const { user , setUser  } = useUser();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(user?.name || "");
+  const [editedName, setEditedName] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [location, setLocation] = useState("");
+  const fileInputRef = useRef();
+  const [uploading, setUploading] = useState(false);
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
-  };
+  useEffect(() => {
+    if (user && user.name) {
+      setEditedName(user.name);
+      setNewPassword("");
+      setPreviewUrl(user.avatarUrl || "");
+      setLocation(user.location || "");
+    }
+  }, [user]);
 
-  const handleSave = () => {
-    console.log("Saving:", editedName, newPassword);
-    setIsEditing(false);
+  const handleEditToggle = () => setIsEditing(!isEditing);
+
+  const handleSave = async () => {
+    try {
+      const res = await axios.put(
+        `http://localhost:3000/api/user/update-profile/${user._id}`,
+        {
+          name: editedName,
+          location,
+          password: newPassword,
+        }
+      );
+  
+      const updatedUser = res.data.user; // ✅ direct, not nested
+  
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser)); // ✅ flat value now
+  
+      console.log("Saved user to localStorage:", updatedUser);
+      console.log("New localStorage value:", localStorage.getItem("user"));
+  
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    }
   };
 
   const formattedDate = new Date().toLocaleDateString("en-GB", {
@@ -25,32 +86,130 @@ const UserProfilePage = () => {
     year: "numeric",
   });
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("avatar", file);
+    formData.append("userId", user._id);
+  
+    try {
+      const res = await axios.post("http://localhost:3000/api/user/uploadAvatar", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+  
+      const url = res.data.avatarUrl;
+  
+      // ✅ Update preview
+      setPreviewUrl(url);
+  
+      // ✅ Create updated user object
+      const updatedUser = {
+        ...user,
+        avatarUrl: url,
+      };
+  
+      // ✅ Sync with context and localStorage
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+  
+      console.log("Avatar uploaded and synced:", updatedUser);
+    } catch (err) {
+      console.error("Upload error:", err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  if (!user) return <div>Loading profile...</div>;
+
   return (
     <PageWrapper>
       <Dashboard />
 
       <ProfileContainer>
-        {/* Top Header */}
         <HeaderSection>
           <HeaderLeft>
-            <WelcomeText>Welcome, {user?.name}</WelcomeText>
+            <WelcomeText>Welcome, {user.name}</WelcomeText>
             <DateText>{formattedDate}</DateText>
           </HeaderLeft>
 
           <HeaderRight>
-            <SearchInput placeholder="Search" />
-            <Icon>🔔</Icon>
-            <Icon>👤</Icon>
+            <SearchBarWrapper>
+              <CiSearch className="icon" />
+              <SearchInput type="text" placeholder="Search" />
+            </SearchBarWrapper>
+            <IconWrapper>
+              <Icon>🔔</Icon>
+            </IconWrapper>
+            <IconWrapper style={{ padding: 0 }}>
+              {user?.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt="avatar"
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <Icon
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",
+                    backgroundColor: "#f0f0f0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.2rem",
+                    color: "#6a380f",
+                  }}
+                >
+                  {user?.name?.charAt(0)?.toUpperCase() || "?"}
+                </Icon>
+              )}
+            </IconWrapper>
           </HeaderRight>
         </HeaderSection>
 
-        {/* User Profile Card */}
         <UserCard>
           <UserHeader>
-            <Avatar>{user?.name?.[0]?.toUpperCase()}</Avatar>
+            <>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                style={{ display: "none" }}
+              />
+
+              <Avatar onClick={() => fileInputRef.current.click()}>
+                {uploading ? (
+                  <span style={{ fontSize: "0.9rem" }}>Uploading...</span>
+                ) : previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt="avatar"
+                    style={{
+                      width: "100%",
+                      height: "100%,",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                  />
+                ) : (
+                  user?.name?.charAt(0)?.toUpperCase() || "?"
+                )}
+              </Avatar>
+            </>
             <UserDetails>
-              <Name>{user?.name}</Name>
-              <Email>{user?.email}</Email>
+              <Name>{user.name}</Name>
+              <Email>{user.email}</Email>
             </UserDetails>
             {!isEditing ? (
               <EditButton onClick={handleEditToggle}>Edit</EditButton>
@@ -61,32 +220,56 @@ const UserProfilePage = () => {
 
           <FormGrid>
             <Field>
-              <Label>Full Name</Label>
-              <Input
-                type="text"
-                value={editedName}
-                onChange={(e) => setEditedName(e.target.value)}
-                disabled={!isEditing}
-              />
+              <Label>Name</Label>
+              <InputWrapper>
+                <FaUser className="input-icon" />
+                <Input
+                  type="text"
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  disabled={!isEditing}
+                />
+              </InputWrapper>
+            </Field>
+
+            <Field>
+              <Label>Location</Label>
+              <InputWrapper>
+                <FaMapMarkerAlt className="input-icon" />
+                <Input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  disabled={!isEditing}
+                />
+              </InputWrapper>
+            </Field>
+
+            <Field>
+              <Label>Email</Label>
+              <InputWrapper>
+                <MdEmail className="input-icon" />
+                <Input
+                  type="email"
+                  value={user.email}
+                  disabled
+                />
+              </InputWrapper>
             </Field>
 
             <Field>
               <Label>Password</Label>
-              <Input
-                type="password"
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                disabled={!isEditing}
-              />
+              <InputWrapper>
+                <RiLockPasswordLine className="input-icon" />
+                <Input
+                  type="password"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={!isEditing}
+                />
+              </InputWrapper>
             </Field>
-
-            {user?.role === "crafter" && (
-              <Field>
-                <Label>Craft</Label>
-                <Input type="text" value={user?.craft} disabled />
-              </Field>
-            )}
           </FormGrid>
         </UserCard>
       </ProfileContainer>
@@ -95,142 +278,3 @@ const UserProfilePage = () => {
 };
 
 export default UserProfilePage;
-
-const PageWrapper = styled.div`
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  background-color: #f5f6fa;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-`;
-
-const ProfileContainer = styled.div`
-  flex: 1;
-  padding: 3rem;
-`;
-
-/* Header Section */
-const HeaderSection = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2.5rem;
-`;
-
-const HeaderLeft = styled.div``;
-
-const WelcomeText = styled.div`
-  font-size: 1.8rem;
-  font-weight: 600;
-`;
-
-const DateText = styled.div`
-  font-size: 0.95rem;
-  color: #6a380f;
-`;
-
-const HeaderRight = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const SearchInput = styled.input`
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 0.95rem;
-`;
-
-const Icon = styled.div`
-  font-size: 1.4rem;
-  cursor: pointer;
-`;
-
-/* Profile Card */
-const UserCard = styled.div`
-  background-color: white;
-  border-radius: 16px;
-  padding: 2.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-`;
-
-const UserHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-`;
-
-const Avatar = styled.div`
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: #d2b48c;
-  font-size: 2rem;
-  font-weight: bold;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const UserDetails = styled.div`
-  flex: 1;
-  margin-left: 1rem;
-`;
-
-const Name = styled.div`
-  font-size: 1.4rem;
-  font-weight: 600;
-`;
-
-const Email = styled.div`
-  font-size: 0.95rem;
-  color: #888;
-`;
-
-const FormGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-`;
-
-const Field = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Label = styled.label`
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #6a380f;
-`;
-
-const Input = styled.input`
-  padding: 0.7rem 1rem;
-  border: 2px solid #6a380f;
-  border-radius: 8px;
-  font-size: 1rem;
-  background-color: ${({ disabled }) => (disabled ? "#f5f5f5" : "white")};
-`;
-
-const EditButton = styled.button`
-  background-color: #444;
-  color: white;
-  padding: 0.7rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-`;
-
-const SaveButton = styled.button`
-  background-color: #6a380f;
-  color: white;
-  padding: 0.7rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-`;

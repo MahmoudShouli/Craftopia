@@ -19,7 +19,8 @@ export const register = async (
   password,
   location,
   role,
-  craft
+  craft,
+  avatarUrl
 ) => {
   try {
     const response = await axios.post("http://localhost:3000/auth/register", {
@@ -29,6 +30,7 @@ export const register = async (
       location,
       role,
       craft,
+      avatarUrl,
     });
 
     return response.data;

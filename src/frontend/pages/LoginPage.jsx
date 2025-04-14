@@ -37,14 +37,11 @@ const LoginPage = () => {
   const handleNormalLogin = async () => {
     
     const data = await login(email, password)
-    setUser(data.name)
-    setRole(data.role)
+    setUser(data.user);
 
     if(data){
       navigate('/userprofile')
     }
-
-    
   }
 
   return (

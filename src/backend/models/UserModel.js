@@ -7,6 +7,7 @@ const UserSchema = mongoose.Schema({
   location: { type: String, required: true },
   role: { type: String, required: true },
   craft: { type: String, required: false },
+  avatarUrl: { type: String, required: false },
 });
 
 const UserModel = mongoose.model("Users", UserSchema, "users");
