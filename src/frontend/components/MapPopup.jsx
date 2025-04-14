@@ -20,9 +20,16 @@ const MapPopup = ({ onClose, onSelectCoordinates, onSelectCity }) => {
   const reverseGeocode = async (lat, lon) => {
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
     const data = await res.json();
-    const city = data?.address?.city || data?.address?.town || data?.address?.village || "";
+  
+    const address = data?.address;
+    const city = address?.city || address?.town || address?.village || "";
+    const street = address?.road || address?.pedestrian || address?.footway || "";
+    
+    // Combine for full readable location (e.g., "Main St, Nablus")
+    const fullLocation = `${city} , ${street}`;
+  
     onSelectCoordinates(`${lat.toFixed(4)}, ${lon.toFixed(4)}`);
-    onSelectCity(`${city}`)
+    onSelectCity(fullLocation);  // sends to SignupPage input
     onClose();
   };
 
