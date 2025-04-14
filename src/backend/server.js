@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import express from "express";
 import http from "http";
 import cors from "cors";
@@ -11,6 +10,7 @@ const startServer = async () => {
   app.use(cors({ origin: ["http://localhost:5173", "http://localhost:5174"] }));
   app.use(express.json());
   app.use("/auth", authRouter);
+  // app.use("/api/reviews", reviewRoutes);
 
   const server = http.createServer(app);
 

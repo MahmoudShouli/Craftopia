@@ -40,10 +40,9 @@ const LoginPage = () => {
     setUser(data.name)
     setRole(data.role)
 
-    // if (role == "customer")
-    //   navigate('homepage')
-    // else
-    //   navigate('crafterpage')
+    if(data){
+      navigate('/userprofile')
+    }
 
     
   }
