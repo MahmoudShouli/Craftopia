@@ -80,19 +80,7 @@ const UserProfileCard = ({
           </InputWrapper>
         </Field>
 
-        <Field>
-          <Label>Location</Label>
-          <InputWrapper>
-            <FaMapMarkerAlt className="input-icon" />
-            <Input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              disabled={!isEditing}
-            />
-          </InputWrapper>
-        </Field>
-
+      
         <Field>
           <Label>Email</Label>
           <InputWrapper>
@@ -114,6 +102,19 @@ const UserProfileCard = ({
               placeholder="Enter new password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              disabled={!isEditing}
+            />
+          </InputWrapper>
+        </Field>
+
+        <Field>
+          <Label>Location</Label>
+          <InputWrapper>
+            <FaMapMarkerAlt className="input-icon" />
+            <Input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
               disabled={!isEditing}
             />
           </InputWrapper>

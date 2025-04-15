@@ -100,6 +100,7 @@ const UserProfilePage = () => {
     <PageWrapper>
       <Dashboard />
       <ProfileContainer>
+        
         <UserProfileHeader user={user} formattedDate={formattedDate} />
 
         <UserProfileCard
