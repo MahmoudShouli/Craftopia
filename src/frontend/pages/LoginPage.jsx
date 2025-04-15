@@ -39,12 +39,10 @@ const LoginPage = () => {
     const data = await login(email, password);
     console.log("LOGIN RESPONSE DATA:", data); // ✅ Check what's returned
   
-    setUser({
-      name: data.name,
-      email: email,
-    });
+    setUser(
+      data.user
+    );
   
-    setRole(data.role);
      navigate('/');
   };
 
