@@ -5,6 +5,7 @@ import { FaUser, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import MapPopup from '../components/MapPopup';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import {
   UserCard,
   UserHeader,
