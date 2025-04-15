@@ -1,9 +1,10 @@
 // components/UserProfileCard.jsx
-import React from "react";
+import React, { useState } from 'react';
 import UserAvatar from "./UserAvatar";
 import { FaUser, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
+import MapPopup from '../components/MapPopup';
 import {
   UserCard,
   UserHeader,
@@ -35,6 +36,10 @@ const UserProfileCard = ({
   newPassword,
   setNewPassword
 }) => {
+
+  const [city, setCity] = useState('');
+  const [showMap, setShowMap] = useState(false);
+
   return (
     <UserCard>
       <UserHeader>
@@ -110,16 +115,25 @@ const UserProfileCard = ({
         <Field>
           <Label>Location</Label>
           <InputWrapper>
-            <FaMapMarkerAlt className="input-icon" />
+            <FaMapMarkerAlt className="input-icon" onClick={() => setShowMap(true)} style={{ cursor: "pointer" }} />
             <Input
               type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              name="location"
+              placeholder="Address"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               disabled={!isEditing}
             />
           </InputWrapper>
         </Field>
       </FormGrid>
+      {showMap && (
+        <MapPopup
+          onClose={() => setShowMap(false)}
+          onSelectCoordinates={(locationString) => setLocation(locationString)}
+          onSelectCity={(locationString) => setCity(locationString)}
+        />
+      )}
     </UserCard>
   );
 };
