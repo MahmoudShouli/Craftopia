@@ -23,31 +23,30 @@ import {
   LogoSection,
   Eye
 } from '../styles/LoginPage.styled'
+import HomePage from './Homepage';
 
 const LoginPage = () => {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { user, role, setUser, setRole } = useUser()
 
   const togglePassword = () => setShowPassword(prev => !prev);
 
   const handleNormalLogin = async () => {
-    
-    const data = await login(email, password)
-    console.log(data)
-    setUser(data)
+    const data = await login(email, password);
+    console.log("LOGIN RESPONSE DATA:", data); // ✅ Check what's returned
   
-
-    // if (role == "customer")
-    //   navigate('homepage')
-    // else
-    //   navigate('crafterpage')
-
-    
-  }
+    setUser({
+      name: data.name,
+      email: email,
+    });
+  
+    setRole(data.role);
+     navigate('/');
+  };
 
   return (
     <PageWrapper>
