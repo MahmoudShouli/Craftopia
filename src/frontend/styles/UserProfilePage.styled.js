@@ -145,7 +145,7 @@ export const Field = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 360px;
+  max-width: 500px;
 `;
 
 export const Label = styled.label`
@@ -188,6 +188,7 @@ export const EditButton = styled.button`
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
+  margin-right: 19%;
 `;
 
 export const SaveButton = styled.button`
@@ -198,4 +199,5 @@ export const SaveButton = styled.button`
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
+  margin-right: 19%;
 `;
