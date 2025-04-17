@@ -5,10 +5,8 @@ import React, { useState } from 'react';
 import { FaUserAlt, FaPaintBrush } from 'react-icons/fa'; 
 import logo from '../assets/favicon.png';
 import { register } from '../api/authService'; 
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom'
 import MapPopup from '../components/MapPopup';
-
 import {
   PageWrapper,
   SidebarSection,
@@ -24,10 +22,7 @@ import {
   Logo,
 } from '../styles/SignupPage.styled'; 
 import { toast } from 'react-toastify';
-
-
-
-
+import 'react-toastify/dist/ReactToastify.css';
 
 const crafts = [
   'Plasterer',

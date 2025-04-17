@@ -109,3 +109,13 @@ export const MenuPopup = styled.div`
     }
   }
 `;
+
+export const AvatarWrapper = styled.div`
+  margin-right: 0.5rem;
+  cursor: pointer;
+  border: 2px solid white;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+`;

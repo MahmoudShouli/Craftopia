@@ -22,7 +22,7 @@ import { useUser } from '../context/UserContext';
 const Contact = () => {
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState('');
-  const { user } = useUser(); // ✅ get user from context
+  const { user } = useUser(); 
 
   useEffect(() => {
     AOS.init({ duration: 1000, once: false });

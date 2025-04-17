@@ -12,21 +12,21 @@ import {
   Icon,
   UserInfo,
   MenuPopup,
+  AvatarWrapper
 } from '../styles/Navbar.styled';
 import { useUser } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import UserAvatar from './UserAvatar';
 
 const NavbarComponent = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
   const menuRef = useRef();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -49,6 +49,12 @@ const NavbarComponent = () => {
 
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null); // Clear context
+    navigate('/');
   };
 
   return (
@@ -74,21 +80,34 @@ const NavbarComponent = () => {
       </CenterLinks>
 
       <RegisterButton>
-        <Icon onClick={handleUserClick}><FaUser /></Icon>
+        {user && (
+          <AvatarWrapper onClick={handleUserClick}>
+            <UserAvatar
+              user={user}
+              previewUrl={user.avatarUrl || null}
+              width={40}
+              height={40}
+            />
+          </AvatarWrapper>
+        )}
+        {!user && (
+          <Icon onClick={handleUserClick}>
+            <FaUser />
+          </Icon>
+        )}
+
         {user && <UserInfo>Hi {user.name}</UserInfo>}
-        <Icon onClick={toggleMenu}><FaBars /></Icon>
+
+        <Icon onClick={toggleMenu}>
+          <FaBars />
+        </Icon>
 
         {menuOpen && (
           <MenuPopup ref={menuRef}>
             {user ? (
               <>
                 <div onClick={() => navigate('/userprofile')}>Profile</div>
-                <div onClick={() => navigate('/settings')}>Settings</div>
-                <div onClick={() => {
-                  localStorage.removeItem('user');
-                  navigate('/');
-                  window.location.reload();
-                }}>Logout</div>
+                <div onClick={handleLogout}>Logout</div>
               </>
             ) : (
               <div onClick={() => navigate('/signin')}>Log In</div>
