@@ -1,20 +1,34 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import lightLogo from "../assets/light-logo.png";
 
-
-// List of sidebar features
+// Sidebar items
 const sidebarItems = [
-  { icon: "🏠", label: "Home" },
-  { icon: "👤", label: "Profile" },
-  { icon: "🛠️", label: "Settings" },
+  { icon: "🏠", label: "Home", route: "/homepage" },
+  { icon: "👤", label: "Profile", route: "/userprofile" },
+  { icon: "🛠️", label: "Settings" },  // Settings and Documents are static
   { icon: "📄", label: "Documents" },
-  { icon: "🚪", label: "Logout" },
+  { icon: "🚪", label: "Logout", route: "/" },
 ];
 
 const Dashboard = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const navigate = useNavigate();
+
+  const handleItemClick = (index) => {
+    const item = sidebarItems[index];
+
+    setSelectedIndex(index);
+
+    if (item.label === "Logout") {
+      localStorage.removeItem("user"); // or whatever key you're using
+      navigate("/");
+    } else if (item.route) {
+      navigate(item.route);
+    }
+  };
 
   return (
     <Sidebar
@@ -23,11 +37,7 @@ const Dashboard = () => {
       $expanded={isHovered}
     >
       <LogoWrapper>
-        <LogoImage
-          src= {lightLogo}
-          alt="Logo"
-          $expanded={isHovered}
-        />
+        <LogoImage src={lightLogo} alt="Logo" $expanded={isHovered} />
       </LogoWrapper>
 
       {sidebarItems.map((item, index) => (
@@ -35,7 +45,7 @@ const Dashboard = () => {
           key={index}
           $expanded={isHovered}
           $active={selectedIndex === index}
-          onClick={() => setSelectedIndex(index)}
+          onClick={() => handleItemClick(index)}
         >
           <span className="icon">{item.icon}</span>
           <span className="label">{item.label}</span>
