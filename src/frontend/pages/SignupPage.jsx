@@ -48,6 +48,8 @@ const SignupPage = () => {
   const [craft, setSelectedCraft] = useState('');
   // const [error, setError] = useState('');
   const [location, setLocation] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+
   const navigate = useNavigate();
   const [city, setCity] = useState('');
   const [showMap, setShowMap] = useState(false);
@@ -56,8 +58,8 @@ const SignupPage = () => {
 
   const SubmitSignUp = async (e) => {
     e.preventDefault();
-  
-    const data = await register(name, email, password, location, role, craft);
+
+    const data = await register(name, email, password,location, role, craft , avatarUrl);
     console.log("🔐 Register response:", data);
   
     if (data && data.success) {

@@ -6,6 +6,9 @@ import SignupPage from './pages/SignupPage';
 import Homepage from './pages/Homepage';
 import { UserProvider } from './context/UserContext';
 import './index.css'
+import UserProfile from './pages/userProfilePage';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
@@ -18,6 +21,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<Homepage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/signin" element={<LoginPage />} />
+          <Route path="/userprofile" element={<UserProfile />} />
         </Routes>
         <ToastContainer 
           position="top-right"
