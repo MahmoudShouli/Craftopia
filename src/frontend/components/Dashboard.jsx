@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import lightLogo from "../assets/light-logo.png";
+import { useUser } from "../context/UserContext"; 
 
 // Sidebar items
 const sidebarItems = [
-  { icon: "🏠", label: "Home", route: "/homepage" },
+  { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
-  { icon: "🛠️", label: "Settings" },  // Settings and Documents are static
+  { icon: "🛠️", label: "Settings" },  
   { icon: "📄", label: "Documents" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
 
-const Dashboard = () => {
+const Dashboard = ({ defaultIndex = 0 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const handleItemClick = (index) => {
     const item = sidebarItems[index];
@@ -23,7 +25,8 @@ const Dashboard = () => {
     setSelectedIndex(index);
 
     if (item.label === "Logout") {
-      localStorage.removeItem("user"); // or whatever key you're using
+      localStorage.removeItem("user");
+      setUser(null);
       navigate("/");
     } else if (item.route) {
       navigate(item.route);

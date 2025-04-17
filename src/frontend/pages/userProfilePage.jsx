@@ -98,7 +98,7 @@ const UserProfilePage = () => {
 
   return (
     <PageWrapper>
-      <Dashboard />
+      <Dashboard defaultIndex = {1} />
       <ProfileContainer>
         
         <UserProfileHeader user={user} formattedDate={formattedDate} />

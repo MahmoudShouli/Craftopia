@@ -82,7 +82,7 @@ const NavbarComponent = () => {
           <MenuPopup ref={menuRef}>
             {user ? (
               <>
-                <div onClick={() => navigate('/profile')}>Profile</div>
+                <div onClick={() => navigate('/userprofile')}>Profile</div>
                 <div onClick={() => navigate('/settings')}>Settings</div>
                 <div onClick={() => {
                   localStorage.removeItem('user');
