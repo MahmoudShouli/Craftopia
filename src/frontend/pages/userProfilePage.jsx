@@ -119,6 +119,7 @@ const UserProfilePage = () => {
           newPassword={newPassword}
           setNewPassword={setNewPassword}
         />
+        
       </ProfileContainer>
     </PageWrapper>
   );

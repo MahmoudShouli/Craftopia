@@ -125,12 +125,12 @@ export const UserDetails = styled.div`
 `;
 
 export const Name = styled.div`
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   font-weight: 600;
 `;
 
 export const Email = styled.div`
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #888;
 `;
 
@@ -146,12 +146,14 @@ export const Field = styled.div`
   flex-direction: column;
   width: 100%;
   max-width: 500px;
+  margin-top: 70px;
 `;
 
 export const Label = styled.label`
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: #6a380f;
+  font-size: 1rem;
 `;
 
 export const InputWrapper = styled.div`
@@ -162,7 +164,7 @@ export const InputWrapper = styled.div`
   .input-icon {
     position: absolute;
     left: 0.9rem;
-    font-size: 1.1rem;
+    font-size: 1.5rem;
     color: #6a380f;
   }
 `;
@@ -172,7 +174,7 @@ export const Input = styled.input`
   padding: 0.7rem 1rem 0.7rem 2.5rem;
   border: 2px solid #6a380f;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.3rem;
   background-color: ${({ disabled }) => (disabled ? "#f5f5f5" : "white")};
 
   &::placeholder {
@@ -186,7 +188,7 @@ export const EditButton = styled.button`
   padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.3rem;
   cursor: pointer;
   margin-right: 19%;
 `;
@@ -197,7 +199,7 @@ export const SaveButton = styled.button`
   padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.3rem;
   cursor: pointer;
   margin-right: 19%;
 `;

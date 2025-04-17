@@ -6,6 +6,7 @@ import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import MapPopup from '../components/MapPopup';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import'leaflet/dist/leaflet.css';
 import {
   UserCard,
   UserHeader,
@@ -56,8 +57,8 @@ const UserProfileCard = ({
             previewUrl={previewUrl}
             uploading={uploading}
             user={user}
-            width={120}
-            height={120}
+            width={200}
+            height={200}
             onClick={() => fileInputRef.current.click()}
           />
         </>
