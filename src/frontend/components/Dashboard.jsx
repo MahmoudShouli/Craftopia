@@ -8,12 +8,12 @@ import { useUser } from "../context/UserContext";
 const sidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
-  { icon: "🛠️", label: "Settings" },  
+  { icon: "🔎", label: "Search & filter" },  
   { icon: "📄", label: "Documents" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
 
-const Dashboard = ({ defaultIndex = 0 }) => {
+const Dashboard = ({ defaultIndex = 0 ,  onViewChange }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const navigate = useNavigate();
@@ -21,13 +21,17 @@ const Dashboard = ({ defaultIndex = 0 }) => {
 
   const handleItemClick = (index) => {
     const item = sidebarItems[index];
-
     setSelectedIndex(index);
-
+  
     if (item.label === "Logout") {
       localStorage.removeItem("user");
       setUser(null);
       navigate("/");
+    } else if (item.label === "Search & filter") {
+      onViewChange?.("search"); 
+    } else if (item.label === "Profile") {
+      onViewChange?.("profile"); 
+      if (item.route) navigate(item.route);
     } else if (item.route) {
       navigate(item.route);
     }

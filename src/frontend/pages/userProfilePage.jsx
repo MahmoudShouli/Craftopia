@@ -9,6 +9,7 @@ import {
   PageWrapper,
   ProfileContainer,
 } from '../styles/UserProfilePage.styled';
+import Search from "../components/Search";
 
 const UserProfilePage = () => {
   const { user, setUser } = useUser();
@@ -19,6 +20,8 @@ const UserProfilePage = () => {
   const [location, setLocation] = useState("");
   const fileInputRef = useRef();
   const [uploading, setUploading] = useState(false);
+  const [activeView, setActiveView] = useState("profile"); 
+
 
   useEffect(() => {
     if (user && user.name) {
@@ -98,11 +101,12 @@ const UserProfilePage = () => {
 
   return (
     <PageWrapper>
-      <Dashboard defaultIndex = {1} />
+      <Dashboard defaultIndex={1} onViewChange={setActiveView} />
       <ProfileContainer>
         
         <UserProfileHeader user={user} formattedDate={formattedDate} />
 
+        {activeView === "profile" && (
         <UserProfileCard
           user={user}
           fileInputRef={fileInputRef}
@@ -119,6 +123,9 @@ const UserProfilePage = () => {
           newPassword={newPassword}
           setNewPassword={setNewPassword}
         />
+      )}
+
+      {activeView === "search" && <Search />}
         
       </ProfileContainer>
     </PageWrapper>
