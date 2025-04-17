@@ -1,16 +1,17 @@
 // controllers/reviewController.js
 import ReviewModel from "../models/ReviewModel.js";
 import UserModel from "../models/UserModel.js";
+import { ReviewType } from "../models/enums/reviewType.js";
 
 export const addReview = async (req, res) => {
-  const { email, message, rating } = req.body;
+  const { email, message, rating, type, to } = req.body;
 
-  if (!email || !message || rating == null) {
+  if (!email || !message || !rating || !type == null) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
-    const review = new ReviewModel({ email, message, rating });
+    const review = new ReviewModel({ email, message, rating, type, to });
     await review.save();
     res.status(201).json({ message: "Review saved successfully" });
   } catch (error) {
@@ -21,7 +22,7 @@ export const addReview = async (req, res) => {
 
 export const getAllReviews = async (req, res) => {
   try {
-    const reviews = await ReviewModel.find();
+    const reviews = await ReviewModel.find({ type: ReviewType.SITE });
 
     const enrichedReviews = await Promise.all(
       reviews.map(async (review) => {
@@ -31,14 +32,14 @@ export const getAllReviews = async (req, res) => {
           ...review.toObject(),
           user: user
             ? { name: user.name, role: user.role }
-            : { name: "User", role: "Customer" }, // fallback
+            : { name: "User", role: "Customer" },
         };
       })
     );
 
     res.status(200).json(enrichedReviews);
   } catch (error) {
-    console.error("Get reviews error:", error.message);
+    console.error(" Get reviews error:", error);
     res.status(500).json({ error: "Failed to get reviews" });
   }
 };

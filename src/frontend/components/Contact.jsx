@@ -18,6 +18,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { useUser } from '../context/UserContext';
+import { ReviewType } from '../../backend/models/enums/reviewType';
 
 const Contact = () => {
   const [rating, setRating] = useState(0);
@@ -31,32 +32,33 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!user) {
       toast.error('You must be signed in to leave a review');
       return;
     }
-
-    console.log({
-      email: user?.email,
-      rating,
-      message
-    });
-    
-
+  
     try {
       const response = await axios.post('http://localhost:3000/api/reviews/addReview', {
         email: user.email,
         rating,
         message,
+        type: ReviewType.SITE,
+        to: null,
       });
-
+  
       toast.success('Review submitted successfully!');
       setRating(0);
       setMessage('');
     } catch (error) {
-      console.error(error);
-      toast.error('Something went wrong while saving your review.');
+      console.error("❌ Save review error:", error);
+  
+      if (error.response?.data) {
+        console.log("📩 Backend Response:", error.response.data);
+        toast.error(error.response.data.message || "Something went wrong while saving your review.");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
     }
   };
 
