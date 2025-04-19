@@ -14,17 +14,15 @@ function CraftDropdown({ crafts, selectedCraft, onSelectCraft }) {
 
   const handleSelect = (eventKey) => {
     const lowercaseCraft = eventKey.toLowerCase();
-    setSelectedItem(eventKey);        // local label update
-    onSelectCraft(lowercaseCraft);          // update parent state
+    setSelectedItem(eventKey);              // Update dropdown label
+    onSelectCraft(lowercaseCraft);          // Pass lowercase value to parent
   };
 
   return (
     <BootstrapDropdownWrapper>
-      <div className="label">{selectedItem}</div>
-
       <Dropdown onSelect={handleSelect}>
         <Dropdown.Toggle id="dropdown-basic">
-          Crafts
+          {selectedItem}
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
