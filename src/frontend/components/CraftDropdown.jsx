@@ -7,7 +7,9 @@ function CraftDropdown({ crafts, selectedCraft, onSelectCraft }) {
 
   // Sync local label with selectedCraft from parent
   useEffect(() => {
-    if (selectedCraft) {
+    if (!selectedCraft) {
+      setSelectedItem('Select a Craft');
+    } else {
       setSelectedItem(selectedCraft);
     }
   }, [selectedCraft]);

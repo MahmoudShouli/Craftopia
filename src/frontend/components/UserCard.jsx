@@ -6,8 +6,9 @@ import {
   ContactButton,
 } from "../styles/UserCard.styled";
 import UserAvatar from "./UserAvatar";
+import StarRating from "./StarRating";
 
-const UserCard = ({ avatarUrl, name, craft, uploading = false }) => {
+const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false }) => {
   const user = { name };
 
   return (
@@ -21,6 +22,11 @@ const UserCard = ({ avatarUrl, name, craft, uploading = false }) => {
       />
       <CrafterName>{name}</CrafterName>
       <CrafterCraft>{craft}</CrafterCraft>
+
+      <p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
+          ⭐ {rating.toFixed(1)} / 5
+      </p>
+
       <ContactButton>Contact</ContactButton>
     </CardContainer>
   );

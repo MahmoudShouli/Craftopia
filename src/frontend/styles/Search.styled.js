@@ -55,6 +55,12 @@ export const SearchButton = styled.button`
   font-size: 1.1rem;
   cursor: pointer;
   height: 100%;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: #8b4f1c;
+    color: #fff;
+  }
 `;
 
 export const FilterBoxGroup = styled.div`
