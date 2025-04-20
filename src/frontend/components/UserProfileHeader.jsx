@@ -1,8 +1,7 @@
-// components/UserProfileHeader.jsx
-
-import React from "react";
+import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import UserAvatar from "./UserAvatar";
+import NotificationMenu from "./NotificationMenu"; 
 
 import {
   HeaderSection,
@@ -17,6 +16,20 @@ import {
 } from "../styles/UserProfilePage.styled";
 
 const UserProfileHeader = ({ user, formattedDate }) => {
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [readIds, setReadIds] = useState([]);
+
+  const notifications = [
+    { id: 1, message: "New message from admin" },
+    { id: 2, message: "New message from admin" },
+    { id: 3, message: "New message from admin" },
+    { id: 4, message: "New message from admin" },
+    { id: 5, message: "New message from admin" },
+    { id: 6, message: "New message from admin" },
+    
+    // empty array = no notifications
+  ];
+
   return (
     <HeaderSection>
       <HeaderLeft>
@@ -29,9 +42,20 @@ const UserProfileHeader = ({ user, formattedDate }) => {
           <CiSearch className="icon" />
           <SearchInput type="text" placeholder="Search" />
         </SearchBarWrapper>
-        <IconWrapper>
+
+        <IconWrapper
+          onClick={() => setShowNotifications(!showNotifications)}
+          style={{ position: "relative", cursor: "pointer" }}
+        >
           <Icon>🔔</Icon>
+          {showNotifications && (
+            <NotificationMenu notifications={notifications} 
+              readIds={readIds}
+              setReadIds={setReadIds}
+            />
+          )}
         </IconWrapper>
+
         <IconWrapper style={{ padding: 0 }}>
           <UserAvatar
             previewUrl={user.avatarUrl}
