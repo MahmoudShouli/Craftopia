@@ -27,7 +27,7 @@ export const updateUserProfile = async (req, res) => {
     const updateData = {
       ...(name && { name }),
       ...(location && { location }),
-      ...(password && { password }), // no hashing in this setup
+      ...(password && { password }),
     };
 
     const updatedUser = await User.findByIdAndUpdate(id, updateData, {
@@ -78,7 +78,7 @@ export const searchCrafters = async (req, res) => {
 
     res.json({ success: true, users: usersWithRating });
   } catch (error) {
-    console.error("❌ Search Error:", error);
+    console.error("Search Error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

@@ -10,12 +10,12 @@ export const fetchUsers = async ({ query, selectedCraft, sortByRating }) => {
       params.order = sortByRating;
     }
 
-    const res = await axios.get("http://localhost:3000/api/user/search", {
+    const res = await axios.get("http://localhost:3000/user/search", {
       params,
     });
     return res.data.users;
   } catch (error) {
-    console.error("❌ Error fetching users:", error.message);
+    console.error("Error fetching users:", error.message);
     return [];
   }
 };

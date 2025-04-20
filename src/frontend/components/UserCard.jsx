@@ -6,7 +6,7 @@ import {
   ContactButton,
 } from "../styles/UserCard.styled";
 import UserAvatar from "./UserAvatar";
-import StarRating from "./StarRating";
+
 
 const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false }) => {
   const user = { name };
