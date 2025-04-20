@@ -1,16 +1,15 @@
-import {
-    NotificationPopup,
-    NotificationItem,
-    NoNotification,
-    NotificationContent,
-    NotificationRow,
-  } from "../styles/NotificationMenu.styled";
-
 import React, { useState, useRef } from "react";
-
+import {
+  NotificationPopup,
+  NotificationItem,
+  NoNotification,
+  NotificationContent,
+  NotificationRow,
+} from "../styles/NotificationMenu.styled";
 
 const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
   const longPressTimeout = useRef();
+  const wasLongPressed = useRef(false);
 
   const handleMarkAsRead = (id) => {
     if (!readIds.includes(id)) {
@@ -25,9 +24,17 @@ const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
   const isRead = (id) => readIds.includes(id);
 
   const handleMouseDown = (id) => {
+    wasLongPressed.current = false;
     longPressTimeout.current = setTimeout(() => {
       handleMarkAsUnread(id);
-    }, 500);
+      wasLongPressed.current = true;
+    }, 800);
+  };
+
+  const handleClick = (id) => {
+    if (!wasLongPressed.current) {
+      handleMarkAsRead(id);
+    }
   };
 
   const cancelLongPress = () => {
@@ -41,7 +48,7 @@ const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
           <NotificationItem
             key={note.id}
             $read={isRead(note.id)}
-            onClick={() => handleMarkAsRead(note.id)}
+            onClick={() => handleClick(note.id)}
             onMouseDown={() => handleMouseDown(note.id)}
             onMouseUp={cancelLongPress}
             onMouseLeave={cancelLongPress}
@@ -57,4 +64,5 @@ const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
     </NotificationPopup>
   );
 };
+
 export default NotificationMenu;
