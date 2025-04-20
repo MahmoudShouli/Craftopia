@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
   SectionWrapper,
@@ -10,11 +11,11 @@ import {
   ImageContainer,
   ImageWrapper,
   StyledImage,
-} from '../styles/WhyCraftopia.styled';
+} from './WhyCraftopia.styled';
 
 import { motion } from 'framer-motion';
 import { FaUserShield, FaComments, FaTools, FaMapMarkerAlt } from 'react-icons/fa';
-import image from '../assets/why-craftopia.png';
+import image from '../../../assets/why-craftopia.png';
 
 const features = [
   {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { fetchReviews } from '../../../api/reviewService'; 
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import {
   SectionWrapper,
@@ -10,8 +10,8 @@ import {
   CardItem,
   LeftArrow,
   RightArrow,
-} from '../styles/Testimonials.styled';
-import Card from './Card';
+} from './Testimonials.styled';
+import Card from '../../Card';
 
 const Testimonials = () => {
   const [reviews, setReviews] = useState([]);
@@ -20,16 +20,16 @@ const Testimonials = () => {
   const totalPages = Math.ceil(reviews.length / maxVisible);
 
   useEffect(() => {
-    const fetchReviews = async () => {
+    const loadReviews = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/reviews/getAllReviews');
-        setReviews(res.data);
+        const data = await fetchReviews();
+        setReviews(data);
       } catch (error) {
         console.error('Failed to fetch reviews:', error.response?.data || error.message);
       }
-    };
+    };    
 
-    fetchReviews();
+    loadReviews();
   }, []);
 
   const handleNext = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import UserAvatar from "./UserAvatar";
-import NotificationMenu from "./NotificationMenu"; 
+import NotificationMenu from "../NotificationMenu"; 
 
 import {
   HeaderSection,

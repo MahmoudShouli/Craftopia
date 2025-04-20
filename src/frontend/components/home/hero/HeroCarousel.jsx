@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import bg1 from '../assets/bg1.png';
-import bg2 from '../assets/bg2.png';
-import bg3 from '../assets/bg3.png';
+import bg1 from '../../../assets/bg1.png';
+import bg2 from '../../../assets/bg2.png';
+import bg3 from '../../../assets/bg3.png';
 import {
   CarouselWrapper,
   SlidesContainer,
@@ -16,7 +16,7 @@ import {
   DotsWrapper,
   Dot,
   Content
-} from '../styles/HeroCarousel.styled';
+} from './HeroCarousel.styled';
 
 const slides = [
   {

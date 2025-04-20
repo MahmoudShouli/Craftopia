@@ -8,8 +8,8 @@ import UserProfileHeader from "../components/UserProfileHeader";
 import {
   PageWrapper,
   ProfileContainer,
-} from '../styles/UserProfilePage.styled';
-import Search from "../components/Search";
+} from '../components/userprofile/UserProfilePage.styled';
+import Search from "../components/userprofile/Search";
 
 const UserProfilePage = () => {
   const { user, setUser } = useUser();

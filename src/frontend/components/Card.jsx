@@ -6,7 +6,7 @@ import {
   Role,
   Message,
   Rating,
-} from '../styles/Testimonials.styled';
+} from './home/testimonials/Testimonials.styled';
 
 const Card = ({ name, role, message, avatar, rating, delay }) => {
   const renderAvatar = () => {

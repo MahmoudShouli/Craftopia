@@ -33,7 +33,6 @@ const UserProfileCard = ({
   handleSave,
   editedName,
   setEditedName,
-  location,
   setLocation,
   newPassword,
   setNewPassword

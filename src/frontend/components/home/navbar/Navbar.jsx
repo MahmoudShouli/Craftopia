@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import logo from '../assets/logo.png';
+import logo from '../../../assets/logo.png';
 import { FaUser, FaBars } from 'react-icons/fa';
 import { Link as ScrollLink } from 'react-scroll';
 import {
@@ -13,10 +13,10 @@ import {
   UserInfo,
   MenuPopup,
   AvatarWrapper
-} from '../styles/Navbar.styled';
-import { useUser } from '../context/UserContext';
+} from './NavBar.styled';
+import { useUser } from '../../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import UserAvatar from './UserAvatar';
+import UserAvatar from '../../UserAvatar';
 
 const NavbarComponent = () => {
   const [scrolled, setScrolled] = useState(false);

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import {
   SectionWrapper,
@@ -8,17 +9,17 @@ import {
   Textarea,
   SubmitButton,
   ContactTitle
-} from '../styles/Contact.styled';
+} from './Contact.styled';
 
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
-import StarRating from './StarRating';
+import StarRating from '../../StarRating';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
-import { useUser } from '../context/UserContext';
-import { ReviewType } from '../../backend/models/enums/reviewType';
+import { addReview } from '../../../api/reviewService'; 
+import { useUser } from '../../../context/UserContext';
+import { ReviewType } from '../../../../backend/models/enums/reviewType';
 
 const Contact = () => {
   const [rating, setRating] = useState(0);
@@ -39,7 +40,7 @@ const Contact = () => {
     }
   
     try {
-      const response = await axios.post('http://localhost:3000/reviews/addReview', {
+      const data = await addReview({
         email: user.email,
         rating,
         message,

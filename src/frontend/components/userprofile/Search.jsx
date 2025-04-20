@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchUsers as getUsersFromDB } from '../api/userService';
+import { fetchUsers as getUsersFromDB } from '../../api/userService';
 import {
   SearchCard,
   FilterBoxGroup,
@@ -9,11 +9,11 @@ import {
   SearchButton,
   UsersGrid,
   UsersGridWrapper
-} from '../styles/Search.styled';
-import UserCard from './UserCard';
+} from '../../styles/Search.styled';
+import UserCard from '../UserCard';
 import CraftDropdown from './CraftDropdown';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
-import { useUser } from '../context/UserContext';
+import { useUser } from '../../context/UserContext';
 import MapPopup from './MapPopup';
 
 const crafts = [

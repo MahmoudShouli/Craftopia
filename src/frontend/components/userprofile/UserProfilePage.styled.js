@@ -121,6 +121,7 @@ export const Avatar = styled.div`
 `;
 
 export const UserDetails = styled.div`
+  color: #6a380f;
   flex: 1;
   margin-left: 1rem;
 `;

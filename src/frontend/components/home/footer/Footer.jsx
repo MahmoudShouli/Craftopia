@@ -13,7 +13,7 @@ import {
   FooterColumn,
   SocialIcons,
   FooterBottom
-} from '../styles/Footer.styled';
+} from './Footer.styled';
 
 
 

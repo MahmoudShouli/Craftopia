@@ -10,7 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage';
 import Homepage from './pages/Homepage';
-import UserProfile from './pages/userProfilePage';
+import UserProfile from './pages/UserProfilePage';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

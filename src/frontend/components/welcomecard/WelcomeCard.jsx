@@ -5,7 +5,7 @@ import {
   WelcomeHeading,
   WelcomeSubtext,
   WelcomeButton
-} from '../styles/WelcomeCard.styled'
+} from './WelcomeCard.styled'
 
 const WelcomeCard = ({ mainText, subText, buttonText, linkTo }) => {
   return (
