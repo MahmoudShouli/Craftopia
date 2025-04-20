@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import bg1 from '../assets/bg1.png';
 import bg2 from '../assets/bg2.png';

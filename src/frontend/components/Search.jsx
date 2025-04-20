@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchUsers as getUsersFromDB } from '../api/userService';
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
 import {
   SearchCard,
   FilterBoxGroup,
@@ -13,6 +15,8 @@ import {
 import UserCard from './UserCard';
 import CraftDropdown from './CraftDropdown';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { useUser } from '../context/UserContext';
+import MapPopup from './MapPopup';
 
 const crafts = [
   'Plumber',
@@ -30,9 +34,18 @@ const Search = () => {
   const [sortByRating, setSortByRating] = useState(null); // 'asc' | 'desc'
   const [query, setQuery] = useState('');
   const [users, setUsers] = useState([]);
+  const [showMap, setShowMap] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const { user } = useUser();
 
   const fetchUsers = async () => {
-    const data = await getUsersFromDB({ query, selectedCraft, sortByRating });
+    const data = await getUsersFromDB({
+      query,
+      selectedCraft,
+      sortByRating,
+      location: selectedLocation,
+    });
+    
     setUsers(data);
   };
 
@@ -91,8 +104,58 @@ const Search = () => {
           {sortByRating === 'desc' && <FaArrowDown />}
         </FilterBox>
 
-        <FilterBox disabled>Location</FilterBox>
+        <FilterBox 
+          onClick={() => {
+            if (user && user.location && user.location.coordinates) {
+              const [lng, lat] = user.location.coordinates;
+              setSelectedLocation({ lat, lng }); 
+              fetchUsers(); 
+            } else {
+              
+              setShowMap(true);
+            }
+          }}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+        >
+          <span>Location</span>
+        </FilterBox>
+
       </FilterBoxGroup>
+
+      {selectedLocation && users.length > 0 && (
+        <div style={{ width: "100%", height: "400px", marginTop: "1rem" }}>
+          <MapContainer center={[selectedLocation.lat, selectedLocation.lng]} zoom={13} style={{ height: "100%", width: "100%" }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+            {/* User's location */}
+            <Marker position={[selectedLocation.lat, selectedLocation.lng]}>
+              <Popup>You are here</Popup>
+            </Marker>
+
+            {/* Nearby crafters */}
+            {users.map((user, idx) => {
+              const [lng, lat] = user.location?.coordinates || [];
+              if (!lat || !lng) return null;
+
+              const avatarIcon = L.icon({
+                iconUrl: user.avatarUrl || "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+                iconSize: [40, 40],
+                className: 'custom-avatar-icon'
+              });
+
+              return (
+                <Marker key={idx} position={[lat, lng]} icon={avatarIcon}>
+                  <Popup>
+                    <strong>{user.name}</strong><br />
+                    {user.craft}
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </MapContainer>
+        </div>
+      )}
+
 
       <UsersGridWrapper>
         {users.length > 0 ? (
@@ -113,6 +176,17 @@ const Search = () => {
           </p>
         )}
       </UsersGridWrapper>
+      {showMap && (
+        <MapPopup
+          onClose={() => setShowMap(false)}
+          onSelectCoordinates={(locationString) => {
+            const [lat, lng] = locationString.split(',').map(Number);
+            setSelectedLocation({ lat, lng });
+            setShowMap(false);
+            fetchUsers(); 
+          }}          
+        />
+      )}
     </SearchCard>
   );
 };

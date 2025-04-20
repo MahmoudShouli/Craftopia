@@ -31,7 +31,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { user,  setUser} = useUser()
+  const { setUser} = useUser()
 
   const togglePassword = () => setShowPassword(prev => !prev);
 

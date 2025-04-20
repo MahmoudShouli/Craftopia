@@ -43,13 +43,33 @@ export const updateUserProfile = async (req, res) => {
 
 export const searchCrafters = async (req, res) => {
   try {
-    const { query, craft, sortBy, order } = req.query;
+    const { query, craft, sortBy, order, lat, lng } = req.query;
 
     const filter = { role: "crafter" };
     if (query) filter.name = { $regex: query, $options: "i" };
     if (craft) filter.craft = craft.toLowerCase();
 
-    const users = await User.find(filter).lean();
+    let users = [];
+
+    if (lat && lng) {
+      const userLat = parseFloat(lat);
+      const userLng = parseFloat(lng);
+
+      users = await User.find({
+        ...filter,
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [userLng, userLat],
+            },
+            $maxDistance: 10000, // 10 km radius
+          },
+        },
+      }).lean();
+    } else {
+      users = await User.find(filter).lean();
+    }
 
     const usersWithRating = await Promise.all(
       users.map(async (user) => {
