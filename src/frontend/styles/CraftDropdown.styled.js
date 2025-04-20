@@ -57,19 +57,22 @@ export const BootstrapDropdownWrapper = styled.div`
   }
 
   .dropdown-toggle {
-    display: inline-block;
-    font-weight: 400;
-    color: #fff;
-    background-color: #6a380f;
-    border: 1px solid transparent;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.375rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+    background-color: #f7e9d7 !important;
+    color: #6a380f !important;
+    font-size: 1.3rem;
+    font-weight: 500;
+    border: 2px solid #6a380f !important;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: none;
 
-    &:hover {
-      background-color: #ecdbab;
+    &:hover,
+    &:focus,
+    &.show {
+      background-color: #6a380f !important;
+      color: white !important;
     }
   }
 `;

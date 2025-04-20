@@ -37,7 +37,7 @@ const UserProfilePage = () => {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:3000/api/user/update-profile/${user._id}`,
+        `http://localhost:3000/user/update-profile/${user._id}`,
         {
           name: editedName,
           location,
@@ -68,7 +68,7 @@ const UserProfilePage = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/user/uploadAvatar",
+        "http://localhost:3000/user/uploadAvatar",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

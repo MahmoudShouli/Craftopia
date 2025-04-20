@@ -7,24 +7,24 @@ function CraftDropdown({ crafts, selectedCraft, onSelectCraft }) {
 
   // Sync local label with selectedCraft from parent
   useEffect(() => {
-    if (selectedCraft) {
+    if (!selectedCraft) {
+      setSelectedItem('Select a Craft');
+    } else {
       setSelectedItem(selectedCraft);
     }
   }, [selectedCraft]);
 
   const handleSelect = (eventKey) => {
     const lowercaseCraft = eventKey.toLowerCase();
-    setSelectedItem(eventKey);        // local label update
-    onSelectCraft(lowercaseCraft);          // update parent state
+    setSelectedItem(eventKey);              // Update dropdown label
+    onSelectCraft(lowercaseCraft);          // Pass lowercase value to parent
   };
 
   return (
     <BootstrapDropdownWrapper>
-      <div className="label">{selectedItem}</div>
-
       <Dropdown onSelect={handleSelect}>
         <Dropdown.Toggle id="dropdown-basic">
-          Crafts
+          {selectedItem}
         </Dropdown.Toggle>
 
         <Dropdown.Menu>

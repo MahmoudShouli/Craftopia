@@ -12,9 +12,8 @@ const startServer = async () => {
   app.use(cors({ origin: ["http://localhost:5173", "http://localhost:5174"] }));
   app.use(express.json());
   app.use("/auth", authRouter);
-  // app.use("/api/reviews", reviewRoutes);
-  app.use("/api/user", userRouter);
-  app.use("/api/reviews", reviewRoutes);
+  app.use("/user", userRouter);
+  app.use("/reviews", reviewRoutes);
 
   const server = http.createServer(app);
 

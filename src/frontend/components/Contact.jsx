@@ -39,7 +39,7 @@ const Contact = () => {
     }
   
     try {
-      const response = await axios.post('http://localhost:3000/api/reviews/addReview', {
+      const response = await axios.post('http://localhost:3000/reviews/addReview', {
         email: user.email,
         rating,
         message,
@@ -51,7 +51,7 @@ const Contact = () => {
       setRating(0);
       setMessage('');
     } catch (error) {
-      console.error("❌ Save review error:", error);
+      console.error("Save review error:", error);
   
       if (error.response?.data) {
         console.log("📩 Backend Response:", error.response.data);
