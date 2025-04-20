@@ -8,7 +8,7 @@ const sidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
   { icon: "🔎", label: "Search & filter" },  
-  { icon: "📄", label: "Documents" },
+  { icon: "📄", label: "Chatting" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
 
