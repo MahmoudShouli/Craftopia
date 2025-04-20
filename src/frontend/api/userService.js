@@ -5,6 +5,7 @@ export const fetchUsers = async ({
   selectedCraft,
   sortByRating,
   location,
+  maxDistance,
 }) => {
   try {
     const params = {};
@@ -18,6 +19,7 @@ export const fetchUsers = async ({
       params.lat = location.lat;
       params.lng = location.lng;
     }
+    if (maxDistance) params.maxDistance = maxDistance;
 
     const res = await axios.get("http://localhost:3000/user/search", {
       params,

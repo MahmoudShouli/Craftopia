@@ -188,6 +188,7 @@ const SignupPage = () => {
           onClose={() => setShowMap(false)}
           onSelectCoordinates={(locationString) => setLocation(locationString)}
           onSelectCity={(locationString) => setCity(locationString)}
+          isSearch={false}
         />
       )}
     </PageWrapper>

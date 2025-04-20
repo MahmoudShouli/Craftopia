@@ -23,6 +23,7 @@ export const HeaderSection = styled.div`
 export const HeaderLeft = styled.div``;
 
 export const WelcomeText = styled.div`
+  color: #6a380f;
   font-size: 1.8rem;
   font-weight: 600;
 `;

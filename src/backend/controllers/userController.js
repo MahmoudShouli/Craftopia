@@ -43,7 +43,7 @@ export const updateUserProfile = async (req, res) => {
 
 export const searchCrafters = async (req, res) => {
   try {
-    const { query, craft, sortBy, order, lat, lng } = req.query;
+    const { query, craft, sortBy, order, lat, lng, maxDistance } = req.query;
 
     const filter = { role: "crafter" };
     if (query) filter.name = { $regex: query, $options: "i" };
@@ -63,7 +63,7 @@ export const searchCrafters = async (req, res) => {
               type: "Point",
               coordinates: [userLng, userLat],
             },
-            $maxDistance: 10000, // 10 km radius
+            $maxDistance: maxDistance * 1000,
           },
         },
       }).lean();
