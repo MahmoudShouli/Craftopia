@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import lightLogo from "../assets/light-logo.png";
+import lightLogo from "../../assets/light-logo.png";
 import { useUser } from "../../context/UserContext"; 
+import {
+  Sidebar,
+  LogoWrapper,
+  LogoImage,
+  SidebarItem
+} from "./Dashboard.styled";
 
 // Sidebar items
 const sidebarItems = [

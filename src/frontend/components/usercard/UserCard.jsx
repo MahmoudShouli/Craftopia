@@ -4,8 +4,8 @@ import {
   CrafterName,
   CrafterCraft,
   ContactButton,
-} from "../styles/UserCard.styled";
-import UserAvatar from "./UserAvatar";
+} from "./UserCard.styled";
+import UserAvatar from "../useravatar/UserAvatar";
 
 
 const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false }) => {

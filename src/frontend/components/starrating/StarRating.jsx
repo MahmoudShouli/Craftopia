@@ -1,19 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-
-const StarsWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  cursor: pointer;
-`;
-
-const Star = styled.span`
-  font-size: 2rem;
-  color: ${({ $filled }) => ($filled ? '#ffc107' : '#ccc')};
-  transition: color 0.2s;
-`;
+import { StarsWrapper, Star } from "./StarRating.styled";
 
 const StarRating = ({ rating, onRatingChange }) => {
   const [hovered, setHovered] = useState(0);

@@ -11,7 +11,7 @@ import {
   LeftArrow,
   RightArrow,
 } from './Testimonials.styled';
-import Card from '../../Card';
+import ReviewCard from './ReviewCard';
 
 const Testimonials = () => {
   const [reviews, setReviews] = useState([]);
@@ -55,7 +55,7 @@ const Testimonials = () => {
           <CardRow $total={reviews.length}>
             {reviews.map((r, idx) => (
               <CardItem key={idx}>
-                <Card
+                <ReviewCard
                   name={r.user?.name || 'User'}
                   role={r.user?.role || 'Customer'}
                   message={r.message}

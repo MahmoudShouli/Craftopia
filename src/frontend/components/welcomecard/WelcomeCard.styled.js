@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import brownBackground from "../assets/brown.png";
+import brownBackground from "../../assets/brown.png";
 
 export const WelcomeContainer = styled.div`
   background-image: url(${brownBackground});

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
-import UserAvatar from "./UserAvatar";
-import NotificationMenu from "../NotificationMenu"; 
+import UserAvatar from "../../useravatar/UserAvatar";
+import NotificationMenu from "../../Notifications/NotificationMenu"; 
 
 import {
   HeaderSection,
@@ -13,7 +13,7 @@ import {
   SearchInput,
   IconWrapper,
   Icon,
-} from "../styles/UserProfilePage.styled";
+} from "./UserProfileHeader.styled";
 
 const UserProfileHeader = ({ user, formattedDate }) => {
   const [showNotifications, setShowNotifications] = useState(false);

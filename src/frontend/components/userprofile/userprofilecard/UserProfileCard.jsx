@@ -1,10 +1,10 @@
 // components/UserProfileCard.jsx
 import React, { useState } from 'react';
-import UserAvatar from "./UserAvatar";
+import UserAvatar from "../../useravatar/UserAvatar";
 import { FaUser, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
-import MapPopup from '../components/MapPopup';
+import MapPopup from '../../map/MapPopup';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import'leaflet/dist/leaflet.css';
 import {
@@ -20,7 +20,7 @@ import {
   Label,
   InputWrapper,
   Input
-} from "../styles/UserProfilePage.styled";
+} from "./UserProfileCard.styled";
 
 const UserProfileCard = ({
   user,
@@ -42,6 +42,7 @@ const UserProfileCard = ({
   const [showMap, setShowMap] = useState(false);
 
   return (
+    
     <UserCard>
       <UserHeader>
         <>

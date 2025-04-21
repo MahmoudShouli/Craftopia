@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { BootstrapDropdownWrapper } from "../styles/CraftDropdown.styled";
+import { BootstrapDropdownWrapper } from "../craftdropdown/CraftDropdown.styled";
 
 function CraftDropdown({ crafts, selectedCraft, onSelectCraft }) {
   const [selectedItem, setSelectedItem] = useState('Select a Craft');

@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useUser } from "../context/UserContext";
-import Dashboard from "../components/Dashboard";
+import Dashboard from "../components/dashboard/Dashboard";
 import { toast } from "react-toastify";
-import UserProfileCard from "../components/UserProfileCard";
-import UserProfileHeader from "../components/UserProfileHeader";
+import UserProfileCard from "../components/userprofile/userprofilecard/UserProfileCard";
+import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
 import {
   PageWrapper,
   ProfileContainer,
-} from '../components/userprofile/UserProfilePage.styled';
-import Search from "../components/userprofile/Search";
+} from '../styles/UserProfilePage.styled';
+import Search from "../components/userprofile/search/Search";
 
 const UserProfilePage = () => {
   const { user, setUser } = useUser();

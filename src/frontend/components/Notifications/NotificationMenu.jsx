@@ -5,7 +5,7 @@ import {
   NoNotification,
   NotificationContent,
   NotificationRow,
-} from "../styles/NotificationMenu.styled";
+} from "./NotificationMenu.styled";
 
 const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
   const longPressTimeout = useRef();

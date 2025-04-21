@@ -14,7 +14,7 @@ import {
   AvatarImage,
   AvatarMarkerWrapper,
   RedPointer
-} from '../styles/MapPopup.styled';
+} from './MapPopup.styled';
 
 const MapPopup = ({ onClose, onSelectCoordinates, onSelectCity, crafters = [], center, onSetDistance, isSearch }) => {
   const [position, setPosition] = useState(center || [32.2227, 35.2621]);

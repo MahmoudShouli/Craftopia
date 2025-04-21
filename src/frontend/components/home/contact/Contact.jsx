@@ -12,7 +12,7 @@ import {
 } from './Contact.styled';
 
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from 'react-icons/fa';
-import StarRating from '../../StarRating';
+import StarRating from '../../starrating/StarRating';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { toast, ToastContainer } from 'react-toastify';

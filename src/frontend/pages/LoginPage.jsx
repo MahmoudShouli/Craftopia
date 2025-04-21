@@ -3,7 +3,7 @@ import React from 'react';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import WelcomeCard from '../components/WelcomeCard';
+import WelcomeCard from '../components/welcomecard/WelcomeCard';
 import logo from '../assets/favicon.png';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

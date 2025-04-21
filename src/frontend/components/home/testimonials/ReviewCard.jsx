@@ -6,9 +6,9 @@ import {
   Role,
   Message,
   Rating,
-} from './home/testimonials/Testimonials.styled';
+} from './Testimonials.styled';
 
-const Card = ({ name, role, message, avatar, rating, delay }) => {
+const ReviewCard = ({ name, role, message, avatar, rating, delay }) => {
   const renderAvatar = () => {
     if (avatar) {
       return <Avatar src={avatar} alt={name || 'User'} />;
@@ -42,4 +42,4 @@ const Card = ({ name, role, message, avatar, rating, delay }) => {
   );
 };
 
-export default Card;
+export default ReviewCard;

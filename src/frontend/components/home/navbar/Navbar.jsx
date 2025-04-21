@@ -16,7 +16,7 @@ import {
 } from './NavBar.styled';
 import { useUser } from '../../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
-import UserAvatar from '../../UserAvatar';
+import UserAvatar from '../../useravatar/UserAvatar';
 
 const NavbarComponent = () => {
   const [scrolled, setScrolled] = useState(false);

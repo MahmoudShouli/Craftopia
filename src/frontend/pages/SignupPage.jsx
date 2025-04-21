@@ -1,12 +1,12 @@
-import WelcomeCard from '../components/WelcomeCard'; 
-import CraftDropdown from '../components/CraftDropdown'; 
+import WelcomeCard from '../components/welcomecard/WelcomeCard'; 
+import CraftDropdown from '../components/craftdropdown/CraftDropdown'; 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import React, { useState } from 'react';
 import { FaUserAlt, FaPaintBrush } from 'react-icons/fa'; 
 import logo from '../assets/favicon.png';
 import { register } from '../api/authService'; 
 import { useNavigate } from 'react-router-dom'
-import MapPopup from '../components/MapPopup';
+import MapPopup from '../components/map/MapPopup';
 import {
   PageWrapper,
   SidebarSection,
