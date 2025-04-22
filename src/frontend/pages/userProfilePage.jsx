@@ -5,11 +5,13 @@ import Dashboard from "../components/dashboard/Dashboard";
 import { toast } from "react-toastify";
 import UserProfileCard from "../components/userprofile/userprofilecard/UserProfileCard";
 import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
+import Search from "../components/userprofile/search/Search";
+import SchedulesPage from "../components/appointments/schedules/SchedulesPage"; 
+
 import {
   PageWrapper,
   ProfileContainer,
 } from '../styles/UserProfilePage.styled';
-import Search from "../components/userprofile/search/Search";
 
 const UserProfilePage = () => {
   const { user, setUser } = useUser();
@@ -18,10 +20,10 @@ const UserProfilePage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [location, setLocation] = useState("");
-  const fileInputRef = useRef();
   const [uploading, setUploading] = useState(false);
-  const [activeView, setActiveView] = useState("profile"); 
+  const [activeView, setActiveView] = useState("profile");
 
+  const fileInputRef = useRef();
 
   useEffect(() => {
     if (user && user.name) {
@@ -103,30 +105,32 @@ const UserProfilePage = () => {
     <PageWrapper>
       <Dashboard defaultIndex={1} onViewChange={setActiveView} />
       <ProfileContainer>
-        
+
         <UserProfileHeader user={user} formattedDate={formattedDate} />
 
         {activeView === "profile" && (
-        <UserProfileCard
-          user={user}
-          fileInputRef={fileInputRef}
-          handleImageUpload={handleImageUpload}
-          previewUrl={previewUrl}
-          uploading={uploading}
-          isEditing={isEditing}
-          handleEditToggle={handleEditToggle}
-          handleSave={handleSave}
-          editedName={editedName}
-          setEditedName={setEditedName}
-          location={location}
-          setLocation={setLocation}
-          newPassword={newPassword}
-          setNewPassword={setNewPassword}
-        />
-      )}
+          <UserProfileCard
+            user={user}
+            fileInputRef={fileInputRef}
+            handleImageUpload={handleImageUpload}
+            previewUrl={previewUrl}
+            uploading={uploading}
+            isEditing={isEditing}
+            handleEditToggle={handleEditToggle}
+            handleSave={handleSave}
+            editedName={editedName}
+            setEditedName={setEditedName}
+            location={location}
+            setLocation={setLocation}
+            newPassword={newPassword}
+            setNewPassword={setNewPassword}
+          />
+        )}
 
-      {activeView === "search" && <Search />}
-        
+        {activeView === "search" && <Search />}
+
+        {activeView === "Schedules" && <SchedulesPage />} 
+
       </ProfileContainer>
     </PageWrapper>
   );

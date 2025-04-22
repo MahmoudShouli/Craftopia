@@ -14,6 +14,7 @@ const sidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
   { icon: "🔎", label: "Search & filter" },  
+  { icon: "📅", label: "Schedules"},
   { icon: "📄", label: "Chatting" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
@@ -37,7 +38,9 @@ const Dashboard = ({ defaultIndex = 0 ,  onViewChange }) => {
     } else if (item.label === "Profile") {
       onViewChange?.("profile"); 
       if (item.route) navigate(item.route);
-    } else if (item.route) {
+    } else if (item.label === "Schedules"){
+      onViewChange?.("Schedules"); 
+    }else if (item.route) {
       navigate(item.route);
     }
   };
