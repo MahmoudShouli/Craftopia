@@ -9,8 +9,8 @@ import {
   SidebarItem
 } from "./Dashboard.styled";
 
-// Sidebar items
-const sidebarItems = [
+// Sidebar items for customers
+const customerSidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
   { icon: "🔎", label: "Search & filter" },  
@@ -19,10 +19,22 @@ const sidebarItems = [
   { icon: "🚪", label: "Logout", route: "/" },
 ];
 
+// Sidebar items for crafters
+const crafterSidebarItems = [
+  { icon: "🏠", label: "Home", route: "/" },
+  { icon: "👤", label: "Profile", route: "/userprofile" },
+  { icon: "📅", label: "Schedules" },
+  { icon: "📄", label: "Chatting" },
+  { icon: "🚪", label: "Logout", route: "/" },
+];
+
 const Dashboard = ({ selectedIndex, onItemSelect }) => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
+
+  // Pick list based on user role
+  const sidebarItems = user?.role === "crafter" ? crafterSidebarItems : customerSidebarItems;
 
   const handleItemClick = (index) => {
     const item = sidebarItems[index];

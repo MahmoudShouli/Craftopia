@@ -16,7 +16,7 @@ import CrafterInfoPanel from "./CrafterInfoPanel";
 import BookingSection from "./BookingSection";
 import AppointmentsPanel from "./AppointmentsPanel";
 
-const SchedulesPage = ({ crafter }) => {
+const UserSchedulesPage = ({ crafter }) => {
   const { user } = useUser();
   const [selectedDate, setSelectedDate] = useState(null);
   const [step, setStep] = useState(1);
@@ -116,4 +116,4 @@ const SchedulesPage = ({ crafter }) => {
   );
 };
 
-export default SchedulesPage;
+export default UserSchedulesPage;

@@ -106,7 +106,15 @@ const NavbarComponent = () => {
           <MenuPopup ref={menuRef}>
             {user ? (
               <>
-                <div onClick={() => navigate('/userprofile')}>Profile</div>
+                <div onClick={() => {
+                    if (user?.role === 'customer') {
+                      navigate('/userprofile');
+                    } else if (user?.role === 'crafter') {
+                      navigate('/crafterprofile');
+                    }
+                  }}>
+                    Profile
+                  </div>
                 <div onClick={handleLogout}>Logout</div>
               </>
             ) : (

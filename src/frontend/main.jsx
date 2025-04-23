@@ -10,7 +10,8 @@ import 'leaflet/dist/leaflet.css';
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage';
 import Homepage from './pages/Homepage';
-import UserProfile from './pages/UserProfilePage';
+import UserPage from './pages/UserPage';
+import CrafterPage from './pages/CrafterPage';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -20,7 +21,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<Homepage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/signin" element={<LoginPage />} />
-          <Route path="/userprofile" element={<UserProfile />} />
+          <Route path="/userprofile" element={<UserPage />} />
+          <Route path="/crafterprofile" element={<CrafterPage />} />
         </Routes>
         <ToastContainer 
           position="top-right"

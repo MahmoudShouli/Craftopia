@@ -6,14 +6,14 @@ import { toast } from "react-toastify";
 import UserProfileCard from "../components/userprofile/userprofilecard/UserProfileCard";
 import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
 import Search from "../components/userprofile/search/Search";
-import SchedulesPage from "../components/appointments/schedules/SchedulesPage";
+import UserSchedulesPage from "../components/appointments/schedules/UserSchedulesPage";
 
 import {
   PageWrapper,
   ProfileContainer,
 } from "../styles/UserProfilePage.styled";
 
-const UserProfilePage = () => {
+const UserPage = () => {
   const { user, setUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState("");
@@ -155,11 +155,11 @@ const UserProfilePage = () => {
         )}
 
         {activeView === "Schedules" && crafterForSchedule && (
-          <SchedulesPage crafter={crafterForSchedule} />
+          <UserSchedulesPage crafter={crafterForSchedule} />
         )}
       </ProfileContainer>
     </PageWrapper>
   );
 };
 
-export default UserProfilePage;
+export default UserPage;
