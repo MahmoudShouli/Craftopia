@@ -68,3 +68,66 @@ export const deleteAppointment = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const disableDate = async (req, res) => {
+  const { crafterEmail, date } = req.body;
+
+  console.log("📥 Incoming disableDate request:", { crafterEmail, date });
+
+  if (!crafterEmail || !date) {
+    console.warn("⚠️ Missing crafterEmail or date");
+    return res.status(400).json({ error: "Missing crafterEmail or date" });
+  }
+
+  try {
+    const created = await AppointmentModel.create({
+      crafterEmail,
+      userEmail: "system",
+      date: new Date(date),
+      status: "disabled",
+    });
+
+    console.log("✅ Appointment created:", created);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ Mongoose create error:", err.message);
+    res.status(500).json({ error: "Failed to disable date" });
+  }
+};
+
+// Enable a date (remove the system appointment)
+export const enableDate = async (req, res) => {
+  const { crafterEmail, date } = req.body;
+
+  if (!crafterEmail || !date) {
+    return res.status(400).json({ error: "Missing crafterEmail or date" });
+  }
+
+  try {
+    await AppointmentModel.deleteOne({
+      crafterEmail,
+      customerEmail: "system",
+      date: new Date(date),
+    });
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("❌ Failed to enable date:", err.message);
+    res.status(500).json({ error: "Failed to enable date" });
+  }
+};
+
+// Get all disabled dates for a crafter
+export const getDisabledDates = async (req, res) => {
+  const { crafterEmail } = req.params;
+  try {
+    const disabledAppointments = await AppointmentModel.find({
+      crafterEmail,
+      customerEmail: "system",
+    });
+
+    res.json(disabledAppointments.map((a) => a.date));
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch disabled dates" });
+  }
+};

@@ -26,3 +26,24 @@ export const deleteAppointment = async (id) => {
   );
   return response.data;
 };
+
+export const getDisabledDates = async (crafterEmail) => {
+  const res = await axios.get(
+    `http://localhost:3000/appointments/disabledDates/${crafterEmail}`
+  );
+  return res.data;
+};
+
+export const disableDate = async (crafterEmail, date) => {
+  return axios.post("http://localhost:3000/appointments/disableDate", {
+    crafterEmail,
+    date,
+  });
+};
+
+export const enableDate = async (crafterEmail, date) => {
+  return axios.post("http://localhost:3000/appointments/enableDate", {
+    crafterEmail,
+    date,
+  });
+};
