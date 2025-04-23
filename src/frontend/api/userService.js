@@ -30,3 +30,8 @@ export const fetchUsers = async ({
     return [];
   }
 };
+
+export const getUserByEmail = async (email) => {
+  const response = await axios.get(`http://localhost:3000/user/email/${email}`);
+  return response.data;
+};

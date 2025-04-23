@@ -28,7 +28,7 @@ export const LeftSection = styled.div`
   background-color: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -96,7 +96,7 @@ export const MiddleSection = styled.div`
   background-color: white;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 `;
 
 export const RightSection = styled.div`
@@ -106,7 +106,7 @@ export const RightSection = styled.div`
   background-color: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
 `;
 
 export const AppointmentsList = styled.ul`

@@ -22,9 +22,22 @@ export const createAppointment = async (req, res) => {
 export const getAppointmentsByEmail = async (req, res) => {
   try {
     const email = req.params.email;
-    const appointments = await AppointmentModel.find({
-      $or: [{ userEmail: email }, { crafterEmail: email }],
-    }).sort({ date: 1 });
+    const role = req.query.role;
+
+    let filter = {};
+
+    if (role === "crafter") {
+      filter = { crafterEmail: email };
+    } else if (role === "user") {
+      filter = { userEmail: email };
+    } else {
+      // fallback: fetch all where user is either side
+      filter = {
+        $or: [{ userEmail: email }, { crafterEmail: email }],
+      };
+    }
+
+    const appointments = await AppointmentModel.find(filter).sort({ date: 1 });
 
     res.json(appointments);
   } catch (err) {

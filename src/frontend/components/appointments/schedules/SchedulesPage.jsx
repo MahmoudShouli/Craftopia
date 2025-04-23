@@ -2,159 +2,96 @@ import React, { useState, useEffect } from "react";
 import {
   SchedulesCard,
   SchedulesInnerWrapper,
-  LeftSection,
-  MiddleSection,
-  RightSection,
-  CrafterName,
-  CrafterEmail,
-  CrafterCraft,
-  Rating,
-  StepIndicator,
-  StepItem,
-  ActiveStepIcon,
-  InactiveStepIcon,
-  AppointmentsList,
+  MiddleSection
 } from "./SchedulesPage.styled";
 
-import BookingCalendar from "../calendar/BookingCalendar";
-import { FaCalendarAlt, FaClock, FaUser } from "react-icons/fa";
-import UserAvatar from "../../../components/useravatar/UserAvatar";
-import AppointmentItem from "./AppointmentItem";
 import { useUser } from "../../../context/UserContext";
 import {
   createAppointment,
-  getAppointmentsByEmail,
+  getAppointmentsByEmail
 } from "../../../api/appointmentService";
+import { getUserByEmail } from "../../../api/userService";
+
+import CrafterInfoPanel from "./CrafterInfoPanel";
+import BookingSection from "./BookingSection";
+import AppointmentsPanel from "./AppointmentsPanel";
 
 const SchedulesPage = ({ crafter }) => {
   const { user } = useUser();
   const [selectedDate, setSelectedDate] = useState(null);
   const [step, setStep] = useState(1);
   const [appointments, setAppointments] = useState([]);
+  const [disabledDates, setDisabledDates] = useState([]);
 
-  if (!crafter) {
-    return <p style={{ padding: "2rem" }}>No crafter selected.</p>;
-  }
-
-  // ✅ Fetch appointments on load
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const data = await getAppointmentsByEmail(user.email);
-        setAppointments(data); // ✅ keep ALL user appointments
+        console.log("📡 Fetching appointments...");
+        const userAppointments = await getAppointmentsByEmail(user.email, "user");
+        console.log("✅ User appointments:", userAppointments);
+
+        const crafterMap = {};
+        const enriched = await Promise.all(
+          userAppointments.map(async (app) => {
+            if (!crafterMap[app.crafterEmail]) {
+              try {
+                const fetchedCrafter = await getUserByEmail(app.crafterEmail);
+                crafterMap[app.crafterEmail] = fetchedCrafter.name;
+              } catch {
+                crafterMap[app.crafterEmail] = "Unknown";
+              }
+            }
+            return { ...app, crafterName: crafterMap[app.crafterEmail] };
+          })
+        );
+        setAppointments(enriched);
+
+        if (crafter) {
+          const crafterAppointments = await getAppointmentsByEmail(crafter.email, "crafter");
+          const dates = crafterAppointments.map((a) => new Date(a.date));
+          setDisabledDates(dates);
+          console.log("🛑 Crafter disabled dates:", dates);
+        }
       } catch (err) {
         console.error("❌ Failed to fetch appointments:", err);
       }
     };
-  
+
     fetchAppointments();
-  }, [user.email]);
+  }, [user.email, crafter?.email]);
 
   const handleConfirm = async (date) => {
     try {
       const newApp = await createAppointment({
         userEmail: user.email,
         crafterEmail: crafter.email,
-        date,
+        date
       });
 
       setStep(2);
-      setAppointments((prev) => [...prev, newApp]);
+      setAppointments((prev) => [...prev, { ...newApp, crafterName: crafter.name }]);
+      setDisabledDates((prev) => [...prev, new Date(newApp.date)]);
     } catch (error) {
-      console.error("❌ Failed to create appointment:", error);
+      console.error("Failed to create appointment:", error);
     }
   };
 
   return (
     <SchedulesCard>
       <SchedulesInnerWrapper>
-        {/* LEFT SECTION */}
-        <LeftSection>
-          <UserAvatar
-            previewUrl={crafter.avatarUrl}
-            uploading={false}
-            user={crafter}
-            width={100}
-            height={100}
-          />
-          <CrafterName>{crafter.name}</CrafterName>
-          <CrafterEmail>{crafter.email}</CrafterEmail>
-          <CrafterCraft>
-            {crafter.craft} <Rating>⭐ {crafter.rating}</Rating>
-          </CrafterCraft>
-
-          <StepIndicator>
-            <StepItem>
-              {step >= 1 ? (
-                <ActiveStepIcon>
-                  <FaCalendarAlt />
-                </ActiveStepIcon>
-              ) : (
-                <InactiveStepIcon>
-                  <FaCalendarAlt />
-                </InactiveStepIcon>
-              )}
-              {selectedDate && <span>{selectedDate.toDateString()}</span>}
-            </StepItem>
-
-            <StepItem>
-              {step >= 2 ? (
-                <ActiveStepIcon>
-                  <FaClock />
-                </ActiveStepIcon>
-              ) : (
-                <InactiveStepIcon>
-                  <FaClock />
-                </InactiveStepIcon>
-              )}
-            </StepItem>
-
-            <StepItem>
-              {step >= 3 ? (
-                <ActiveStepIcon>
-                  <FaUser />
-                </ActiveStepIcon>
-              ) : (
-                <InactiveStepIcon>
-                  <FaUser />
-                </InactiveStepIcon>
-              )}
-            </StepItem>
-          </StepIndicator>
-        </LeftSection>
-
-        {/* MIDDLE SECTION */}
-        <MiddleSection>
-        <BookingCalendar
-            onDateChange={(date) => {
-              setSelectedDate(date);
-              setStep(1);
-            }}
-            onConfirm={() => {
-              if (selectedDate) handleConfirm(selectedDate);
-            }}
-            disabledDates={appointments
-              .filter((a) => a.crafterEmail === crafter.email)
-              .map((a) => new Date(a.date))}
-          />
-        </MiddleSection>
-
-        {/* RIGHT SECTION */}
-        <RightSection>
-          <h3 style={{ marginBottom: "1rem" }}>Your Appointments</h3>
-          <AppointmentsList>
-            {[...appointments]
-              .sort((a, b) => new Date(a.date) - new Date(b.date))
-              .map((app, index) => (
-                <AppointmentItem
-                  key={index}
-                  date={app.date}
-                  status={app.status}
-                  crafterName={app.crafterName || crafter.name}
-                />
-              ))}
-          </AppointmentsList>
-        </RightSection>
+          <>
+            <CrafterInfoPanel crafter={crafter} selectedDate={selectedDate} step={step} />
+            <BookingSection
+              selectedDate={selectedDate}
+              setSelectedDate={(date) => {
+                setSelectedDate(date);
+                setStep(1);
+              }}
+              onConfirm={handleConfirm}
+              disabledDates={disabledDates}
+            />
+            <AppointmentsPanel appointments={appointments} />
+          </>
       </SchedulesInnerWrapper>
     </SchedulesCard>
   );

@@ -25,19 +25,3 @@ export const CrafterCraft = styled.p`
   color: #444;
   margin: 0;
 `;
-
-export const ContactButton = styled.button`
-  margin-top: 1rem;
-  padding: 0.5rem 1.2rem;
-  border: none;
-  border-radius: 20px;
-  background-color: #6a380f;
-  color: white;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #8d5120;
-  }
-`;

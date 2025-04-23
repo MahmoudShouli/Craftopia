@@ -11,7 +11,11 @@ export const createAppointment = async ({ userEmail, crafterEmail, date }) => {
   return response.data;
 };
 
-export const getAppointmentsByEmail = async (email) => {
-  const response = await axios.get(`${API_BASE}/${email}`);
+export const getAppointmentsByEmail = async (email, role = null) => {
+  const url = role
+    ? `${API_BASE}/${email}?role=${role}`
+    : `${API_BASE}/${email}`;
+
+  const response = await axios.get(url);
   return response.data;
 };

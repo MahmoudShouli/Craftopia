@@ -21,7 +21,9 @@ const UserProfilePage = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [location, setLocation] = useState("");
   const [uploading, setUploading] = useState(false);
+
   const [activeView, setActiveView] = useState("profile");
+  const [selectedIndex, setSelectedIndex] = useState(1); // sidebar highlight
   const [crafterForSchedule, setCrafterForSchedule] = useState(null);
 
   const fileInputRef = useRef();
@@ -100,11 +102,29 @@ const UserProfilePage = () => {
     year: "numeric",
   });
 
+  const handleViewChange = (view) => {
+    setActiveView(view);
+
+    switch (view) {
+      case "profile":
+        setSelectedIndex(1);
+        break;
+      case "search":
+        setSelectedIndex(2);
+        break;
+      case "Schedules":
+        setSelectedIndex(3);
+        break;
+      default:
+        setSelectedIndex(1);
+    }
+  };
+
   if (!user) return <div>Loading profile...</div>;
 
   return (
     <PageWrapper>
-      <Dashboard defaultIndex={1} onViewChange={setActiveView} />
+      <Dashboard selectedIndex={selectedIndex} onItemSelect={handleViewChange} />
       <ProfileContainer>
         <UserProfileHeader user={user} formattedDate={formattedDate} />
 
@@ -129,7 +149,7 @@ const UserProfilePage = () => {
 
         {activeView === "search" && (
           <Search
-            onViewChange={setActiveView}
+            onViewChange={handleViewChange}
             setSelectedCrafter={setCrafterForSchedule}
           />
         )}

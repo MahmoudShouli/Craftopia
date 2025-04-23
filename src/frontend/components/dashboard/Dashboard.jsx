@@ -14,33 +14,31 @@ const sidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
   { icon: "🔎", label: "Search & filter" },  
-  { icon: "📅", label: "Schedules"},
+  { icon: "📅", label: "Schedules" },
   { icon: "📄", label: "Chatting" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
 
-const Dashboard = ({ defaultIndex = 0 ,  onViewChange }) => {
+const Dashboard = ({ selectedIndex, onItemSelect }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const navigate = useNavigate();
   const { setUser } = useUser();
 
   const handleItemClick = (index) => {
     const item = sidebarItems[index];
-    setSelectedIndex(index);
-  
+
     if (item.label === "Logout") {
       localStorage.removeItem("user");
       setUser(null);
       navigate("/");
     } else if (item.label === "Search & filter") {
-      onViewChange?.("search"); 
+      onItemSelect?.("search");
     } else if (item.label === "Profile") {
-      onViewChange?.("profile"); 
+      onItemSelect?.("profile");
       if (item.route) navigate(item.route);
-    } else if (item.label === "Schedules"){
-      onViewChange?.("Schedules"); 
-    }else if (item.route) {
+    } else if (item.label === "Schedules") {
+      onItemSelect?.("Schedules");
+    } else if (item.route) {
       navigate(item.route);
     }
   };
@@ -71,4 +69,3 @@ const Dashboard = ({ defaultIndex = 0 ,  onViewChange }) => {
 };
 
 export default Dashboard;
-

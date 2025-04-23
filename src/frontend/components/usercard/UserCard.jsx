@@ -3,9 +3,9 @@ import {
   CardContainer,
   CrafterName,
   CrafterCraft,
-  ContactButton,
 } from "./UserCard.styled";
 import UserAvatar from "../useravatar/UserAvatar";
+import Button from "../button/Button";
 
 const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false, onContact }) => {
   const user = { name };
@@ -22,11 +22,16 @@ const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false, onCon
       <CrafterName>{name}</CrafterName>
       <CrafterCraft>{craft}</CrafterCraft>
 
-      <p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
+      <p style={{ fontSize: '1.2rem'}}>
         ⭐ {rating.toFixed(1)} / 5
       </p>
 
-      <ContactButton onClick={onContact}>Contact</ContactButton>
+      <Button
+        text="Contact"
+        size="medium"
+        color="#6a380f"
+        onClick={onContact}
+      />
     </CardContainer>
   );
 };
