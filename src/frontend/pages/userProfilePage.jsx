@@ -6,12 +6,12 @@ import { toast } from "react-toastify";
 import UserProfileCard from "../components/userprofile/userprofilecard/UserProfileCard";
 import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
 import Search from "../components/userprofile/search/Search";
-import SchedulesPage from "../components/appointments/schedules/SchedulesPage"; 
+import SchedulesPage from "../components/appointments/schedules/SchedulesPage";
 
 import {
   PageWrapper,
   ProfileContainer,
-} from '../styles/UserProfilePage.styled';
+} from "../styles/UserProfilePage.styled";
 
 const UserProfilePage = () => {
   const { user, setUser } = useUser();
@@ -22,6 +22,7 @@ const UserProfilePage = () => {
   const [location, setLocation] = useState("");
   const [uploading, setUploading] = useState(false);
   const [activeView, setActiveView] = useState("profile");
+  const [crafterForSchedule, setCrafterForSchedule] = useState(null);
 
   const fileInputRef = useRef();
 
@@ -105,7 +106,6 @@ const UserProfilePage = () => {
     <PageWrapper>
       <Dashboard defaultIndex={1} onViewChange={setActiveView} />
       <ProfileContainer>
-
         <UserProfileHeader user={user} formattedDate={formattedDate} />
 
         {activeView === "profile" && (
@@ -127,10 +127,16 @@ const UserProfilePage = () => {
           />
         )}
 
-        {activeView === "search" && <Search />}
+        {activeView === "search" && (
+          <Search
+            onViewChange={setActiveView}
+            setSelectedCrafter={setCrafterForSchedule}
+          />
+        )}
 
-        {activeView === "Schedules" && <SchedulesPage />} 
-
+        {activeView === "Schedules" && crafterForSchedule && (
+          <SchedulesPage crafter={crafterForSchedule} />
+        )}
       </ProfileContainer>
     </PageWrapper>
   );

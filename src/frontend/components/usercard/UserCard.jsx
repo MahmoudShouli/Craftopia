@@ -7,8 +7,7 @@ import {
 } from "./UserCard.styled";
 import UserAvatar from "../useravatar/UserAvatar";
 
-
-const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false }) => {
+const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false, onContact }) => {
   const user = { name };
 
   return (
@@ -24,10 +23,10 @@ const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false }) => 
       <CrafterCraft>{craft}</CrafterCraft>
 
       <p style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
-          ⭐ {rating.toFixed(1)} / 5
+        ⭐ {rating.toFixed(1)} / 5
       </p>
 
-      <ContactButton>Contact</ContactButton>
+      <ContactButton onClick={onContact}>Contact</ContactButton>
     </CardContainer>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SchedulesCard,
   SchedulesInnerWrapper,
@@ -13,30 +13,56 @@ import {
   StepItem,
   ActiveStepIcon,
   InactiveStepIcon,
-  AppointmentsList
+  AppointmentsList,
 } from "./SchedulesPage.styled";
 
 import BookingCalendar from "../calendar/BookingCalendar";
 import { FaCalendarAlt, FaClock, FaUser } from "react-icons/fa";
 import UserAvatar from "../../../components/useravatar/UserAvatar";
-import AppointmentItem from "./AppointmentItem"; 
+import AppointmentItem from "./AppointmentItem";
+import { useUser } from "../../../context/UserContext";
+import {
+  createAppointment,
+  getAppointmentsByEmail,
+} from "../../../api/appointmentService";
 
-const SchedulesPage = () => {
+const SchedulesPage = ({ crafter }) => {
+  const { user } = useUser();
   const [selectedDate, setSelectedDate] = useState(null);
   const [step, setStep] = useState(1);
   const [appointments, setAppointments] = useState([]);
 
-  const crafter = {
-    avatarUrl: "https://i.pravatar.cc/100",
-    name: "Ali Osman",
-    email: "ali@example.com",
-    craft: "Woodwork",
-    rating: 4.8,
-  };
+  if (!crafter) {
+    return <p style={{ padding: "2rem" }}>No crafter selected.</p>;
+  }
 
-  const handleConfirm = (date) => {
-    setStep(2);
-    setAppointments((prev) => [...prev, { date, status: "Confirmed" , crafterName: crafter.name, }]);
+  // ✅ Fetch appointments on load
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const data = await getAppointmentsByEmail(user.email);
+        setAppointments(data); // ✅ keep ALL user appointments
+      } catch (err) {
+        console.error("❌ Failed to fetch appointments:", err);
+      }
+    };
+  
+    fetchAppointments();
+  }, [user.email]);
+
+  const handleConfirm = async (date) => {
+    try {
+      const newApp = await createAppointment({
+        userEmail: user.email,
+        crafterEmail: crafter.email,
+        date,
+      });
+
+      setStep(2);
+      setAppointments((prev) => [...prev, newApp]);
+    } catch (error) {
+      console.error("❌ Failed to create appointment:", error);
+    }
   };
 
   return (
@@ -60,26 +86,38 @@ const SchedulesPage = () => {
           <StepIndicator>
             <StepItem>
               {step >= 1 ? (
-                <ActiveStepIcon><FaCalendarAlt /></ActiveStepIcon>
+                <ActiveStepIcon>
+                  <FaCalendarAlt />
+                </ActiveStepIcon>
               ) : (
-                <InactiveStepIcon><FaCalendarAlt /></InactiveStepIcon>
+                <InactiveStepIcon>
+                  <FaCalendarAlt />
+                </InactiveStepIcon>
               )}
               {selectedDate && <span>{selectedDate.toDateString()}</span>}
             </StepItem>
 
             <StepItem>
               {step >= 2 ? (
-                <ActiveStepIcon><FaClock /></ActiveStepIcon>
+                <ActiveStepIcon>
+                  <FaClock />
+                </ActiveStepIcon>
               ) : (
-                <InactiveStepIcon><FaClock /></InactiveStepIcon>
+                <InactiveStepIcon>
+                  <FaClock />
+                </InactiveStepIcon>
               )}
             </StepItem>
 
             <StepItem>
               {step >= 3 ? (
-                <ActiveStepIcon><FaUser /></ActiveStepIcon>
+                <ActiveStepIcon>
+                  <FaUser />
+                </ActiveStepIcon>
               ) : (
-                <InactiveStepIcon><FaUser /></InactiveStepIcon>
+                <InactiveStepIcon>
+                  <FaUser />
+                </InactiveStepIcon>
               )}
             </StepItem>
           </StepIndicator>
@@ -87,15 +125,17 @@ const SchedulesPage = () => {
 
         {/* MIDDLE SECTION */}
         <MiddleSection>
-          <BookingCalendar
+        <BookingCalendar
             onDateChange={(date) => {
               setSelectedDate(date);
-              setStep(1); // reset to step 1 on new date
+              setStep(1);
             }}
             onConfirm={() => {
               if (selectedDate) handleConfirm(selectedDate);
             }}
-            disabledDates={appointments.map(a => new Date(a.date))}
+            disabledDates={appointments
+              .filter((a) => a.crafterEmail === crafter.email)
+              .map((a) => new Date(a.date))}
           />
         </MiddleSection>
 
@@ -103,16 +143,16 @@ const SchedulesPage = () => {
         <RightSection>
           <h3 style={{ marginBottom: "1rem" }}>Your Appointments</h3>
           <AppointmentsList>
-          {[...appointments]
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .map((app, index) => (
+            {[...appointments]
+              .sort((a, b) => new Date(a.date) - new Date(b.date))
+              .map((app, index) => (
                 <AppointmentItem
-                key={index}
-                date={app.date}
-                status={app.status}
-                crafterName={app.crafterName}
+                  key={index}
+                  date={app.date}
+                  status={app.status}
+                  crafterName={app.crafterName || crafter.name}
                 />
-            ))}
+              ))}
           </AppointmentsList>
         </RightSection>
       </SchedulesInnerWrapper>

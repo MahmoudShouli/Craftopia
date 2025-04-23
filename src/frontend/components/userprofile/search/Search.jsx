@@ -11,7 +11,7 @@ import {
   UsersGridWrapper
 } from './Search.styled';
 
-import UserCard from '../../usercard/UserCard'
+import UserCard from '../../usercard/UserCard';
 import CraftDropdown from '../../craftdropdown/CraftDropdown';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { useUser } from '../../../context/UserContext';
@@ -28,14 +28,14 @@ const crafts = [
   'Aluminum and Glass Technician',
 ];
 
-const Search = () => {
+const Search = ({ onViewChange, setSelectedCrafter }) => {
   const [selectedCraft, setSelectedCraft] = useState('');
-  const [sortByRating, setSortByRating] = useState(null); // 'asc' | 'desc'
+  const [sortByRating, setSortByRating] = useState(null);
   const [query, setQuery] = useState('');
   const [users, setUsers] = useState([]);
   const [showMap, setShowMap] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [maxDistance, setMaxDistance] = useState(5); // default to 5 km
+  const [maxDistance, setMaxDistance] = useState(5);
   const { user } = useUser();
 
   const fetchUsers = async (distanceOverride = maxDistance) => {
@@ -48,7 +48,7 @@ const Search = () => {
       location: selectedLocation,
       maxDistance: finalDistance,
     });
-    
+
     const data = await getUsersFromDB({
       query,
       selectedCraft,
@@ -56,14 +56,13 @@ const Search = () => {
       location: selectedLocation,
       maxDistance: finalDistance,
     });
-    
+
     setUsers(data);
   };
 
   useEffect(() => {
     fetchUsers();
   }, [selectedCraft, sortByRating]);
-
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -82,6 +81,11 @@ const Search = () => {
     fetchUsers();
   };
 
+  const handleContact = (crafter) => {
+    setSelectedCrafter?.(crafter);     // Pass crafter to parent view
+    onViewChange?.("Schedules");       // Switch view to schedule
+  };
+
   return (
     <SearchCard>
       <SearchInputGroup as="form" onSubmit={handleSearch}>
@@ -92,12 +96,7 @@ const Search = () => {
           onChange={(e) => setQuery(e.target.value)}
         />
         <SearchButton type="submit">Go</SearchButton>
-        <SearchButton
-          type="button"
-          onClick={handleReset}
-        >
-          Reset
-        </SearchButton>
+        <SearchButton type="button" onClick={handleReset}>Reset</SearchButton>
       </SearchInputGroup>
 
       <FilterBoxGroup>
@@ -127,7 +126,6 @@ const Search = () => {
         >
           <span>Location</span>
         </FilterBox>
-
       </FilterBoxGroup>
 
       <UsersGridWrapper>
@@ -140,6 +138,7 @@ const Search = () => {
                 name={user.name}
                 craft={user.craft}
                 rating={user.rating}
+                onContact={() => handleContact(user)}
               />
             ))}
           </UsersGrid>
@@ -149,14 +148,15 @@ const Search = () => {
           </p>
         )}
       </UsersGridWrapper>
+
       {showMap && (
         <MapPopup
           onClose={() => setShowMap(false)}
-          crafters={users} // Pass the nearby crafters
-          center={[selectedLocation.lat, selectedLocation.lng]} // Center on the user
+          crafters={users}
+          center={[selectedLocation.lat, selectedLocation.lng]}
           onSetDistance={(value) => {
             setMaxDistance(value);
-            fetchUsers(value); // fetch AFTER the new state is set
+            fetchUsers(value);
           }}
           isSearch={true}
         />

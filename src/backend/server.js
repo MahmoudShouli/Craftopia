@@ -4,6 +4,7 @@ import cors from "cors";
 import authRouter from "./routes/authRoute.js";
 import userRouter from "./routes/userRoute.js";
 import reviewRoutes from "./routes/reviewRoute.js";
+import appointmentRoute from "./routes/appointmentRoute.js";
 
 const startServer = async () => {
   const app = express();
@@ -14,6 +15,7 @@ const startServer = async () => {
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/reviews", reviewRoutes);
+  app.use("/appointments", appointmentRoute);
 
   const server = http.createServer(app);
 

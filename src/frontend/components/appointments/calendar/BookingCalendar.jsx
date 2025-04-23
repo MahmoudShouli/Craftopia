@@ -39,7 +39,7 @@ const BookingCalendar = ({ onConfirm, onDateChange, disabledDates = [] }) => {
             marginTop: "10rem",
             padding: "12px 24px",
             borderRadius: "10px",
-            backgroundColor: "#6a380f", // 👈 your specified brown
+            backgroundColor: "#6a380f",
             color: "#fff",
             fontWeight: "600",
             fontSize: "1rem",
