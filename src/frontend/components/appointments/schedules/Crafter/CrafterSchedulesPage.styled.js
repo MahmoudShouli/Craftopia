@@ -1,25 +1,45 @@
 import styled from "styled-components";
 
-export const CrafterSchedulesWrapper = styled.div`
+export const SchedulesCard = styled.div`
+  background-color: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  min-height: 700px;
   display: flex;
-  height: 100vh;
-  padding: 2rem;
-  background-color: #f9f9f9;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+`;
+
+export const SchedulesInnerWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 650px;
   gap: 2rem;
-`;
-
-export const LeftColumn = styled.div`
-  flex: 1;
-  display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 `;
 
-export const RightColumn = styled.div`
+export const LeftSection = styled.div`
   flex: 1;
-  overflow-y: auto;
-  background-color: #fff;
-  border-radius: 10px;
+  background-color: white;
+  border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+export const RightSection = styled.div`
+  flex: 1;
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 `;
