@@ -19,3 +19,10 @@ export const getAppointmentsByEmail = async (email, role = null) => {
   const response = await axios.get(url);
   return response.data;
 };
+
+export const deleteAppointment = async (id) => {
+  const response = await axios.delete(
+    `http://localhost:3000/appointments/delete/${id}`
+  );
+  return response.data;
+};

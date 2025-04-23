@@ -44,3 +44,27 @@ export const getAppointmentsByEmail = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const deleteAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appointment = await AppointmentModel.findById(id);
+    if (!appointment)
+      return res.status(404).json({ error: "Appointment not found" });
+
+    const secondsSinceCreation =
+      (new Date() - new Date(appointment.createdAt)) / 1000;
+
+    // 10 second cutoff for testing (change to 86400 for 24 hours)
+    if (secondsSinceCreation > 86400) {
+      return res
+        .status(400)
+        .json({ error: "Cannot cancel appointment after the allowed time." });
+    }
+
+    await AppointmentModel.findByIdAndDelete(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

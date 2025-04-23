@@ -1,23 +1,45 @@
 import React from "react";
-import { FaCalendarAlt } from "react-icons/fa";
 import {
   AppointmentCard,
+  CancelIcon,
   AppointmentDate,
-  AppointmentStatus,
-  AppointmentCrafter
+  AppointmentCrafter,
+  AppointmentStatusWrapper,
 } from "./SchedulesPage.styled";
+import { FaTimes } from "react-icons/fa";
+import { deleteAppointment } from "../../../api/appointmentService";
+import { toast } from "react-toastify";
 
-const AppointmentItem = ({ date, status, crafterName }) => {
+const AppointmentItem = ({ date, status, crafterName, id, onDelete }) => {
+  const handleCancel = async () => {
+    try {
+      const res = await deleteAppointment(id);
+      if (res.success) {
+        toast.success("Appointment canceled");
+        onDelete?.(id); // trigger removal from local list
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Cannot cancel appointment.");
+    }
+  };
+
   return (
     <AppointmentCard>
-      <FaCalendarAlt style={{ fontSize: "1.2rem", color: "white" }} />
-      <div style={{ marginLeft: "0.75rem" }}>
-        <AppointmentCrafter>{crafterName}</AppointmentCrafter>
-        <AppointmentDate>{new Date(date).toDateString()}</AppointmentDate>
-        <AppointmentStatus className={status.toLowerCase()}>
-          {status}
-        </AppointmentStatus>
-      </div>
+      <CancelIcon onClick={handleCancel} title="Cancel appointment">
+        <FaTimes />
+      </CancelIcon>
+
+      <AppointmentDate>
+        {new Date(date).toLocaleDateString()}
+      </AppointmentDate>
+
+      <AppointmentStatusWrapper status={status}>
+        Status: <span>{status}</span>
+      </AppointmentStatusWrapper>
+
+      <AppointmentCrafter>
+        Crafter: {crafterName}
+      </AppointmentCrafter>
     </AppointmentCard>
   );
 };

@@ -26,10 +26,7 @@ const SchedulesPage = ({ crafter }) => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        console.log("📡 Fetching appointments...");
         const userAppointments = await getAppointmentsByEmail(user.email, "user");
-        console.log("✅ User appointments:", userAppointments);
-
         const crafterMap = {};
         const enriched = await Promise.all(
           userAppointments.map(async (app) => {
@@ -41,7 +38,7 @@ const SchedulesPage = ({ crafter }) => {
                 crafterMap[app.crafterEmail] = "Unknown";
               }
             }
-            return { ...app, crafterName: crafterMap[app.crafterEmail] };
+            return { ...app, crafterName: crafterMap[app.crafterEmail], id: app._id };
           })
         );
         setAppointments(enriched);
@@ -50,7 +47,6 @@ const SchedulesPage = ({ crafter }) => {
           const crafterAppointments = await getAppointmentsByEmail(crafter.email, "crafter");
           const dates = crafterAppointments.map((a) => new Date(a.date));
           setDisabledDates(dates);
-          console.log("🛑 Crafter disabled dates:", dates);
         }
       } catch (err) {
         console.error("❌ Failed to fetch appointments:", err);
@@ -69,16 +65,24 @@ const SchedulesPage = ({ crafter }) => {
       });
 
       setStep(2);
-      setAppointments((prev) => [...prev, { ...newApp, crafterName: crafter.name }]);
+      setAppointments((prev) => [
+        ...prev,
+        {
+          ...newApp,
+          id: newApp._id,
+          crafterName: crafter.name
+        }
+      ]);
       setDisabledDates((prev) => [...prev, new Date(newApp.date)]);
     } catch (error) {
-      console.error("Failed to create appointment:", error);
+      console.error("❌ Failed to create appointment:", error);
     }
   };
 
   return (
     <SchedulesCard>
       <SchedulesInnerWrapper>
+        {crafter ? (
           <>
             <CrafterInfoPanel crafter={crafter} selectedDate={selectedDate} step={step} />
             <BookingSection
@@ -90,8 +94,23 @@ const SchedulesPage = ({ crafter }) => {
               onConfirm={handleConfirm}
               disabledDates={disabledDates}
             />
-            <AppointmentsPanel appointments={appointments} />
+            <AppointmentsPanel
+              appointments={appointments}
+              onDelete={(id) => {
+                setAppointments((prev) => prev.filter((app) => app.id !== id));
+              }}
+            />
           </>
+        ) : (
+          <MiddleSection style={{ alignItems: "flex-start" }}>
+            <AppointmentsPanel
+              appointments={appointments}
+              onDelete={(id) => {
+                setAppointments((prev) => prev.filter((app) => app.id !== id));
+              }}
+            />
+          </MiddleSection>
+        )}
       </SchedulesInnerWrapper>
     </SchedulesCard>
   );

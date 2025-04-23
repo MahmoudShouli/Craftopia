@@ -13,6 +13,7 @@ const AppointmentsPanel = ({ appointments }) => (
         .map((app, index) => (
           <AppointmentItem
             key={index}
+            id={app._id || app.id}
             date={app.date}
             status={app.status}
             crafterName={app.crafterName}

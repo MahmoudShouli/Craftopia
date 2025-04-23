@@ -124,13 +124,14 @@ export const AppointmentsList = styled.ul`
 `;
 
 export const AppointmentCard = styled.div`
-  display: flex;
-  align-items: flex-start;
-  background-color: #6a380f;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
+  position: relative;
+  background-color: #fff5ee;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
   margin-bottom: 1rem;
-  color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  text-align: center;
 `;
 
 export const AppointmentDate = styled.div`
@@ -138,26 +139,48 @@ export const AppointmentDate = styled.div`
   font-size: 0.95rem;
 `;
 
-export const AppointmentStatus = styled.div`
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-
-  &.confirmed {
-    color: #d1fae5; /* soft green */
-  }
-
-  &.pending {
-    color: #fde68a; /* yellow */
-  }
-
-  &.canceled {
-    color: #fecaca; /* red */
-  }
-`;
-
 export const AppointmentCrafter = styled.div`
   font-weight: 700;
   font-size: 1rem;
   margin-bottom: 0.25rem;
-  color: white;
+`;
+
+export const CancelIcon = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  cursor: pointer;
+  color: red;
+  font-size: 1rem;
+  z-index: 2;
+
+  &:hover {
+    transform: scale(1.2);
+    transition: 0.2s ease;
+  }
+`;
+
+export const AppointmentStatusWrapper = styled.p`
+  margin-top: 0.5rem;
+  font-weight: 500;
+  color: #000; /* 'Status:' stays black */
+
+  span {
+    font-weight: bold;
+    margin-left: 5px;
+    color: ${({ status }) => {
+      switch (status) {
+        case "confirmed":
+          return "green";
+        case "pending":
+          return "orange";
+        case "completed":
+          return "blue";
+        case "canceled":
+          return "red";
+        default:
+          return "#333";
+      }
+    }};
+  }
 `;
