@@ -39,14 +39,12 @@ const BookingCalendar = ({
 
       {selectedDate && (
         <>
-          {mode === "crafter" && (
+          {mode === "crafter" && !isDisabled(selectedDate) && (
             <button
               onClick={() => onDisableDate?.(selectedDate)}
               style={disableBtnStyle}
             >
-              {isDisabled(selectedDate)
-                ? `Enable ${selectedDate.toDateString()}`
-                : `Disable ${selectedDate.toDateString()}`}
+              Disable {selectedDate.toDateString()}
             </button>
           )}
 

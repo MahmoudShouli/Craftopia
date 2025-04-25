@@ -8,11 +8,11 @@ import {
 } from "./CrafterSchedulesPage.styled";
 
 import BookingCalendar from "../../calendar/BookingCalendar";
+import AppointmentItem from "../AppointmentItem"; 
 import {
+  createAppointment,
   getDisabledDates,
-  disableDate,
-  enableDate,
-  getAppointmentsByEmail, // ✅ use existing endpoint
+  getAppointmentsByEmail,
 } from "../../../../api/appointmentService";
 import { useUser } from "../../../../context/UserContext";
 
@@ -21,26 +21,27 @@ const CrafterSchedulesPage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [disabledDates, setDisabledDates] = useState([]);
   const [calendarBlockedDates, setCalendarBlockedDates] = useState([]);
+  const [appointments, setAppointments] = useState([]); // ✅ new state
+
+  const loadCalendarData = async () => {
+    try {
+      const disabled = await getDisabledDates(user.email);
+      const appts = await getAppointmentsByEmail(user.email, "crafter");
+
+      const appointmentDates = appts.map((a) => new Date(a.date));
+      const disabledConverted = disabled.map((d) => new Date(d));
+      const allBlocked = [...appointmentDates, ...disabledConverted];
+
+      setDisabledDates(disabledConverted);
+      setCalendarBlockedDates(allBlocked);
+      setAppointments(appts); // ✅ update appointments
+    } catch (err) {
+      toast.error("Failed to load calendar data");
+    }
+  };
 
   useEffect(() => {
-    const loadBlockedDates = async () => {
-      try {
-        const disabled = await getDisabledDates(user.email);
-        const appointments = await getAppointmentsByEmail(user.email, "crafter");
-
-        const appointmentDates = appointments.map((a) => new Date(a.date));
-        const disabledConverted = disabled.map((d) => new Date(d));
-
-        const allBlocked = [...appointmentDates, ...disabledConverted];
-
-        setDisabledDates(disabledConverted); // for toggle button
-        setCalendarBlockedDates(allBlocked); // for calendar rendering
-      } catch (err) {
-        toast.error("Failed to load calendar data");
-      }
-    };
-
-    if (user?.email) loadBlockedDates();
+    if (user?.email) loadCalendarData();
   }, [user]);
 
   const handleDisableToggle = async (date) => {
@@ -48,27 +49,28 @@ const CrafterSchedulesPage = () => {
       (d) => d.toDateString() === date.toDateString()
     );
 
-    try {
-      if (isDisabled) {
-        await enableDate(user.email, date.toISOString());
-        toast.success(`Enabled ${date.toDateString()}`);
-      } else {
-        await disableDate(user.email, date.toISOString());
-        toast.info(`Disabled ${date.toDateString()}`);
-      }
-
-      const disabled = await getDisabledDates(user.email);
-      const appointments = await getAppointmentsByEmail(user.email, "crafter");
-
-      const appointmentDates = appointments.map((a) => new Date(a.date));
-      const disabledConverted = disabled.map((d) => new Date(d));
-      const allBlocked = [...appointmentDates, ...disabledConverted];
-
-      setDisabledDates(disabledConverted);
-      setCalendarBlockedDates(allBlocked);
-    } catch (err) {
-      toast.error("Failed to update date");
+    if (isDisabled) {
+      toast.info(`${date.toDateString()} is already disabled.`);
+      return;
     }
+
+    try {
+      await createAppointment({
+        userEmail: "system",
+        crafterEmail: user.email,
+        date: date.toISOString(),
+      });
+      toast.success(`Disabled ${date.toDateString()}`);
+      await loadCalendarData(); // ✅ reload everything
+    } catch (err) {
+      toast.error("Failed to disable date");
+    }
+  };
+
+  const handleDeleteAppointment = async (id) => {
+    // remove from local list after delete
+    setAppointments((prev) => prev.filter((a) => a._id !== id));
+    await loadCalendarData(); // ✅ refresh calendar state too
   };
 
   return (
@@ -79,12 +81,25 @@ const CrafterSchedulesPage = () => {
             mode="crafter"
             onDateChange={setSelectedDate}
             onDisableDate={handleDisableToggle}
-            disabledDates={calendarBlockedDates} // ✅ render both blocked + booked
+            disabledDates={calendarBlockedDates}
           />
         </LeftSection>
         <RightSection>
           <h2>Your Appointments</h2>
-          {/* Add Appointment Panel here later */}
+          {appointments.length === 0 ? (
+            <p>No appointments yet.</p>
+          ) : (
+            appointments.map((a) => (
+              <AppointmentItem
+                key={a._id}
+                id={a._id}
+                date={a.date}
+                status={a.status}
+                crafterName={user.name} // assuming crafter is logged in
+                onDelete={handleDeleteAppointment}
+              />
+            ))
+          )}
         </RightSection>
       </SchedulesInnerWrapper>
     </SchedulesCard>

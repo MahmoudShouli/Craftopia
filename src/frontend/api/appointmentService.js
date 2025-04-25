@@ -33,17 +33,3 @@ export const getDisabledDates = async (crafterEmail) => {
   );
   return res.data;
 };
-
-export const disableDate = async (crafterEmail, date) => {
-  return axios.post("http://localhost:3000/appointments/disableDate", {
-    crafterEmail,
-    date,
-  });
-};
-
-export const enableDate = async (crafterEmail, date) => {
-  return axios.post("http://localhost:3000/appointments/enableDate", {
-    crafterEmail,
-    date,
-  });
-};
