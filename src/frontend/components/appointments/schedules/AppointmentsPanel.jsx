@@ -14,12 +14,12 @@ const AppointmentsPanel = ({ appointments, userEmail, onDelete }) => (
             id={app._id || app.id}
             date={app.date}
             status={app.status}
-            crafterName={app.crafterName}      // ✅ still pass crafterName
+            crafterName={app.crafterName}     
             crafterEmail={app.crafterEmail}
             userEmail={userEmail}
             isCrafter={false}
-            showBookedByName={true}             // ✅ always true to show crafter name
-            bookedByName={app.crafterName}       // ✅ show crafterName
+            showBookedByName={true}             
+            bookedByName={app.crafterName}       
             onDelete={onDelete}
           />
         ))}

@@ -83,9 +83,12 @@ const AppointmentItem = ({
         Status: <span>{status}</span>
       </AppointmentStatusWrapper>
 
-      {showBookedByName && (
+      {isCrafter ? (
+        <AppointmentCrafter>Booked By: {bookedByName}</AppointmentCrafter>
+      ):(
         <AppointmentCrafter>Crafter: {bookedByName}</AppointmentCrafter>
-      )}
+      )
+      }
 
       {!isCrafter && status === "completed" && (
         <ReviewBox
