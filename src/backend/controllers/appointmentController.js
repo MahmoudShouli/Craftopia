@@ -64,6 +64,8 @@ export const getAppointmentsByEmail = async (req, res) => {
 export const deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
+    const { role } = req.body;
+
     const appointment = await AppointmentModel.findById(id);
     if (!appointment)
       return res.status(404).json({ error: "Appointment not found" });
@@ -71,8 +73,8 @@ export const deleteAppointment = async (req, res) => {
     const secondsSinceCreation =
       (new Date() - new Date(appointment.createdAt)) / 1000;
 
-    // 10 second cutoff for testing (change to 86400 for 24 hours)
-    if (secondsSinceCreation > 86400) {
+    // if the user is NOT a crafter, check the time limit
+    if (role !== "crafter" && secondsSinceCreation > 10) {
       return res
         .status(400)
         .json({ error: "Cannot cancel appointment after the allowed time." });

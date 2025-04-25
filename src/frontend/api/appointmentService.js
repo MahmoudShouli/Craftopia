@@ -20,9 +20,12 @@ export const getAppointmentsByEmail = async (email, role = null) => {
   return response.data;
 };
 
-export const deleteAppointment = async (id) => {
+export const deleteAppointment = async (id, role) => {
   const response = await axios.delete(
-    `http://localhost:3000/appointments/delete/${id}`
+    `http://localhost:3000/appointments/delete/${id}`,
+    {
+      data: { role },
+    }
   );
   return response.data;
 };

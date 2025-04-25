@@ -17,6 +17,7 @@ import {
 import { deleteAppointment, updateAppointmentStatus } from "../../../api/appointmentService";
 import { toast } from "react-toastify";
 import ReviewBox from "../../reviewbox/ReviewBox";
+import { useUser } from "../../../context/UserContext";
 
 const AppointmentItem = ({
   id,
@@ -30,9 +31,11 @@ const AppointmentItem = ({
   bookedByName = "",
   isCrafter = false,
 }) => {
+  const { user } = useUser();
+
   const handleCancel = async () => {
     try {
-      const res = await deleteAppointment(id);
+      const res = await deleteAppointment(id , user.role);
       if (res.success) {
         toast.success("Appointment canceled");
         onDelete?.(id);

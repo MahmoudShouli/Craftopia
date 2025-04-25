@@ -21,7 +21,7 @@ const CrafterSchedulesPage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [disabledDates, setDisabledDates] = useState([]);
   const [calendarBlockedDates, setCalendarBlockedDates] = useState([]);
-  const [appointments, setAppointments] = useState([]); // ✅ new state
+  const [appointments, setAppointments] = useState([]); //  new state
 
   const loadCalendarData = async () => {
     try {
@@ -34,7 +34,7 @@ const CrafterSchedulesPage = () => {
 
       setDisabledDates(disabledConverted);
       setCalendarBlockedDates(allBlocked);
-      setAppointments(appts); // ✅ update appointments
+      setAppointments(appts); //  update appointments
     } catch (err) {
       toast.error("Failed to load calendar data");
     }
@@ -61,7 +61,7 @@ const CrafterSchedulesPage = () => {
         date: date.toISOString(),
       });
       toast.success(`Disabled ${date.toDateString()}`);
-      await loadCalendarData(); // ✅ reload everything
+      await loadCalendarData(); // reload everything
     } catch (err) {
       toast.error("Failed to disable date");
     }
@@ -70,7 +70,7 @@ const CrafterSchedulesPage = () => {
   const handleDeleteAppointment = async (id) => {
     // remove from local list after delete
     setAppointments((prev) => prev.filter((a) => a._id !== id));
-    await loadCalendarData(); // ✅ refresh calendar state too
+    await loadCalendarData(); // refresh calendar state 
   };
 
   return (
@@ -85,7 +85,7 @@ const CrafterSchedulesPage = () => {
           />
         </LeftSection>
         <RightSection>
-          <h2>Your Appointments</h2>
+          <h2 style={{ textAlign: "center", marginBottom: "10px" }}>State</h2>
           {appointments.length === 0 ? (
             <p>No appointments yet.</p>
           ) : (

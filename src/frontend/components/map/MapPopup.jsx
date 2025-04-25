@@ -56,7 +56,7 @@ const MapPopup = ({ onClose, onSelectCoordinates, onSelectCity, crafters = [], c
             type="number"
             min="1"
             max="50000"
-            step="1"
+            step="0.1"
             defaultValue={5}
             ref={distanceRef}
           />
