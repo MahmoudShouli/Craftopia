@@ -74,7 +74,7 @@ export const deleteAppointment = async (req, res) => {
       (new Date() - new Date(appointment.createdAt)) / 1000;
 
     // if the user is NOT a crafter, check the time limit
-    if (role !== "crafter" && secondsSinceCreation > 10) {
+    if (role !== "crafter" && secondsSinceCreation > 86400) {
       return res
         .status(400)
         .json({ error: "Cannot cancel appointment after the allowed time." });
