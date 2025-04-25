@@ -59,7 +59,7 @@ const Testimonials = () => {
                   name={r.user?.name || 'User'}
                   role={r.user?.role || 'Customer'}
                   message={r.message}
-                  avatar=""
+                  avatar={r.user?.avatarUrl}
                   rating={r.rating}
                 />
               </CardItem>

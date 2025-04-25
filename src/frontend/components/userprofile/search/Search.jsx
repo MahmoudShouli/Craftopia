@@ -15,7 +15,8 @@ import UserCard from '../../usercard/UserCard';
 import CraftDropdown from '../../craftdropdown/CraftDropdown';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { useUser } from '../../../context/UserContext';
-import MapPopup from '../../map/MapPopup';
+import PopUpPage from '../../map/PopUpPage';
+import RatingPage from '../../starrating/RatingPage';
 
 const crafts = [
   'Plumber',
@@ -37,18 +38,11 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [maxDistance, setMaxDistance] = useState(5);
   const { user } = useUser();
+  const [showUserPopup, setShowUserPopup] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchUsers = async (distanceOverride = maxDistance) => {
     const finalDistance = distanceOverride ?? maxDistance;
-
-    console.log("🔎 Searching with:", {
-      query,
-      selectedCraft,
-      sortByRating,
-      location: selectedLocation,
-      maxDistance: finalDistance,
-    });
-
     const data = await getUsersFromDB({
       query,
       selectedCraft,
@@ -84,6 +78,11 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
   const handleContact = (crafter) => {
     setSelectedCrafter?.(crafter);     // Pass crafter to parent view
     onViewChange?.("Schedules");       // Switch view to schedule
+  };
+
+  const handleView = (crafter) => {
+    setSelectedUser(crafter);
+    setShowUserPopup(true);
   };
 
   return (
@@ -138,6 +137,7 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
                 name={user.name}
                 craft={user.craft}
                 rating={user.rating}
+                onView={() => handleView(user)}
                 onContact={() => handleContact(user)}
               />
             ))}
@@ -160,6 +160,11 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
           }}
           isSearch={true}
         />
+      )}
+      {showUserPopup && (
+        <PopUpPage onClose={() => setShowUserPopup(false)}>
+          <RatingPage crafter={selectedUser}></RatingPage>
+        </PopUpPage>
       )}
     </SearchCard>
   );

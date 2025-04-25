@@ -7,11 +7,11 @@ import {
 import UserAvatar from "../useravatar/UserAvatar";
 import Button from "../button/Button";
 
-const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false, onContact }) => {
+const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false, onContact , onView }) => {
   const user = { name };
 
   return (
-    <CardContainer>
+    <CardContainer onClick={onView}>
       <UserAvatar
         previewUrl={avatarUrl}
         uploading={uploading}
@@ -30,7 +30,10 @@ const UserCard = ({ avatarUrl, name, craft, rating = 0, uploading = false, onCon
         text="Contact"
         size="medium"
         color="#6a380f"
-        onClick={onContact}
+        onClick={(e) => {
+          e.stopPropagation(); 
+          onContact();
+        }}
       />
     </CardContainer>
   );

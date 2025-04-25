@@ -13,6 +13,7 @@ import Homepage from './pages/Homepage';
 import UserPage from './pages/UserPage';
 import CrafterPage from './pages/CrafterPage';
 
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <UserProvider>

@@ -21,3 +21,10 @@ export const addReview = async ({
   });
   return response.data;
 };
+
+export const getReviewsByEmail = async (email) => {
+  const res = await axios.get(
+    `http://localhost:3000/reviews/getByEmail?email=${email}`
+  );
+  return res.data;
+};
