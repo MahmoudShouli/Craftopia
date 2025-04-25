@@ -72,7 +72,6 @@ const AppointmentItem = ({
           </>
         )}
 
-        {/* ❌ Cancel icon always shows */}
         <CancelIcon title="Cancel" onClick={handleCancel}>
           <FaTimes />
         </CancelIcon>
@@ -85,16 +84,15 @@ const AppointmentItem = ({
       </AppointmentStatusWrapper>
 
       {showBookedByName && (
-        <AppointmentCrafter>Booked By: {bookedByName}</AppointmentCrafter>
+        <AppointmentCrafter>Crafter: {bookedByName}</AppointmentCrafter>
       )}
 
-      {/* ⭐ Show ReviewBox if user and completed */}
       {!isCrafter && status === "completed" && (
         <ReviewBox
           userEmail={userEmail}
           crafterEmail={crafterEmail}
           appointmentId={id}
-          onSuccess={onDelete} // ✅ remove from UI after review submit
+          onSuccess={onDelete}
         />
       )}
     </AppointmentCard>

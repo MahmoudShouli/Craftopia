@@ -81,39 +81,40 @@ const UserSchedulesPage = ({ crafter }) => {
 
   return (
     <SchedulesCard>
-      <SchedulesInnerWrapper>
-        {crafter ? (
-          <>
-            <CrafterInfoPanel crafter={crafter} selectedDate={selectedDate} step={step} />
-            <BookingSection
-              selectedDate={selectedDate}
-              setSelectedDate={(date) => {
-                setSelectedDate(date);
-                setStep(1);
-              }}
-              onConfirm={handleConfirm}
-              disabledDates={disabledDates}
-            />
-            <AppointmentsPanel
-              appointments={appointments}
-              onDelete={(id) => {
-                setAppointments((prev) => prev.filter((app) => app.id !== id));
-              }}
-            />
-          </>
-        ) : (
-          <MiddleSection style={{ alignItems: "flex-start" }}>
-            <AppointmentsPanel
-              appointments={appointments}
-              userEmail={user.email}
-              onDelete={(id) => {
-                setAppointments((prev) => prev.filter((app) => app.id !== id));
-              }}
-            />
-          </MiddleSection>
-        )}
-      </SchedulesInnerWrapper>
-    </SchedulesCard>
+  <SchedulesInnerWrapper>
+    {crafter ? (
+      <>
+        <CrafterInfoPanel crafter={crafter} selectedDate={selectedDate} step={step} />
+        <BookingSection
+          selectedDate={selectedDate}
+          setSelectedDate={(date) => {
+            setSelectedDate(date);
+            setStep(1);
+          }}
+          onConfirm={handleConfirm}
+          disabledDates={disabledDates}
+        />
+        <AppointmentsPanel
+          appointments={appointments}
+          userEmail={user.email}  
+          onDelete={(id) => {
+            setAppointments((prev) => prev.filter((app) => app.id !== id));
+          }}
+        />
+      </>
+    ) : (
+      <MiddleSection style={{ alignItems: "flex-start" }}>
+        <AppointmentsPanel
+          appointments={appointments}
+          userEmail={user.email}  
+          onDelete={(id) => {
+            setAppointments((prev) => prev.filter((app) => app.id !== id));
+          }}
+        />
+      </MiddleSection>
+    )}
+  </SchedulesInnerWrapper>
+</SchedulesCard>
   );
 };
 

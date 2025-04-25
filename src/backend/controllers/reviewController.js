@@ -6,7 +6,7 @@ import { ReviewType } from "../models/enums/reviewType.js";
 export const addReview = async (req, res) => {
   const { email, message, rating, type, to } = req.body;
 
-  if (!email || !message || !rating || !type == null) {
+  if (!email || !message || !rating || !type) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
