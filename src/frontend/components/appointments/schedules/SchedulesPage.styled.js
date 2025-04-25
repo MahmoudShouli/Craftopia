@@ -112,14 +112,33 @@ export const RightSection = styled.div`
 export const AppointmentsList = styled.ul`
   list-style: none;
   margin-top: 1rem;
-  padding: 0;
   font-size: 0.95rem;
+  border-radius: 10px;
+
+  max-height: 550px; /* limit panel height */
+  overflow-y: auto; /* scroll when needed */
+  padding-right: 0.5rem; /* ✅ little margin from the scrollbar */
+
+  /* Scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #6a380f; /* brown thumb */
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #f9f5f2; /* matches panel background */
+  }
 
   li {
-    margin-bottom: 0.5rem;
-    padding: 0.4rem 0.6rem;
-    border-radius: 6px;
-    background-color: #f3f4f6;
+    margin-bottom: 0.8rem;
+    padding: 0.8rem;
+    border-radius: 8px;
+    background-color: #fff5ee;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -144,40 +163,55 @@ export const AppointmentCrafter = styled.div`
   font-size: 1rem;
   margin-bottom: 0.25rem;
 `;
-
-export const CancelIcon = styled.div`
-  position: absolute;
-  top: 8px;
-  right: 10px;
+export const ActionIcon = styled.div`
   cursor: pointer;
-  color: red;
-  font-size: 1rem;
-  z-index: 2;
+  color: #007bff;
+  font-size: 1.2rem;
+  transition: color 0.2s ease;
 
   &:hover {
     transform: scale(1.2);
     transition: 0.2s ease;
   }
 `;
+export const CancelIcon = styled(ActionIcon)`
+  color: red;
+`;
+
+export const CompleteIcon = styled(ActionIcon)`
+  color: #28a745;
+`;
+
+export const ActionIconsWrapper = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 1;
+`;
 
 export const AppointmentStatusWrapper = styled.p`
   margin-top: 0.5rem;
   font-weight: 500;
-  color: #000; /* 'Status:' stays black */
+  color: #000;
 
   span {
     font-weight: bold;
     margin-left: 5px;
-    color: ${({ status }) => {
-      switch (status) {
+    color: ${({ $status }) => {
+      switch ($status) {
         case "confirmed":
-          return "green";
+          return "blue";
         case "pending":
           return "orange";
         case "completed":
-          return "blue";
+          return "green";
         case "canceled":
           return "red";
+        case "disabled":
+          return "grey";
         default:
           return "#333";
       }

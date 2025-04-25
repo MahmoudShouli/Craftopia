@@ -95,8 +95,10 @@ const CrafterSchedulesPage = () => {
                 id={a._id}
                 date={a.date}
                 status={a.status}
-                crafterName={user.name} // assuming crafter is logged in
                 onDelete={handleDeleteAppointment}
+                showBookedByName={true}
+                bookedByName={a.userName || a.userEmail}
+                isCrafter={true} 
               />
             ))
           )}

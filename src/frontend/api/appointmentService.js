@@ -33,3 +33,11 @@ export const getDisabledDates = async (crafterEmail) => {
   );
   return res.data;
 };
+
+export const updateAppointmentStatus = async (id, status) => {
+  const res = await axios.patch(
+    `http://localhost:3000/appointments/${id}/status`,
+    { status }
+  );
+  return res.data;
+};

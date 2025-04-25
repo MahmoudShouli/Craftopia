@@ -2,9 +2,7 @@ import React from "react";
 import { RightSection, AppointmentsList } from "./SchedulesPage.styled";
 import AppointmentItem from "./AppointmentItem";
 
-const AppointmentsPanel = ({ appointments }) => (
-    
-    
+const AppointmentsPanel = ({ appointments, userEmail, onDelete }) => (
   <RightSection>
     <h3 style={{ marginBottom: "1rem" }}>Your Appointments</h3>
     <AppointmentsList>
@@ -17,6 +15,11 @@ const AppointmentsPanel = ({ appointments }) => (
             date={app.date}
             status={app.status}
             crafterName={app.crafterName}
+            crafterEmail={app.crafterEmail}
+            userEmail={userEmail} // ✅ correct!
+            isCrafter={false}
+            showBookedByName={false}
+            onDelete={onDelete} // ✅ allow deleting appointment from UI
           />
         ))}
     </AppointmentsList>

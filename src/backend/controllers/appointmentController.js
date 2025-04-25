@@ -99,3 +99,22 @@ export const getDisabledDates = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch disabled dates" });
   }
 };
+
+export const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // Optionally validate status values
+    const allowedStatuses = ["pending", "confirmed", "completed"];
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({ error: "Invalid status value." });
+    }
+
+    await AppointmentModel.findByIdAndUpdate(id, { status });
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

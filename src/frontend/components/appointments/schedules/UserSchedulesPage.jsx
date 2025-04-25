@@ -105,6 +105,7 @@ const UserSchedulesPage = ({ crafter }) => {
           <MiddleSection style={{ alignItems: "flex-start" }}>
             <AppointmentsPanel
               appointments={appointments}
+              userEmail={user.email}
               onDelete={(id) => {
                 setAppointments((prev) => prev.filter((app) => app.id !== id));
               }}
