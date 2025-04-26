@@ -79,9 +79,7 @@ const UserPage = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
       const url = res.data.avatarUrl;
-
       const updatedUser = { ...user, avatarUrl: url };
       setPreviewUrl(url);
       setUser(updatedUser);

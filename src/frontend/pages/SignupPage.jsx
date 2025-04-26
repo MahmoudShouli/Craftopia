@@ -41,10 +41,8 @@ const SignupPage = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [craft, setSelectedCraft] = useState('');
-  // const [error, setError] = useState('');
   const [location, setLocation] = useState('');
   const [avatarUrl] = useState('');
-
   const navigate = useNavigate();
   const [city, setCity] = useState('');
   const [showMap, setShowMap] = useState(false);
@@ -62,8 +60,7 @@ const SignupPage = () => {
     };
 
     const data = await register(name, email, password, geoLocation, role, craft , avatarUrl);
-    console.log("🔐 Register response:", data);
-  
+
     if (data && data.success) {
       toast.success("Account created! Redirecting to Sign In...", {
         position: "top-center",
@@ -85,7 +82,6 @@ const SignupPage = () => {
 
   return (
     <PageWrapper>
-    
       <WelcomeCard
           mainText="Start New Journey!"
           subText="Already have an account?"
@@ -93,7 +89,6 @@ const SignupPage = () => {
           linkTo={"/signin"}
       />
     
-
       <RightSection>  
         <LogoSection>
           <Logo src={logo} alt="Craftopia Logo" />

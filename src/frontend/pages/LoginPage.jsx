@@ -23,7 +23,7 @@ import {
   LogoSection,
   Eye
 } from '../styles/LoginPage.styled'
-import HomePage from './Homepage';
+
 
 const LoginPage = () => {
 
@@ -32,13 +32,9 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { setUser} = useUser()
-
   const togglePassword = () => setShowPassword(prev => !prev);
-
   const handleNormalLogin = async () => {
     const data = await login(email, password);
-    console.log("LOGIN RESPONSE DATA:", data); // ✅ Check what's returned
-  
     setUser(
       data.user
     );
@@ -52,9 +48,7 @@ const LoginPage = () => {
         <LogoSection>
           <Logo src={logo} alt="Craftopia Logo" />
         </LogoSection>
-        
-        
-        
+
         <FormWrapper>
           <Heading style={{ marginBottom: '15px' }}>Sign in to Craftopia</Heading>
 
@@ -79,9 +73,6 @@ const LoginPage = () => {
             <FcGoogle size={20} />
             Sign in with Google
           </GoogleButton>
-
-          
-          
         </FormWrapper>
       </LeftPanel>
 

@@ -20,7 +20,6 @@ const CrafterPage = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [location, setLocation] = useState("");
   const [uploading, setUploading] = useState(false);
-
   const [activeView, setActiveView] = useState("profile");
   const [selectedIndex, setSelectedIndex] = useState(1);
   const fileInputRef = useRef();
