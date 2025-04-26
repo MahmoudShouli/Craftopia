@@ -67,17 +67,24 @@ export const deleteAppointment = async (req, res) => {
     const { role } = req.body;
 
     const appointment = await AppointmentModel.findById(id);
-    if (!appointment)
+
+    console.log("Trying to delete appointment:");
+    console.log("ID:", id);
+    console.log("Role:", role);
+    console.log("Appointment Status:", appointment?.status);
+
+    if (!appointment) {
       return res.status(404).json({ error: "Appointment not found" });
+    }
 
-    const secondsSinceCreation =
-      (new Date() - new Date(appointment.createdAt)) / 1000;
-
-    // if the user is NOT a crafter, check the time limit
-    if (role !== "crafter" && secondsSinceCreation > 86400) {
-      return res
-        .status(400)
-        .json({ error: "Cannot cancel appointment after the allowed time." });
+    // Updated rule:
+    if (
+      role !== "crafter" &&
+      !["pending", "completed"].includes(appointment.status)
+    ) {
+      return res.status(400).json({
+        error: "You can only delete pending or completed appointments.",
+      });
     }
 
     await AppointmentModel.findByIdAndDelete(id);

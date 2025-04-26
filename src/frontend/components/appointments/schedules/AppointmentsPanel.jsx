@@ -4,7 +4,7 @@ import AppointmentItem from "./AppointmentItem";
 
 const AppointmentsPanel = ({ appointments, userEmail, onDelete }) => (
   <RightSection>
-    <h3 style={{ marginBottom: "1rem" , textAlign: "center", marginBottom: "10px" }}>Your Appointments</h3>
+    <h3 style={{textAlign: "center", marginBottom: "10px" }}>Your Appointments</h3>
     <AppointmentsList>
       {[...appointments]
         .sort((a, b) => new Date(a.date) - new Date(b.date))

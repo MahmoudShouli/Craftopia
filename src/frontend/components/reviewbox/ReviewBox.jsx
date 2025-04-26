@@ -5,23 +5,25 @@ import Button from "../button/Button";
 import { addReview } from "../../api/reviewService";
 import { deleteAppointment } from "../../api/appointmentService";
 import { toast } from "react-toastify";
+import { useUser } from "../../context/UserContext";
 
 const ReviewBox = ({ userEmail, crafterEmail, appointmentId, onSuccess }) => {
+  const { user } = useUser();
+  const userRole = user.role;
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
 
   const handleSubmit = async () => {
     if (!message.trim()) {
-      toast.error("❗ Please write a review message.");
+      toast.error(" Please write a review message.");
       return;
     }
     if (rating === 0) {
-      toast.error("❗ Please select a star rating.");
+      toast.error(" Please select a star rating.");
       return;
     }
-
+  
     try {
-      // ✅ Submit the review
       await addReview({
         email: userEmail,
         rating,
@@ -30,31 +32,28 @@ const ReviewBox = ({ userEmail, crafterEmail, appointmentId, onSuccess }) => {
         to: crafterEmail,
       });
 
-      // ✅ Try deleting the appointment (ignore if already deleted)
       try {
-        await deleteAppointment(appointmentId);
+        console.log("Deleting appointment with role:", userRole);
+        await deleteAppointment(appointmentId, userRole);
       } catch (deleteError) {
-        console.warn("Appointment already deleted or not found:", deleteError.response?.data?.error);
-        // No crash, just log
+        console.warn("Full delete error:", deleteError);
       }
-
-      // ✅ Show success toast safely after render
+  
       setTimeout(() => {
-        toast.success("⭐ Thank you for your review!");
+        toast.success(" Thank you for your review!");
       }, 0);
-
-      // ✅ Reset form
+  
       setMessage("");
       setRating(0);
-
-      // ✅ Remove appointment from UI
+  
       onSuccess?.(appointmentId);
-
+  
     } catch (error) {
-      console.error("❌ Full error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.error || "❌ Failed to submit review.");
+      console.error(" Full error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.error || " Failed to submit review.");
     }
   };
+  
 
   return (
     <BoxWrapper>
