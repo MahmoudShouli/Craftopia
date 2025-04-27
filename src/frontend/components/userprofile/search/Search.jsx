@@ -16,6 +16,7 @@ import CraftDropdown from '../../craftdropdown/CraftDropdown';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { useUser } from '../../../context/UserContext';
 import PopUpPage from '../../map/PopUpPage';
+import MapPopup from '../../map/MapPopup';
 import RatingPage from '../../starrating/RatingPage';
 
 const crafts = [
