@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import UserProfileCard from "../components/userprofile/userprofilecard/UserProfileCard";
 import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
 import CrafterSchedulesPage from "../components/appointments/schedules/Crafter/CrafterSchedulesPage";
+import CrafterTemplates from "../components/Templates/CrafterTemplates";
 
 import {
   PageWrapper,
@@ -107,6 +108,9 @@ const CrafterPage = () => {
       case "Schedules":
         setSelectedIndex(2);
         break;
+      case "templates":
+        setSelectedIndex(3);
+        break;
       default:
         setSelectedIndex(1);
     }
@@ -140,6 +144,7 @@ const CrafterPage = () => {
         )}
 
         {activeView === "Schedules" && <CrafterSchedulesPage />}
+        {activeView === "templates" && <CrafterTemplates />}
       </ProfileContainer>
     </PageWrapper>
   );

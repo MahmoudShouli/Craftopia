@@ -24,6 +24,7 @@ const crafterSidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
   { icon: "📅", label: "Schedules" },
+  { icon: "🛠️", label: "Templates" },
   { icon: "📄", label: "Chatting" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
@@ -38,7 +39,7 @@ const Dashboard = ({ selectedIndex, onItemSelect }) => {
 
   const handleItemClick = (index) => {
     const item = sidebarItems[index];
-
+  
     if (item.label === "Logout") {
       localStorage.removeItem("user");
       setUser(null);
@@ -50,6 +51,8 @@ const Dashboard = ({ selectedIndex, onItemSelect }) => {
       if (item.route) navigate(item.route);
     } else if (item.label === "Schedules") {
       onItemSelect?.("Schedules");
+    } else if (item.label === "Templates") {
+      onItemSelect?.("templates");   
     } else if (item.route) {
       navigate(item.route);
     }
