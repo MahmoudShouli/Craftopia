@@ -57,8 +57,9 @@ const CrafterTemplates = () => {
   const handleSaveTemplate = async (newTemplate) => {
     try {
       if (popupMode === "add") {
+        const { _id, ...templateData } = newTemplate;
         await createTemplate({
-          ...newTemplate,
+          ...templateData,
           crafterEmail: user.email,
           crafterName: user.name,
           likes: 0,
@@ -68,7 +69,7 @@ const CrafterTemplates = () => {
         await updateTemplate(newTemplate._id, newTemplate);
         toast.success("Template updated!");
       }
-
+  
       setShowPopup(false);
       setSelectedTemplate(null);
       await fetchTemplates();

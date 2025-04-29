@@ -12,6 +12,7 @@ import {
   PageWrapper,
   ProfileContainer,
 } from "../styles/UserProfilePage.styled";
+import UserTemplates from "../components/Templates/UserTemplates";
 
 const UserPage = () => {
   const { user, setUser } = useUser();
@@ -113,6 +114,9 @@ const UserPage = () => {
       case "Schedules":
         setSelectedIndex(3);
         break;
+      case "templates":
+        setSelectedIndex(3);
+        break;
       default:
         setSelectedIndex(1);
     }
@@ -155,6 +159,8 @@ const UserPage = () => {
         {activeView === "Schedules" && crafterForSchedule && (
           <UserSchedulesPage crafter={crafterForSchedule} />
         )}
+
+        {activeView === "templates" && <UserTemplates />}
       </ProfileContainer>
     </PageWrapper>
   );

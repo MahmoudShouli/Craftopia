@@ -14,6 +14,7 @@ const customerSidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
   { icon: "👤", label: "Profile", route: "/userprofile" },
   { icon: "🔎", label: "Search & filter" },  
+  { icon: "🛠️", label: "Templates" },
   { icon: "📅", label: "Schedules" },
   { icon: "📄", label: "Chatting" },
   { icon: "🚪", label: "Logout", route: "/" },
