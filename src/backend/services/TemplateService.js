@@ -19,3 +19,7 @@ export const getTemplate = async (id) => {
 export const removeTemplate = async (id) => {
   return await TemplateRepository.deleteTemplate(id);
 };
+
+export const updateTemplate = async (id, templateData) => {
+  return await TemplateRepository.updateTemplate(id, templateData);
+};

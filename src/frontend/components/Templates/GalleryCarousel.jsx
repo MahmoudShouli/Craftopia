@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaTimesCircle } from "react-icons/fa";
 import {
   CarouselWrapper,
   SlidesContainer,
@@ -11,7 +11,7 @@ import {
   Dot,
 } from "./CrafterTemplates.styled";
 
-const GalleryCarousel = ({ images }) => {
+const GalleryCarousel = ({ images, onImageRemove }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const nextSlide = () => {
@@ -30,8 +30,23 @@ const GalleryCarousel = ({ images }) => {
     <CarouselWrapper>
       <SlidesContainer $activeIndex={activeIndex}>
         {images.map((img, idx) => (
-          <Slide key={idx}>
+          <Slide key={idx} style={{ position: "relative" }}>
             <SlideImage src={img} alt={`Gallery ${idx + 1}`} />
+            {onImageRemove && (
+              <FaTimesCircle
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  color: "red",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  backgroundColor: "white",
+                  borderRadius: "50%",
+                }}
+                onClick={() => onImageRemove(idx)}
+              />
+            )}
           </Slide>
         ))}
       </SlidesContainer>

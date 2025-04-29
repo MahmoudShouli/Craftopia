@@ -10,6 +10,7 @@ const TemplateSchema = new mongoose.Schema({
   sizeOptions: { type: String, required: false },
   crafterEmail: { type: String, required: true },
   tags: [{ type: String, required: true }],
+  likes: { type: Number, default: 0 },
 });
 
 const TemplateModel = mongoose.model("Templates", TemplateSchema, "templates");

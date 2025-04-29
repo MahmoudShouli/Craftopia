@@ -25,3 +25,22 @@ export const deleteTemplate = async (id) => {
   const response = await axios.delete(`${API_URL}/${id}`);
   return response.data;
 };
+
+// Update a template
+export const updateTemplate = async (id, updatedData) => {
+  const response = await axios.put(`${API_URL}/${id}`, updatedData);
+  return response.data;
+};
+
+export const uploadImage = async (file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  const response = await axios.post(`${API_URL}/upload`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data.imageUrl; // cloudinary URL
+};

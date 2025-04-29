@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { FaHeart } from "react-icons/fa";
 
 /* Main Card for Templates List */
 export const TemplateCard = styled.div`
@@ -62,8 +63,10 @@ export const SingleTemplateCard = styled.div`
   padding: 2rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
   width: 250px;
+  height: 340px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   text-align: center;
   transition: 0.3s ease;
@@ -89,6 +92,12 @@ export const TemplateName = styled.h3`
 export const CrafterName = styled.p`
   font-size: 1rem;
   color: #777;
+  margin-top: 1rem;
+`;
+
+export const CraftName = styled.p`
+  font-size: 1rem;
+  color: black;
 `;
 
 /* Template Details Popup */
@@ -120,26 +129,22 @@ export const DetailsWrapper = styled.div`
 `;
 export const TopContent = styled.div`
   display: flex;
-  width: 100%;
+  align-items: stretch;
   gap: 2rem;
 `;
 
 export const LeftSection = styled.div`
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
   align-items: center;
+  justify-content: center;
 `;
 
 export const RightSection = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1.5rem;
-  height: 100%;
+  gap: 1rem;
 `;
 
 export const BottomSection = styled.div`
@@ -152,6 +157,7 @@ export const BottomSection = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+  margin-top: 1rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 `;
 
@@ -352,6 +358,7 @@ export const SlideImage = styled.img`
   height: 100%;
   object-fit: cover;
   border-radius: 16px;
+  background-color: #fff;
 `;
 
 export const PrevArrow = styled.div`
@@ -405,4 +412,43 @@ export const InfoTitle = styled.h3`
   color: #6a380f;
   margin-bottom: 0.5rem;
   text-align: center;
+`;
+export const LikesWrapper = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+export const HeartIcon = styled(FaHeart)`
+  color: red;
+  font-size: 1.2rem;
+
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.3);
+  }
+`;
+
+export const BottomCardContent = styled.div`
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const DeleteIconWrapper = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  z-index: 1;
+
+  &:hover {
+    background: #eee;
+  }
 `;

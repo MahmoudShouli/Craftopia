@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   TemplateCard,
   TopSection,
@@ -8,31 +8,85 @@ import {
 } from "./CrafterTemplates.styled";
 import Button from "../button/Button";
 import TemplateItem from "./TemplateItem";
+import PopUpPage from "../map/PopUpPage";
+import TemplateDetails from "./TemplateDetails";
+import { useUser } from "../../context/UserContext";
+import {
+  getTemplatesByCrafter,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate, // ✅ import deleteTemplate
+} from "../../api/templateService";
+import { toast } from "react-toastify";
 
 const CrafterTemplates = () => {
-  const templates = [
-    {
-      _id: "1",
-      name: "Rustic Oak Coffee Table",
-      description: "Handmade oak table with a rustic finish.",
-      craftType: "Woodworking",
-      mainImage: "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745604179/avatars/hqta1omqji9tgwhhp2q4.jpg",
-      galleryImages: [
-        "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745604179/avatars/hqta1omqji9tgwhhp2q4.jpg",
-        "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745197824/avatars/mu9kafpzx8dtmmqmbsyq.png",
-        "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745197846/avatars/yvgrgv1l1vqhawq7cpoq.png"
-      ],
-      availableColors: ["red", "green", "#00fffa"],
-      sizeOptions: "Small, Medium, Large",
-      crafterEmail: "john@example.com",
-      tags: ["Rustic", "Handmade", "Minimalist"],
-      crafterName: "John Doe",
-    },
-    // Add more templates here
-  ];
+  const { user } = useUser();
+  const [templates, setTemplates] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMode, setPopupMode] = useState("add"); // 'add' or 'edit'
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+
+  const fetchTemplates = async () => {
+    try {
+      const data = await getTemplatesByCrafter(user.email);
+      setTemplates(data);
+    } catch (err) {
+      toast.error("Failed to load templates");
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (user?.email) {
+      fetchTemplates();
+    }
+  }, [user]);
 
   const handleAddTemplate = () => {
-    console.log("Add Template clicked!");
+    setPopupMode("add");
+    setSelectedTemplate(null);
+    setShowPopup(true);
+  };
+
+  const handleEditTemplate = (template) => {
+    setPopupMode("edit");
+    setSelectedTemplate(template);
+    setShowPopup(true);
+  };
+
+  const handleSaveTemplate = async (newTemplate) => {
+    try {
+      if (popupMode === "add") {
+        await createTemplate({
+          ...newTemplate,
+          crafterEmail: user.email,
+          crafterName: user.name,
+          likes: 0,
+        });
+        toast.success("Template added!");
+      } else if (popupMode === "edit" && newTemplate._id) {
+        await updateTemplate(newTemplate._id, newTemplate);
+        toast.success("Template updated!");
+      }
+
+      setShowPopup(false);
+      setSelectedTemplate(null);
+      await fetchTemplates();
+    } catch (err) {
+      toast.error("Failed to save template");
+      console.error(err);
+    }
+  };
+
+  const handleDeleteTemplate = async (id) => {
+    try {
+      await deleteTemplate(id);
+      toast.success("Template deleted!");
+      await fetchTemplates();
+    } catch (err) {
+      toast.error("Failed to delete template");
+      console.error(err);
+    }
   };
 
   return (
@@ -46,9 +100,24 @@ const CrafterTemplates = () => {
 
       <TemplatesGrid>
         {templates.map((template) => (
-          <TemplateItem key={template._id} template={template} />
+          <TemplateItem
+            key={template._id}
+            template={template}
+            onEdit={() => handleEditTemplate(template)}
+            onDelete={handleDeleteTemplate} 
+          />
         ))}
       </TemplatesGrid>
+
+      {showPopup && (
+        <PopUpPage onClose={() => setShowPopup(false)}>
+          <TemplateDetails
+            mode={popupMode}
+            template={selectedTemplate}
+            onSave={handleSaveTemplate}
+          />
+        </PopUpPage>
+      )}
     </TemplateCard>
   );
 };

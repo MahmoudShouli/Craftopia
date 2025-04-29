@@ -25,8 +25,6 @@ const CrafterPage = () => {
   const [selectedIndex, setSelectedIndex] = useState(1);
   const fileInputRef = useRef();
 
-  console.log("Active View:", activeView);
-
   useEffect(() => {
     if (user && user.name) {
       setEditedName(user.name);

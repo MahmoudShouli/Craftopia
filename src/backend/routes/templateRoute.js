@@ -1,7 +1,15 @@
 import express from "express";
+import { upload } from "../../utils/cloudinaryConfig.js";
 import * as TemplateController from "../controllers/templateController.js";
 
 const templateRoute = express.Router();
+
+// Upload image to Cloudinary
+templateRoute.post(
+  "/upload",
+  upload.single("image"),
+  TemplateController.uploadImage
+);
 
 // POST /templates
 templateRoute.post("/", TemplateController.createTemplate);
@@ -14,5 +22,8 @@ templateRoute.get("/crafter/:email", TemplateController.getCrafterTemplates);
 
 // DELETE /templates/:id
 templateRoute.delete("/:id", TemplateController.deleteTemplate);
+
+// PUT /templates/:id
+templateRoute.put("/:id", TemplateController.updateTemplate);
 
 export default templateRoute;

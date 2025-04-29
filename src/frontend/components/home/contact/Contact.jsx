@@ -55,7 +55,7 @@ const Contact = () => {
       console.error("Save review error:", error);
   
       if (error.response?.data) {
-        console.log("📩 Backend Response:", error.response.data);
+        console.log("Backend Response:", error.response.data);
         toast.error(error.response.data.message || "Something went wrong while saving your review.");
       } else {
         toast.error("Something went wrong. Please try again.");

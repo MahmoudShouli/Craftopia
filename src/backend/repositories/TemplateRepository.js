@@ -24,3 +24,7 @@ export const getTemplateById = async (id) => {
 export const deleteTemplate = async (id) => {
   return await TemplateModel.findByIdAndDelete(id);
 };
+
+export const updateTemplate = async (id, templateData) => {
+  return await TemplateModel.findByIdAndUpdate(id, templateData, { new: true });
+};
