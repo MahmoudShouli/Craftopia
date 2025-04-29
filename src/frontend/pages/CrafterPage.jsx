@@ -25,6 +25,8 @@ const CrafterPage = () => {
   const [selectedIndex, setSelectedIndex] = useState(1);
   const fileInputRef = useRef();
 
+  console.log("Active View:", activeView);
+
   useEffect(() => {
     if (user && user.name) {
       setEditedName(user.name);
@@ -120,27 +122,14 @@ const CrafterPage = () => {
 
   return (
     <PageWrapper>
+      
       <Dashboard selectedIndex={selectedIndex} onItemSelect={handleViewChange} />
       <ProfileContainer>
         <UserProfileHeader user={user} formattedDate={formattedDate} />
 
         {activeView === "profile" && (
           <UserProfileCard
-            user={user}
-            fileInputRef={fileInputRef}
-            handleImageUpload={handleImageUpload}
-            previewUrl={previewUrl}
-            uploading={uploading}
-            isEditing={isEditing}
-            handleEditToggle={handleEditToggle}
-            handleSave={handleSave}
-            editedName={editedName}
-            setEditedName={setEditedName}
-            location={location}
-            setLocation={setLocation}
-            newPassword={newPassword}
-            setNewPassword={setNewPassword}
-          />
+            user={user}/>
         )}
 
         {activeView === "Schedules" && <CrafterSchedulesPage />}

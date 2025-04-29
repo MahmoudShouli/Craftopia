@@ -1,66 +1,55 @@
 import React from "react";
+import {
+  TemplateCard,
+  TopSection,
+  Title,
+  AddButtonWrapper,
+  TemplatesGrid,
+} from "./CrafterTemplates.styled";
+import Button from "../button/Button";
+import TemplateItem from "./TemplateItem";
 
 const CrafterTemplates = () => {
-  // Dummy templates for now
   const templates = [
     {
       _id: "1",
       name: "Rustic Oak Coffee Table",
       description: "Handmade oak table with a rustic finish.",
-      mainImage: "https://via.placeholder.com/250x150?text=Oak+Table",
+      craftType: "Woodworking",
+      mainImage: "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745604179/avatars/hqta1omqji9tgwhhp2q4.jpg",
+      galleryImages: [
+        "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745604179/avatars/hqta1omqji9tgwhhp2q4.jpg",
+        "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745197824/avatars/mu9kafpzx8dtmmqmbsyq.png",
+        "https://res.cloudinary.com/dw2tjwbdg/image/upload/v1745197846/avatars/yvgrgv1l1vqhawq7cpoq.png"
+      ],
+      availableColors: ["red", "green", "#00fffa"],
+      sizeOptions: "Small, Medium, Large",
+      crafterEmail: "john@example.com",
+      tags: ["Rustic", "Handmade", "Minimalist"],
+      crafterName: "John Doe",
     },
-    {
-      _id: "2",
-      name: "Handmade Leather Wallet",
-      description: "Genuine leather wallet crafted by hand.",
-      mainImage: "https://via.placeholder.com/250x150?text=Leather+Wallet",
-    },
-    {
-      _id: "3",
-      name: "Custom Embroidered Pillow",
-      description: "Pillow with personalized embroidery design.",
-      mainImage: "https://via.placeholder.com/250x150?text=Embroidered+Pillow",
-    },
+    // Add more templates here
   ];
 
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>🎨 Your Templates</h1>
+  const handleAddTemplate = () => {
+    console.log("Add Template clicked!");
+  };
 
-      {templates.length === 0 ? (
-        <p>No templates found.</p>
-      ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", marginTop: "1rem" }}>
-          {templates.map((template) => (
-            <div
-              key={template._id}
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: "10px",
-                padding: "1rem",
-                width: "250px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              }}
-            >
-              <h3 style={{ marginBottom: "0.5rem" }}>🎨 {template.name}</h3>
-              <img
-                src={template.mainImage}
-                alt={template.name}
-                style={{
-                  width: "100%",
-                  height: "150px",
-                  objectFit: "cover",
-                  borderRadius: "5px",
-                }}
-              />
-              <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#555" }}>
-                {template.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+  return (
+    <TemplateCard>
+      <TopSection>
+        <Title>Your Templates</Title>
+        <AddButtonWrapper>
+          <Button text="Add Template" size="medium" onClick={handleAddTemplate} />
+        </AddButtonWrapper>
+      </TopSection>
+
+      <TemplatesGrid>
+        {templates.map((template) => (
+          <TemplateItem key={template._id} template={template} />
+        ))}
+      </TemplatesGrid>
+    </TemplateCard>
   );
 };
 

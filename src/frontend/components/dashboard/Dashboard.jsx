@@ -40,22 +40,23 @@ const Dashboard = ({ selectedIndex, onItemSelect }) => {
   const handleItemClick = (index) => {
     const item = sidebarItems[index];
   
-    if (item.label === "Logout") {
-      localStorage.removeItem("user");
-      setUser(null);
-      navigate("/");
-    } else if (item.label === "Search & filter") {
-      onItemSelect?.("search");
-    } else if (item.label === "Profile") {
-      onItemSelect?.("profile");
-      if (item.route) navigate(item.route);
-    } else if (item.label === "Schedules") {
-      onItemSelect?.("Schedules");
-    } else if (item.label === "Templates") {
-      onItemSelect?.("templates");   
-    } else if (item.route) {
-      navigate(item.route);
-    }
+    setTimeout(() => {
+      if (item.label === "Logout") {
+        localStorage.removeItem("user");
+        setUser(null);
+        navigate("/");
+      } else if (item.label === "Search & filter") {
+        onItemSelect?.("search");
+      } else if (item.label === "Profile") {
+        onItemSelect?.("profile");
+      } else if (item.label === "Schedules") {
+        onItemSelect?.("Schedules");
+      } else if (item.label === "Templates") {
+        onItemSelect?.("templates");
+      } else if (item.route) {
+        navigate(item.route);
+      }
+    }, 0);
   };
 
   return (

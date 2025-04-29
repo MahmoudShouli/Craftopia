@@ -1,12 +1,15 @@
 // components/UserProfileCard.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import axios from 'axios';
+import { useUser } from "../../../context/UserContext";
+import { toast } from "react-toastify";
 import UserAvatar from "../../useravatar/UserAvatar";
 import { FaUser, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import MapPopup from '../../map/MapPopup';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import'leaflet/dist/leaflet.css';
+import 'leaflet/dist/leaflet.css';
 import {
   UserCard,
   UserHeader,
@@ -22,27 +25,82 @@ import {
   Input
 } from "./UserProfileCard.styled";
 
-const UserProfileCard = ({
-  user,
-  fileInputRef,
-  handleImageUpload,
-  previewUrl,
-  uploading,
-  isEditing,
-  handleEditToggle,
-  handleSave,
-  editedName,
-  setEditedName,
-  setLocation,
-  newPassword,
-  setNewPassword
-}) => {
+const UserProfileCard = ({ user }) => {
 
-  const [city, setCity] = useState('');
+
+  const { setUser } = useUser();
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(user?.name || '');
+  const [newPassword, setNewPassword] = useState('');
+  const [previewUrl, setPreviewUrl] = useState(user?.avatarUrl || '');
+  const [location, setLocation] = useState(user?.location || '');
+  const [city, setCity] = useState(user?.location || '');
+  const [uploading, setUploading] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
+  const fileInputRef = useRef();
+
+  const handleEditToggle = () => setIsEditing(!isEditing);
+
+  const handleSave = async () => {
+    try {
+      const res = await axios.put(
+        `http://localhost:3000/user/update-profile/${user._id}`,
+        {
+          name: editedName,
+          location: city,
+          password: newPassword,
+        }
+      );
+
+      const updatedUser = res.data.user;
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      toast.success("Profile updated successfully!");
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      toast.error("Failed to update profile.");
+    }
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("avatar", file);
+    formData.append("userId", user._id);
+
+    try {
+      const res = await axios.post(
+        "http://localhost:3000/user/uploadAvatar",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const url = res.data.avatarUrl;
+      const updatedUser = { ...user, avatarUrl: url };
+
+      setPreviewUrl(url);
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      toast.success("Avatar uploaded!");
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast.error("Failed to upload avatar.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  
   return (
-    
     <UserCard>
       <UserHeader>
         <>
@@ -87,7 +145,6 @@ const UserProfileCard = ({
           </InputWrapper>
         </Field>
 
-      
         <Field>
           <Label>Email</Label>
           <InputWrapper>
@@ -120,7 +177,6 @@ const UserProfileCard = ({
             <FaMapMarkerAlt className="input-icon" onClick={() => setShowMap(true)} style={{ cursor: "pointer" }} />
             <Input
               type="text"
-              name="location"
               placeholder="Address"
               value={city}
               onChange={(e) => setCity(e.target.value)}
@@ -129,6 +185,7 @@ const UserProfileCard = ({
           </InputWrapper>
         </Field>
       </FormGrid>
+
       {showMap && (
         <MapPopup
           onClose={() => setShowMap(false)}
