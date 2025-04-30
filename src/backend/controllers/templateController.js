@@ -35,9 +35,10 @@ export const getCrafterTemplates = async (req, res) => {
 
 export const getAllTemplates = async (req, res) => {
   try {
-    const templates = await TemplateService.getAllTemplates();
+    const templates = await TemplateService.getAllTemplates(); // your service
     res.json(templates);
   } catch (err) {
+    console.error("getAllTemplates error:", err);
     res.status(500).json({ error: "Failed to fetch templates" });
   }
 };

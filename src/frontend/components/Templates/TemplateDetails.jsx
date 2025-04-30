@@ -30,6 +30,7 @@ import { uploadImage } from "../../api/templateService";
 
 const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
   const { user } = useUser();
+  const isCrafter = user?.role === "crafter"; // ✅ Check role
   const fileInputRef = useRef(null);
 
   const [galleryImages, setGalleryImages] = useState([]);
@@ -43,7 +44,6 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
     tags: [],
   });
 
-  // Load the incoming template into localTemplate
   useEffect(() => {
     if (template) {
       setLocalTemplate({
@@ -150,18 +150,24 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
         <LeftSection>
           <div style={{ width: "100%" }}>
             {galleryImages.length > 0 && (
-              <GalleryCarousel images={galleryImages} onImageRemove={handleImageRemove} />
-            )}
-            <div style={{ marginTop: "1rem", textAlign: "center" }}>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleImageSelect}
-                style={{ display: "none" }}
+              <GalleryCarousel
+                images={galleryImages}
+                onImageRemove={isCrafter ? handleImageRemove : undefined}
               />
-              <Button text="Add Image" size="medium" color="#6a380f" onClick={handleUploadButtonClick} />
-            </div>
+            )}
+
+            {isCrafter && (
+              <div style={{ marginTop: "1rem", textAlign: "center" }}>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  style={{ display: "none" }}
+                />
+                <Button text="Add Image" size="medium" color="#6a380f" onClick={handleUploadButtonClick} />
+              </div>
+            )}
           </div>
         </LeftSection>
 
@@ -173,6 +179,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
                 type="text"
                 value={localTemplate.name}
                 onChange={(e) => handleChange("name", e.target.value)}
+                disabled={!isCrafter}
               />
             </FieldGroup>
           </FieldWrapper>
@@ -180,14 +187,14 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
           <FieldWrapper>
             <FieldGroup>
               <Label>Craft Type</Label>
-              <StyledInput type="text" value={user.craft} disabled />
+              <StyledInput type="text" value={template?.craftType} disabled />
             </FieldGroup>
           </FieldWrapper>
 
           <FieldWrapper>
             <FieldGroup>
               <Label>Crafter</Label>
-              <StyledInput type="text" value={user.name} disabled />
+              <StyledInput type="text" value={template?.crafterName} disabled />
             </FieldGroup>
           </FieldWrapper>
 
@@ -196,6 +203,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
             <StyledTextarea
               value={localTemplate.description}
               onChange={(e) => handleChange("description", e.target.value)}
+              disabled={!isCrafter}
             />
           </VerticalFieldWrapper>
         </RightSection>
@@ -209,19 +217,24 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
             {localTemplate.availableColors.map((color, idx) => (
               <div key={idx} style={{ position: "relative" }}>
                 <ColorDot $color={color} />
-                <RemoveIcon onClick={() => handleRemoveColor(idx)}>×</RemoveIcon>
+                {isCrafter && (
+                  <RemoveIcon onClick={() => handleRemoveColor(idx)}>×</RemoveIcon>
+                )}
               </div>
             ))}
           </ColorsWrapper>
-          <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
-            <StyledSmallInput
-              type="text"
-              placeholder="Add color..."
-              value={newColor}
-              onChange={(e) => setNewColor(e.target.value)}
-            />
-            <AddButton onClick={handleAddColor}>＋</AddButton>
-          </div>
+
+          {isCrafter && (
+            <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
+              <StyledSmallInput
+                type="text"
+                placeholder="Add color..."
+                value={newColor}
+                onChange={(e) => setNewColor(e.target.value)}
+              />
+              <AddButton onClick={handleAddColor}>＋</AddButton>
+            </div>
+          )}
         </div>
 
         {/* Tags */}
@@ -231,33 +244,40 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
             {localTemplate.tags.map((tag, idx) => (
               <div key={idx} style={{ position: "relative" }}>
                 <Tag>{tag}</Tag>
-                <RemoveTagIcon onClick={() => handleRemoveTag(idx)}>×</RemoveTagIcon>
+                {isCrafter && (
+                  <RemoveTagIcon onClick={() => handleRemoveTag(idx)}>×</RemoveTagIcon>
+                )}
               </div>
             ))}
           </TagsWrapper>
-          <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
-            <StyledSmallInput
-              type="text"
-              placeholder="Add tag..."
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-            />
-            <AddButton onClick={handleAddTag}>＋</AddButton>
-          </div>
+
+          {isCrafter && (
+            <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
+              <StyledSmallInput
+                type="text"
+                placeholder="Add tag..."
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+              />
+              <AddButton onClick={handleAddTag}>＋</AddButton>
+            </div>
+          )}
         </div>
       </BottomSection>
 
-      <SaveButtonWrapper>
-      <Button
-        text={mode === "add" ? "Add Template" : "Save Changes"}
-        size="large"
-        color="#6a380f"
-        onMouseDown={(e) => e.preventDefault()} // <- prevent losing focus
-        onClick={() => {
-          requestAnimationFrame(() => handleSaveChanges());
-        }}
-      />
-      </SaveButtonWrapper>
+      {isCrafter && (
+        <SaveButtonWrapper>
+          <Button
+            text={mode === "add" ? "Add Template" : "Save Changes"}
+            size="large"
+            color="#6a380f"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => {
+              requestAnimationFrame(() => handleSaveChanges());
+            }}
+          />
+        </SaveButtonWrapper>
+      )}
     </DetailsWrapper>
   );
 };

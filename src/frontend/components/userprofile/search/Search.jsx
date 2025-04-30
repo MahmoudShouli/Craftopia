@@ -18,6 +18,7 @@ import { useUser } from '../../../context/UserContext';
 import PopUpPage from '../../map/PopUpPage';
 import MapPopup from '../../map/MapPopup';
 import RatingPage from '../../starrating/RatingPage';
+import SearchBar from "./SearchBar";
 
 const crafts = [
   'Plumber',
@@ -88,16 +89,12 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
 
   return (
     <SearchCard>
-      <SearchInputGroup as="form" onSubmit={handleSearch}>
-        <SearchInput
-          type="text"
-          placeholder="Search by name..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+      <SearchBar
+          query={query}
+          setQuery={setQuery}
+          onSearch={handleSearch}
+          onReset={handleReset}
         />
-        <SearchButton type="submit">Go</SearchButton>
-        <SearchButton type="button" onClick={handleReset}>Reset</SearchButton>
-      </SearchInputGroup>
 
       <FilterBoxGroup>
         <CraftDropdown

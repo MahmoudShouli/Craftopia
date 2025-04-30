@@ -57,6 +57,7 @@ export const TemplatesGrid = styled.div`
 `;
 
 export const SingleTemplateCard = styled.div`
+  position: relative;
   background-color: #fff;
   border: 2px solid #6a380f;
   border-radius: 16px;
@@ -441,14 +442,29 @@ export const BottomCardContent = styled.div`
 export const DeleteIconWrapper = styled.div`
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px; /* moved to left to avoid heart overlap */
   cursor: pointer;
   background: white;
   border-radius: 50%;
   padding: 4px;
-  z-index: 1;
+  z-index: 10;
 
   &:hover {
     background: #eee;
+  }
+`;
+
+export const HeartIconWrapper = styled.div`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  background: white;
+  border-radius: 50%;
+  padding: 5px;
+  z-index: 10;
+
+  &:hover {
+    background: #fee;
   }
 `;

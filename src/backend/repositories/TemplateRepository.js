@@ -1,4 +1,5 @@
 import TemplateModel from "../models/TemplateModel.js";
+import UserModel from "../models/UserModel.js";
 
 // Create a new template
 export const createTemplate = async (templateData) => {

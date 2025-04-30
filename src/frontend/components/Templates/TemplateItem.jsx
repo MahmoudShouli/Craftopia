@@ -10,17 +10,24 @@ import {
   LikesWrapper,
   HeartIcon,
   DeleteIconWrapper,
+  HeartIconWrapper,
 } from "./CrafterTemplates.styled";
 
 import UserAvatar from "../useravatar/UserAvatar";
 import PopUpPage from "../map/PopUpPage";
 import TemplateDetails from "./TemplateDetails";
 import { useUser } from "../../context/UserContext";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaHeart } from "react-icons/fa";
+import { toggleLike } from "../../api/likeService";
 
-const TemplateItem = ({ template, onEdit, onDelete }) => {
+const TemplateItem = ({ template, onEdit, onDelete, initiallyLiked = false }) => {
   const { user } = useUser();
   const [showDetails, setShowDetails] = useState(false);
+  const [liked, setLiked] = useState(initiallyLiked);
+  const [localLikesCount, setLocalLikesCount] = useState(template.likes || 0);
+
+  const isCrafter = user?.role === "crafter";
+  const isUser = user?.role === "customer";
 
   if (!template) return null;
 
@@ -35,16 +42,33 @@ const TemplateItem = ({ template, onEdit, onDelete }) => {
     setShowDetails(false);
   };
 
-  const isCrafter = user?.role === "crafter";
+  const handleLikeToggle = async (e) => {
+    e.stopPropagation();
+    try {
+      const res = await toggleLike(user.email, template._id);
+      setLiked(res.liked);
+      setLocalLikesCount((prev) => prev + (res.liked ? 1 : -1));
+    } catch (err) {
+      console.error("Failed to toggle like:", err);
+    }
+  };
 
   return (
     <>
       <SingleTemplateCard onClick={handleCardClick}>
+        {/* Customer like icon */}
+        {isUser && (
+          <HeartIconWrapper onClick={handleLikeToggle}>
+            <FaHeart color={liked ? "red" : "#ccc"} size={18} />
+          </HeartIconWrapper>
+        )}
+
+        {/* Crafter delete icon */}
         {isCrafter && (
           <DeleteIconWrapper
             onClick={(e) => {
-              e.stopPropagation(); // prevent opening popup
-              if (onDelete) onDelete(template._id);
+              e.stopPropagation();
+              onDelete?.(template._id);
             }}
           >
             <FaTimes size={16} color="#a00" />
@@ -77,10 +101,11 @@ const TemplateItem = ({ template, onEdit, onDelete }) => {
           </ColorsWrapper>
         )}
 
+        {/* Show likes count for crafters only */}
         {isCrafter && (
           <LikesWrapper>
             <HeartIcon />
-            <span>{template.likes}</span>
+            <span>{localLikesCount}</span>
           </LikesWrapper>
         )}
       </SingleTemplateCard>

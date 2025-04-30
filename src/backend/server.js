@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoute.js";
 import reviewRoutes from "./routes/reviewRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import templateRoute from "./routes/templateRoute.js";
+import likeRoute from "./routes/likeRoutes.js";
 
 const startServer = async () => {
   const app = express();
@@ -18,6 +19,7 @@ const startServer = async () => {
   app.use("/reviews", reviewRoutes);
   app.use("/appointments", appointmentRoute);
   app.use("/templates", templateRoute);
+  app.use("/likes", likeRoute);
 
   const server = http.createServer(app);
 
