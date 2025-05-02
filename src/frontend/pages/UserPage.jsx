@@ -115,7 +115,7 @@ const UserPage = () => {
         setSelectedIndex(3);
         break;
       case "templates":
-        setSelectedIndex(3);
+        setSelectedIndex(4);
         break;
       default:
         setSelectedIndex(1);
