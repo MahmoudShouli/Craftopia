@@ -54,6 +54,8 @@ const Dashboard = ({ selectedIndex, onItemSelect }) => {
         onItemSelect?.("Schedules");
       } else if (item.label === "Templates") {
         onItemSelect?.("templates");
+      } else if (item.label === "Chatting") {
+        onItemSelect?.("Chatting");
       } else if (item.route) {
         navigate(item.route);
       }

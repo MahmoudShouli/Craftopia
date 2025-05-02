@@ -111,11 +111,14 @@ const UserPage = () => {
       case "search":
         setSelectedIndex(2);
         break;
-      case "Schedules":
+      case "templates":
         setSelectedIndex(3);
         break;
-      case "templates":
+      case "Schedules":
         setSelectedIndex(4);
+        break;
+      case "Chatting":
+        setSelectedIndex(5);
         break;
       default:
         setSelectedIndex(1);
@@ -161,6 +164,8 @@ const UserPage = () => {
         )}
 
         {activeView === "templates" && <UserTemplates />}
+
+        {activeView === "Chatting" && <ChatBox />}
       </ProfileContainer>
     </PageWrapper>
   );
