@@ -40,7 +40,6 @@ export const getCraftersChattedWith = async (req, res) => {
     const { userEmail } = req.query;
     const crafters = await MessageService.getCraftersChattedWith(userEmail);
     res.json(crafters);
-    // eslint-disable-next-line no-unused-vars
   } catch (err) {
     res.status(500).json({ error: "Failed to retrieve chatted-with list" });
   }
