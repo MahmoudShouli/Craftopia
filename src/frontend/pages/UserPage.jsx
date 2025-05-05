@@ -7,6 +7,7 @@ import UserProfileCard from "../components/userprofile/userprofilecard/UserProfi
 import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
 import Search from "../components/userprofile/search/Search";
 import UserSchedulesPage from "../components/appointments/schedules/UserSchedulesPage";
+import ChatBox from "../components/chat/ChatBox";
 
 import {
   PageWrapper,
@@ -26,6 +27,8 @@ const UserPage = () => {
   const [activeView, setActiveView] = useState("profile");
   const [selectedIndex, setSelectedIndex] = useState(1); // sidebar highlight
   const [crafterForSchedule, setCrafterForSchedule] = useState(null);
+  const [crafterForChat, setCrafterForChat] = useState(null);
+
 
   const fileInputRef = useRef();
 
@@ -102,6 +105,12 @@ const UserPage = () => {
   });
 
   const handleViewChange = (view) => {
+
+    // Clear crafterForChat if leaving the chat view
+    if (activeView === "Chatting" && view !== "Chatting") {
+      setCrafterForChat(null);
+    }
+
     setActiveView(view);
 
     switch (view) {
@@ -160,12 +169,24 @@ const UserPage = () => {
         )}
 
         {activeView === "Schedules" && crafterForSchedule && (
-          <UserSchedulesPage crafter={crafterForSchedule} />
+          <UserSchedulesPage
+            crafter={crafterForSchedule}
+            setCrafterForChat={(crafter) => {
+              setActiveView("Chatting");
+              setSelectedIndex(5);
+              setCrafterForChat(crafter);
+            }}
+            setView={setActiveView}
+          />
         )}
+
 
         {activeView === "templates" && <UserTemplates />}
 
-        {activeView === "Chatting" && <ChatBox />}
+        {activeView === "Chatting" && (
+          <ChatBox crafterToChatWith={crafterForChat} />
+        )}
+
       </ProfileContainer>
     </PageWrapper>
   );

@@ -1,5 +1,6 @@
 import User from "../models/UserModel.js";
 import ReviewModel from "../models/ReviewModel.js";
+import { fetchUserByEmail } from "../services/UserService.js";
 
 export const uploadAvatar = async (req, res) => {
   try {
@@ -105,15 +106,10 @@ export const searchCrafters = async (req, res) => {
 
 export const getUserByEmail = async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.params.email }).lean();
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
+    const { email } = req.query;
+    const user = await fetchUserByEmail(email);
     res.json(user);
   } catch (err) {
-    console.error("❌ Failed to get user by email:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Failed to get user by email" });
   }
 };

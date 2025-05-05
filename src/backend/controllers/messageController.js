@@ -7,13 +7,17 @@ export const getChat = async (req, res) => {
     const messages = await MessageService.getChatMessages(sender, receiver);
     res.json(messages);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch chat messages" });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch chat messages from service" });
   }
 };
 
 export const addMessage = async (req, res) => {
   try {
     const { sender, receiver, content } = req.body;
+    console.log("Incoming message data:", sender, receiver, content);
+
     if (!sender || !receiver || !content) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -23,8 +27,21 @@ export const addMessage = async (req, res) => {
       receiver,
       content,
     });
+
+    await MessageService.recordCrafterChat(sender, receiver);
     res.status(201).json(newMessage);
   } catch (err) {
     res.status(500).json({ error: "Failed to send message" });
+  }
+};
+
+export const getCraftersChattedWith = async (req, res) => {
+  try {
+    const { userEmail } = req.query;
+    const crafters = await MessageService.getCraftersChattedWith(userEmail);
+    res.json(crafters);
+    // eslint-disable-next-line no-unused-vars
+  } catch (err) {
+    res.status(500).json({ error: "Failed to retrieve chatted-with list" });
   }
 };
