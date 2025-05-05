@@ -26,4 +26,6 @@ templateRoute.delete("/:id", TemplateController.deleteTemplate);
 // PUT /templates/:id
 templateRoute.put("/:id", TemplateController.updateTemplate);
 
+templateRoute.get("/sorted", TemplateController.getSortedTemplates);
+
 export default templateRoute;

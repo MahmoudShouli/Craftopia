@@ -46,3 +46,7 @@ export const removeTemplate = async (id) => {
 export const updateTemplate = async (id, templateData) => {
   return await TemplateRepository.updateTemplate(id, templateData);
 };
+
+export const fetchSortedTemplates = async () => {
+  return await TemplateRepository.getAllTemplatesSortedByLikes();
+};

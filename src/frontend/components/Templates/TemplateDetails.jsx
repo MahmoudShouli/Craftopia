@@ -245,30 +245,46 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
         </div>
 
         {/* Tags */}
-        <div>
-          <InfoTitle>Tags</InfoTitle>
-          <TagsWrapper>
-            {availableTags.map((tag) => {
-              const selected = localTemplate.tags.includes(tag);
-              return (
-                <div key={tag} style={{ position: "relative" }}>
-                  <Tag
-                    onClick={() => toggleTag(tag)}
-                    style={{
-                      backgroundColor: selected ? "#6a380f" : "#fff",
-                      color: selected ? "#fff" : "#6a380f",
-                      cursor: "pointer",
-                      border: "1px solid #6a380f",
-                    }}
-                  >
-                    {tag}
-                  </Tag>
-                  {selected && <RemoveTagIcon onClick={() => toggleTag(tag)}>×</RemoveTagIcon>}
-                </div>
-              );
-            })}
-          </TagsWrapper>
-        </div>
+<div>
+  <InfoTitle>Tags</InfoTitle>
+  <TagsWrapper>
+    {isCrafter
+      ? availableTags.map((tag) => {
+          const selected = localTemplate.tags.includes(tag);
+          return (
+            <div key={tag} style={{ position: "relative" }}>
+              <Tag
+                onClick={() => toggleTag(tag)}
+                style={{
+                  backgroundColor: selected ? "#6a380f" : "#fff",
+                  color: selected ? "#fff" : "#6a380f",
+                  cursor: "pointer",
+                  border: "1px solid #6a380f",
+                }}
+              >
+                {tag}
+              </Tag>
+              {selected && (
+                <RemoveTagIcon onClick={() => toggleTag(tag)}>×</RemoveTagIcon>
+              )}
+            </div>
+          );
+        })
+      : localTemplate.tags.map((tag, idx) => (
+          <Tag
+            key={idx}
+            style={{
+              backgroundColor: "#6a380f",
+              color: "#fff",
+              border: "1px solid #6a380f",
+            }}
+          >
+            {tag}
+          </Tag>
+        ))}
+  </TagsWrapper>
+</div>
+
       </BottomSection>
 
       {isCrafter && (

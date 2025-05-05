@@ -4,9 +4,6 @@ import {
   SearchCard,
   FilterBoxGroup,
   FilterBox,
-  SearchInputGroup,
-  SearchInput,
-  SearchButton,
   UsersGrid,
   UsersGridWrapper
 } from './Search.styled';
@@ -20,7 +17,6 @@ import MapPopup from '../../map/MapPopup';
 import RatingPage from '../../starrating/RatingPage';
 import SearchBar from "./SearchBar";
 import { CraftValues } from '../../../constants/craftsEnum';
-
 
 const Search = ({ onViewChange, setSelectedCrafter }) => {
   const [selectedCraft, setSelectedCraft] = useState('');
@@ -47,14 +43,10 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
     setUsers(data);
   };
 
+  // 🔁 Live search on change
   useEffect(() => {
     fetchUsers();
-  }, [selectedCraft, sortByRating]);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    fetchUsers();
-  };
+  }, [query, selectedCraft, sortByRating]);
 
   const toggleRatingSort = () => {
     setSortByRating((prev) => (prev === 'asc' ? 'desc' : 'asc'));
@@ -69,8 +61,8 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
   };
 
   const handleContact = (crafter) => {
-    setSelectedCrafter?.(crafter);     // Pass crafter to parent view
-    onViewChange?.("Schedules");       // Switch view to schedule
+    setSelectedCrafter?.(crafter);
+    onViewChange?.("Schedules");
   };
 
   const handleView = (crafter) => {
@@ -81,11 +73,10 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
   return (
     <SearchCard>
       <SearchBar
-          query={query}
-          setQuery={setQuery}
-          onSearch={handleSearch}
-          onReset={handleReset}
-        />
+        query={query}
+        setQuery={setQuery}
+        onReset={handleReset}
+      />
 
       <FilterBoxGroup>
         <CraftDropdown
@@ -107,7 +98,7 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
           onClick={() => {
             setShowMap(true);
             const [lng, lat] = user.location.coordinates;
-            setSelectedLocation({ lat, lng }); 
+            setSelectedLocation({ lat, lng });
             fetchUsers(); 
           }}
           style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
@@ -152,7 +143,7 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
       )}
       {showUserPopup && (
         <PopUpPage onClose={() => setShowUserPopup(false)}>
-          <RatingPage crafter={selectedUser}></RatingPage>
+          <RatingPage crafter={selectedUser} />
         </PopUpPage>
       )}
     </SearchCard>

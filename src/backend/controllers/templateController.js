@@ -63,3 +63,13 @@ export const updateTemplate = async (req, res) => {
     res.status(500).json({ error: "Failed to update template" });
   }
 };
+
+export const getSortedTemplates = async (req, res) => {
+  try {
+    const templates = await TemplateService.fetchSortedTemplates();
+    res.status(200).json({ success: true, data: templates });
+  } catch (error) {
+    console.error("Error fetching sorted templates:", error);
+    res.status(500).json({ success: false, error: "Server Error" });
+  }
+};

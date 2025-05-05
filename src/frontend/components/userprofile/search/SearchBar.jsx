@@ -1,16 +1,15 @@
 import React from "react";
 import { SearchInputGroup, SearchInput, SearchButton } from "./Search.styled";
 
-const SearchBar = ({ query, setQuery, onSearch, onReset }) => {
+const SearchBar = ({ query, setQuery, onReset }) => {
   return (
-    <SearchInputGroup as="form" onSubmit={onSearch}>
+    <SearchInputGroup>
       <SearchInput
         type="text"
-        placeholder="Search by name..."
+        placeholder="Search by name or tag..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <SearchButton type="submit">Go</SearchButton>
       <SearchButton type="button" onClick={onReset}>
         Reset
       </SearchButton>
