@@ -25,7 +25,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/userprofile" element={<UserPage />} />
           <Route path="/crafterprofile" element={<CrafterPage />} />
-          <Route path="/setPrefrences" element={<SetPreferencesPage />} />
+          <Route path="/setPreferences" element={<SetPreferencesPage />} />
         </Routes>
         <ToastContainer 
           position="top-right"

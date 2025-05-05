@@ -19,17 +19,8 @@ import PopUpPage from '../../map/PopUpPage';
 import MapPopup from '../../map/MapPopup';
 import RatingPage from '../../starrating/RatingPage';
 import SearchBar from "./SearchBar";
+import { CraftValues } from '../../../constants/craftsEnum';
 
-const crafts = [
-  'Plumber',
-  'Electrician',
-  'Painter',
-  'Carpenter',
-  'Tiler',
-  'Cleaner',
-  'Plasterer',
-  'Aluminum and Glass Technician',
-];
 
 const Search = ({ onViewChange, setSelectedCrafter }) => {
   const [selectedCraft, setSelectedCraft] = useState('');
@@ -98,7 +89,7 @@ const Search = ({ onViewChange, setSelectedCrafter }) => {
 
       <FilterBoxGroup>
         <CraftDropdown
-          crafts={crafts}
+          crafts={CraftValues}
           selectedCraft={selectedCraft}
           onSelectCraft={setSelectedCraft}
         />

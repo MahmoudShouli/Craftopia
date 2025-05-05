@@ -18,6 +18,19 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, required: true },
   craft: { type: String, required: false },
   avatarUrl: { type: String, required: false },
+
+  preferences: {
+    favoriteColors: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
+    preferredTags: {
+      type: Map,
+      of: Number,
+      default: {},
+    },
+  },
 });
 
 // 🧭 Add the 2dsphere index for geospatial queries

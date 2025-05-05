@@ -22,10 +22,6 @@ export const createAppointment = async (req, res) => {
 
     const saved = await newAppointment.save();
 
-    console.log(
-      `✅ ${isDisabling ? "Disabled date" : "Created appointment"}:`,
-      saved
-    );
     res.status(isDisabling ? 200 : 201).json(saved);
   } catch (err) {
     console.error("❌ Error saving appointment:", err.message);
@@ -67,11 +63,6 @@ export const deleteAppointment = async (req, res) => {
     const { role } = req.body;
 
     const appointment = await AppointmentModel.findById(id);
-
-    console.log("Trying to delete appointment:");
-    console.log("ID:", id);
-    console.log("Role:", role);
-    console.log("Appointment Status:", appointment?.status);
 
     if (!appointment) {
       return res.status(404).json({ error: "Appointment not found" });

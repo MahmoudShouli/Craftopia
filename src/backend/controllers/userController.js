@@ -1,5 +1,6 @@
 import User from "../models/UserModel.js";
 import ReviewModel from "../models/ReviewModel.js";
+import { updateUserPreferences } from "../services/UserService.js";
 
 export const uploadAvatar = async (req, res) => {
   try {
@@ -115,5 +116,26 @@ export const getUserByEmail = async (req, res) => {
   } catch (err) {
     console.error("❌ Failed to get user by email:", err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const updatePreferences = async (req, res) => {
+  try {
+    const { email, favoriteColors, preferredTags } = req.body;
+
+    if (!email || !favoriteColors || !preferredTags) {
+      return res.status(400).json({ error: "Missing data." });
+    }
+
+    const result = await updateUserPreferences(
+      email,
+      favoriteColors,
+      preferredTags
+    );
+
+    res.status(200).json({ success: true, user: result });
+  } catch (err) {
+    console.error("Update preferences error:", err); // ⬅️ log the real error
+    res.status(500).json({ error: "Failed to update preferences." });
   }
 };

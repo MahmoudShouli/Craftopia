@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import { toast } from "react-toastify";
+import { HexColorPicker } from "react-colorful";
 import {
   DetailsWrapper,
   TopContent,
@@ -19,23 +20,25 @@ import {
   ColorsWrapper,
   ColorDot,
   AddButton,
-  StyledSmallInput,
   RemoveIcon,
   RemoveTagIcon,
   SaveButtonWrapper,
+  ColorPickerWrapper,
 } from "./CrafterTemplates.styled";
 import GalleryCarousel from "./GalleryCarousel";
 import Button from "../button/Button";
 import { uploadImage } from "../../api/templateService";
+import { TagsByCraft } from "../../constants/tagsEnum";
 
 const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
   const { user } = useUser();
-  const isCrafter = user?.role === "crafter"; // ✅ Check role
+  const isCrafter = user?.role === "crafter";
   const fileInputRef = useRef(null);
 
   const [galleryImages, setGalleryImages] = useState([]);
-  const [newColor, setNewColor] = useState("");
-  const [newTag, setNewTag] = useState("");
+  const [newColor, setNewColor] = useState("#6a380f");
+  const [showColorPicker, setShowColorPicker] = useState(false);
+
   const [localTemplate, setLocalTemplate] = useState({
     _id: "",
     name: "",
@@ -71,23 +74,13 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
   };
 
   const handleAddColor = () => {
-    if (newColor.trim()) {
+    if (!localTemplate.availableColors.includes(newColor)) {
       setLocalTemplate((prev) => ({
         ...prev,
-        availableColors: [...prev.availableColors, newColor.trim()],
+        availableColors: [...prev.availableColors, newColor],
       }));
-      setNewColor("");
     }
-  };
-
-  const handleAddTag = () => {
-    if (newTag.trim()) {
-      setLocalTemplate((prev) => ({
-        ...prev,
-        tags: [...prev.tags, newTag.trim()],
-      }));
-      setNewTag("");
-    }
+    setShowColorPicker(false);
   };
 
   const handleRemoveColor = (index) => {
@@ -97,10 +90,12 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
     }));
   };
 
-  const handleRemoveTag = (index) => {
+  const toggleTag = (tag) => {
     setLocalTemplate((prev) => ({
       ...prev,
-      tags: prev.tags.filter((_, idx) => idx !== index),
+      tags: prev.tags.includes(tag)
+        ? prev.tags.filter((t) => t !== tag)
+        : [...prev.tags, tag],
     }));
   };
 
@@ -143,6 +138,9 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
 
     onSave(updatedFormData);
   };
+
+  const userCraft = user?.craft?.charAt(0).toUpperCase() + user?.craft?.slice(1);
+  const availableTags = TagsByCraft[userCraft] || [];
 
   return (
     <DetailsWrapper>
@@ -187,14 +185,14 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
           <FieldWrapper>
             <FieldGroup>
               <Label>Craft Type</Label>
-              <StyledInput type="text" value={template?.craftType} disabled />
+              <StyledInput type="text" value={template?.craftType || user.craft} disabled />
             </FieldGroup>
           </FieldWrapper>
 
           <FieldWrapper>
             <FieldGroup>
               <Label>Crafter</Label>
-              <StyledInput type="text" value={template?.crafterName} disabled />
+              <StyledInput type="text" value={template?.crafterName || user.name} disabled />
             </FieldGroup>
           </FieldWrapper>
 
@@ -210,12 +208,20 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
       </TopContent>
 
       <BottomSection>
-        {/* Available Colors */}
+        {/* Colors */}
         <div>
           <InfoTitle>Available Colors</InfoTitle>
           <ColorsWrapper>
             {localTemplate.availableColors.map((color, idx) => (
-              <div key={idx} style={{ position: "relative" }}>
+              <div
+                key={idx}
+                style={{
+                  position: "relative",
+                  display: "inline-block",
+                  marginRight: "10px",
+                  marginBottom: "10px",
+                }}
+              >
                 <ColorDot $color={color} />
                 {isCrafter && (
                   <RemoveIcon onClick={() => handleRemoveColor(idx)}>×</RemoveIcon>
@@ -225,15 +231,16 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
           </ColorsWrapper>
 
           {isCrafter && (
-            <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
-              <StyledSmallInput
-                type="text"
-                placeholder="Add color..."
-                value={newColor}
-                onChange={(e) => setNewColor(e.target.value)}
-              />
-              <AddButton onClick={handleAddColor}>＋</AddButton>
-            </div>
+            <ColorPickerWrapper>
+              {showColorPicker ? (
+                <>
+                  <HexColorPicker color={newColor} onChange={setNewColor} />
+                  <Button text="Add Color" onClick={handleAddColor} size="small" />
+                </>
+              ) : (
+                <Button text="+ Select Color" onClick={() => setShowColorPicker(true)} size="small" />
+              )}
+            </ColorPickerWrapper>
           )}
         </div>
 
@@ -241,27 +248,26 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
         <div>
           <InfoTitle>Tags</InfoTitle>
           <TagsWrapper>
-            {localTemplate.tags.map((tag, idx) => (
-              <div key={idx} style={{ position: "relative" }}>
-                <Tag>{tag}</Tag>
-                {isCrafter && (
-                  <RemoveTagIcon onClick={() => handleRemoveTag(idx)}>×</RemoveTagIcon>
-                )}
-              </div>
-            ))}
+            {availableTags.map((tag) => {
+              const selected = localTemplate.tags.includes(tag);
+              return (
+                <div key={tag} style={{ position: "relative" }}>
+                  <Tag
+                    onClick={() => toggleTag(tag)}
+                    style={{
+                      backgroundColor: selected ? "#6a380f" : "#fff",
+                      color: selected ? "#fff" : "#6a380f",
+                      cursor: "pointer",
+                      border: "1px solid #6a380f",
+                    }}
+                  >
+                    {tag}
+                  </Tag>
+                  {selected && <RemoveTagIcon onClick={() => toggleTag(tag)}>×</RemoveTagIcon>}
+                </div>
+              );
+            })}
           </TagsWrapper>
-
-          {isCrafter && (
-            <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
-              <StyledSmallInput
-                type="text"
-                placeholder="Add tag..."
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-              />
-              <AddButton onClick={handleAddTag}>＋</AddButton>
-            </div>
-          )}
         </div>
       </BottomSection>
 
@@ -272,9 +278,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
             size="large"
             color="#6a380f"
             onMouseDown={(e) => e.preventDefault()}
-            onClick={() => {
-              requestAnimationFrame(() => handleSaveChanges());
-            }}
+            onClick={() => requestAnimationFrame(handleSaveChanges)}
           />
         </SaveButtonWrapper>
       )}

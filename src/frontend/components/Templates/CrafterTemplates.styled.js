@@ -249,17 +249,34 @@ export const TagsWrapper = styled.div`
 export const ColorDot = styled.div`
   width: 30px;
   height: 30px;
-  background-color: ${(props) => props.$color || "#6a380f"};
   border-radius: 50%;
-  border: 2px solid #6a380f;
+  background-color: ${(props) => props.$color};
+  margin-right: 10px;
+  margin-bottom: 10px;
+  position: relative;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 `;
 
 export const Tag = styled.div`
-  background-color: #6a380f;
-  color: white;
-  padding: 0.25rem 0.75rem;
+  padding: 6px 12px;
+  margin: 5px;
   border-radius: 20px;
-  font-size: 0.9rem;
+  border: 1px solid #6a380f;
+  background-color: white;
+  color: #6a380f;
+  text-align: center;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 `;
 
 /* Buttons and Inputs */
@@ -299,16 +316,21 @@ export const StyledSmallInput = styled.input`
 
 export const RemoveIcon = styled.div`
   position: absolute;
-  top: -8px;
-  right: 15px;
+  top: -6px;
+  right: -6px;
+  background: white;
   color: red;
-  background: none;
-  font-size: 1.5rem;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 1.3rem;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   z-index: 10;
 `;
-
 export const RemoveTagIcon = styled.div`
   position: absolute;
   top: -6px;
@@ -467,4 +489,12 @@ export const HeartIconWrapper = styled.div`
   &:hover {
     background: #fee;
   }
+`;
+
+export const ColorPickerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 0.5rem;
 `;

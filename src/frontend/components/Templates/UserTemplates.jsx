@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import SearchBar from "../userprofile/search/SearchBar";
 import CraftDropdown from "../craftdropdown/CraftDropdown";
 import { useUser } from "../../context/UserContext";
+import { CraftValues } from "../../constants/craftsEnum";
 
 const UserTemplates = () => {
   const { user } = useUser();
@@ -19,16 +20,6 @@ const UserTemplates = () => {
   const [likedTemplateIds, setLikedTemplateIds] = useState([]);
   const [selectedCraft, setSelectedCraft] = useState("");
 
-  const crafts = [
-    "Plumber",
-    "Electrician",
-    "Painter",
-    "Carpenter",
-    "Tiler",
-    "Cleaner",
-    "Plasterer",
-    "Aluminum and Glass Technician",
-  ];
 
   const fetchTemplates = async () => {
     try {
@@ -68,7 +59,7 @@ const UserTemplates = () => {
 
       <FilterBoxGroup>
         <CraftDropdown
-          crafts={crafts}
+          crafts={CraftValues}
           selectedCraft={selectedCraft}
           onSelectCraft={setSelectedCraft}
         />

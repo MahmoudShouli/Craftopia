@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import Button from "../components/button/Button";
+import { saveUserPreferences } from "../api/userService";
+import { useUser } from "../context/UserContext";
+
 import {
   PageWrapper,
   PreferencesCard,
@@ -9,23 +14,22 @@ import {
   SectionWrapper,
   ColorsContainer,
   ColorCircle,
-  AddColorButton,
   ColorPickerWrapper,
   TagContainer,
   TagBox,
   ContentWrapper,
-  ButtonWrapper
+  ButtonWrapper,
 } from "../styles/SetPreferencesPage.styled";
 
-const tagOptions = ["wooden", "modern", "classic", "elegant", "handmade"];
+import { TagValues } from "../constants/tagsEnum"; 
 
 const SetPreferencesPage = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
 
   const [selectedColors, setSelectedColors] = useState([]);
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [tempColor, setTempColor] = useState("#6a380f");
-
   const [selectedTags, setSelectedTags] = useState([]);
 
   const addColor = () => {
@@ -47,16 +51,32 @@ const SetPreferencesPage = () => {
     );
   };
 
-  const handleSubmit = () => {
-    console.log("Selected Colors:", selectedColors);
-    console.log("Selected Tags:", selectedTags);
-    navigate("/userprofile");
+  const handleSubmit = async () => {
+    try {
+      if (!user || !user.email) {
+        toast.error("You must be logged in.");
+        return;
+      }
+
+      await saveUserPreferences({
+        email: user.email,
+        favoriteColors: selectedColors,
+        preferredTags: selectedTags,
+      });
+
+      toast.success("Preferences saved successfully!");
+      navigate("/");
+    } catch (err) {
+      toast.error("Failed to save preferences.");
+    }
   };
 
   return (
     <PageWrapper>
       <PreferencesCard>
-        <h1 style={{ color: "#6a380f", marginBottom: "2rem" }}>Select Your Preferences</h1>
+        <h1 style={{ color: "#6a380f", marginBottom: "2rem", textAlign: "center" }}>
+          Select Your Preferences
+        </h1>
 
         <ContentWrapper>
           {/* Colors Section */}
@@ -97,7 +117,7 @@ const SetPreferencesPage = () => {
           <SectionWrapper>
             <SectionTitle>Preferred Tags</SectionTitle>
             <TagContainer>
-              {tagOptions.map((tag) => (
+              {TagValues.map((tag) => (
                 <TagBox
                   key={tag}
                   selected={selectedTags.includes(tag)}
@@ -110,9 +130,9 @@ const SetPreferencesPage = () => {
           </SectionWrapper>
         </ContentWrapper>
 
-        {/* Button at bottom */}
+        {/* Submit Button */}
         <ButtonWrapper>
-          <Button text="Save Preferences" onClick={handleSubmit} size="large"/>
+          <Button text="Save Preferences" onClick={handleSubmit} size="large" />
         </ButtonWrapper>
       </PreferencesCard>
     </PageWrapper>

@@ -33,7 +33,6 @@ const ReviewBox = ({ userEmail, crafterEmail, appointmentId, onSuccess }) => {
       });
 
       try {
-        console.log("Deleting appointment with role:", userRole);
         await deleteAppointment(appointmentId, userRole);
       } catch (deleteError) {
         console.warn("Full delete error:", deleteError);
