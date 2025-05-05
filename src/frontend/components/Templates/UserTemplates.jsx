@@ -10,7 +10,7 @@ import SearchBar from "../userprofile/search/SearchBar";
 import CraftDropdown from "../craftdropdown/CraftDropdown";
 import { useUser } from "../../context/UserContext";
 import { CraftValues } from "../../constants/craftsEnum";
-import { fetchSortedTemplates } from "../../api/templateService";
+import { fetchSortedTemplates, fetchRecommendedTemplates } from "../../api/templateService";
 import { getUserLikedTemplates } from "../../api/likeService";
 import { useLocation } from "react-router-dom";
 
@@ -28,13 +28,16 @@ const UserTemplates = () => {
   const loadTemplates = useCallback(async () => {
     try {
       setIsLoading(true);
-      const [sorted, likedIds] = await Promise.all([
-        fetchSortedTemplates(),
+
+      const [templateData, likedIds] = await Promise.all([
+        isRecommended
+          ? fetchRecommendedTemplates(user.email)
+          : fetchSortedTemplates(),
         getUserLikedTemplates(user.email),
       ]);
 
-      if (Array.isArray(sorted)) {
-        setTemplates(sorted);
+      if (Array.isArray(templateData)) {
+        setTemplates(templateData);
         setLikedTemplateIds(likedIds || []);
       } else {
         setTemplates([]);
@@ -48,15 +51,14 @@ const UserTemplates = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [user.email]);
+  }, [user.email, isRecommended]);
 
   useEffect(() => {
     loadTemplates();
   }, [location.pathname, loadTemplates]);
 
   const toggleView = () => {
-    toast.info("Recommendation feature coming soon.");
-    setIsRecommended(!isRecommended);
+    setIsRecommended((prev) => !prev);
   };
 
   const handleTemplateLikeChanged = () => {
@@ -97,7 +99,9 @@ const UserTemplates = () => {
           selectedCraft={selectedCraft}
           onSelectCraft={(craft) => setSelectedCraft(craft)}
         />
-        <FilterBox onClick={toggleView}>Toggle View</FilterBox>
+        <FilterBox onClick={toggleView}>
+          {isRecommended ? "All" : "Recommended"}
+        </FilterBox>
       </FilterBoxGroup>
 
       {isLoading ? (

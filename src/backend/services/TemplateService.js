@@ -1,82 +1,125 @@
 import * as TemplateRepository from "../repositories/TemplateRepository.js";
 import { getUserByEmail } from "../repositories/UserRepository.js";
-import { getLikedTemplatesByUser } from "../repositories/LikeRepository.js"; // ✅ FIXED
+import { getLikedTemplatesByUser } from "../repositories/LikeRepository.js";
 
-const COLOR_WEIGHT = 1.5;
-const TAG_WEIGHT = 2.0;
+const COLOR_WEIGHT = 5;
+const TAG_WEIGHT = 3;
 const RECENCY_DECAY_MS = 1000 * 60 * 60 * 24 * 7; // 1 week
 
+// Convert hex color to RGB
 const hexToRGB = (hex) => {
   const bigint = parseInt(hex.slice(1), 16);
   return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
 };
 
+// Calculate color distance
 const colorDistance = (c1, c2) => {
-  const [r1, g1, b1] = hexToRGB(c1);
-  const [r2, g2, b2] = hexToRGB(c2);
-  return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+  try {
+    const [r1, g1, b1] = hexToRGB(c1);
+    const [r2, g2, b2] = hexToRGB(c2);
+    return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+  } catch {
+    return Infinity;
+  }
 };
 
+// Check visual similarity
 const isColorSimilar = (userColor, templateColor) => {
   return colorDistance(userColor, templateColor) < 100;
 };
 
+// Main recommendation logic
 export const getRecommendedTemplates = async (userEmail) => {
   const user = await getUserByEmail(userEmail);
   if (!user) throw new Error("User not found");
 
-  const liked = await getLikedTemplatesByUser(userEmail);
   const allTemplates = await getAllTemplates();
 
-  const recentLikes = liked.map((like) => ({
-    ...like.templateId._doc,
-    createdAt: like.createdAt,
-  }));
+  // ✅ Convert Mongoose Maps to plain JS objects safely
+  const favoriteColorsRaw =
+    user.preferences?.favoriteColors instanceof Map
+      ? Object.fromEntries(user.preferences.favoriteColors)
+      : user.preferences?.favoriteColors?.toObject?.() || {};
 
-  const scoredTemplates = allTemplates
-    .map((template) => {
-      let score = 0;
+  const preferredTagsRaw =
+    user.preferences?.preferredTags instanceof Map
+      ? Object.fromEntries(user.preferences.preferredTags)
+      : user.preferences?.preferredTags?.toObject?.() || {};
 
-      // 🔁 Score by color similarity
-      const userColors = user.favoriteColors
-        ? Object.keys(user.favoriteColors)
-        : [];
+  // ✅ Log raw data
+  console.log("🧾 Raw Preferences:", {
+    favoriteColorsRaw,
+    preferredTagsRaw,
+  });
 
-      for (const userColor of userColors) {
-        for (const tempColor of template.availableColors || []) {
-          if (userColor === tempColor || isColorSimilar(userColor, tempColor)) {
-            score += COLOR_WEIGHT * (user.favoriteColors[userColor] || 1);
-          }
+  // ✅ Convert to arrays of keys
+  const favoriteColors = Object.keys(favoriteColorsRaw);
+  const preferredTags = Object.keys(preferredTagsRaw);
+
+  console.log("🎨 Favorite Colors:", favoriteColors);
+  console.log("🏷️ Preferred Tags:", preferredTags);
+
+  const normalizeColor = (c) => c.trim().toLowerCase();
+
+  const scoredTemplates = allTemplates.map((template) => {
+    let colorScore = 0;
+    let tagScore = 0;
+
+    const matchedColors = [];
+    const matchedTags = [];
+
+    // ✅ Color matching
+    for (const userColor of favoriteColors) {
+      for (const templateColor of template.availableColors || []) {
+        const uColor = normalizeColor(userColor);
+        const tColor = normalizeColor(templateColor);
+
+        if (uColor === tColor || isColorSimilar(uColor, tColor)) {
+          colorScore += COLOR_WEIGHT;
+          matchedColors.push(tColor);
+          break; // only score once per user color
         }
       }
+    }
 
-      // 🏷 Score by preferred tags
-      for (const tag of template.tags || []) {
-        if (user.preferredTags?.[tag]) {
-          score += TAG_WEIGHT * user.preferredTags[tag];
-        }
+    // ✅ Tag matching
+    for (const tag of template.tags || []) {
+      if (preferredTags.includes(tag)) {
+        tagScore += TAG_WEIGHT;
+        matchedTags.push(tag);
       }
+    }
 
-      // ⏱️ Add score from recent likes
-      for (const liked of recentLikes) {
-        if (liked._id.toString() === template._id.toString()) {
-          const ageMs = Date.now() - new Date(liked.createdAt).getTime();
-          const freshness = Math.max(0.1, 1 - ageMs / RECENCY_DECAY_MS);
-          score += 5 * freshness;
-        }
-      }
+    const totalScore = colorScore + tagScore;
 
-      return {
-        ...(template.toObject?.() || template),
-        score,
-      };
-    })
-    .filter((template) => template.score > 0) // ✅ Filter out low-score templates
-    .sort((a, b) => b.score - a.score); // ✅ High to low
+    // ✅ Template debug log
+    console.log({
+      templateName: template.name,
+      templateTags: template.tags,
+      templateColors: template.availableColors,
+      matchedTags,
+      matchedColors,
+      tagScore,
+      colorScore,
+      totalScore,
+    });
 
-  return scoredTemplates;
+    return {
+      ...(template.toObject?.() || template),
+      score: totalScore,
+    };
+  });
+
+  // ✅ Filter and sort
+  const recommended = scoredTemplates
+    .filter((t) => t.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  return recommended;
 };
 
+//-------------------------------------------
+// CRUD and Utility Methods
 export const addTemplate = async (templateData) => {
   return await TemplateRepository.createTemplate(templateData);
 };
@@ -86,7 +129,6 @@ export const getCrafterTemplates = async (crafterEmail) => {
     crafterEmail
   );
   const crafter = await getUserByEmail(crafterEmail);
-
   return templates.map((template) => ({
     ...(template.toObject?.() || template),
     crafterName: crafter?.name || "Unknown",
@@ -95,7 +137,6 @@ export const getCrafterTemplates = async (crafterEmail) => {
 
 export const getAllTemplates = async () => {
   const templates = await TemplateRepository.getAllTemplates();
-
   return await Promise.all(
     templates.map(async (template) => {
       const crafter = await getUserByEmail(template.crafterEmail);
