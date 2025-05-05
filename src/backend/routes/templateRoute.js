@@ -28,4 +28,9 @@ templateRoute.put("/:id", TemplateController.updateTemplate);
 
 templateRoute.get("/sorted", TemplateController.getSortedTemplates);
 
+templateRoute.get(
+  "/recommended/:userEmail",
+  TemplateController.fetchRecommendedTemplates
+);
+
 export default templateRoute;

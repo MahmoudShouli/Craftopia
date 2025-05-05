@@ -13,5 +13,5 @@ export const isTemplateLiked = async (userEmail, templateId) => {
 };
 
 export const getLikedTemplatesByUser = async (userEmail) => {
-  return await Like.find({ userEmail }).select("templateId -_id");
+  return await Like.find({ userEmail }).populate("templateId");
 };

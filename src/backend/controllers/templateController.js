@@ -73,3 +73,16 @@ export const getSortedTemplates = async (req, res) => {
     res.status(500).json({ success: false, error: "Server Error" });
   }
 };
+
+export const fetchRecommendedTemplates = async (req, res) => {
+  try {
+    const userEmail = req.params.userEmail;
+    const recommended = await TemplateService.getRecommendedTemplates(
+      userEmail
+    );
+    res.json(recommended);
+  } catch (err) {
+    console.error("Error in recommendation:", err);
+    res.status(500).json({ error: "Failed to fetch recommendations" });
+  }
+};
