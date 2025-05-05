@@ -5,6 +5,7 @@ import messageService from "../../api/messageService";
 import { useUser } from "../../context/UserContext";
 import styledElements from "./ChatBox.styled";
 import { io } from "socket.io-client";
+import { FiMaximize, FiMinimize, FiImage } from "react-icons/fi";
 
 const socket = io.connect("http://localhost:3000");
 
@@ -18,6 +19,7 @@ const ChatBox = ( { crafterToChatWith }) => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const loadCrafters = async () => {
@@ -64,11 +66,15 @@ const ChatBox = ( { crafterToChatWith }) => {
         console.error('Error creating message:', error);
     }
 
+    setMessageInput("");
   }
   
  
   return (
-    <styledElements.ChatCard>
+    <styledElements.ChatCard fullscreen={isFullscreen}>
+      <styledElements.FullscreenToggle onClick={() => setIsFullscreen(!isFullscreen)}>
+        {isFullscreen ? <FiMinimize /> : <FiMaximize />}
+      </styledElements.FullscreenToggle>
       <styledElements.Sidebar>
         {contactedCrafters.length === 0 ? (
             <div style={{
@@ -118,6 +124,12 @@ const ChatBox = ( { crafterToChatWith }) => {
                 placeholder="Type your message..."
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault(); // prevent new line
+                    handleSend();
+                  }
+                }}
               />
               <styledElements.SendButton onClick={handleSend}>Send</styledElements.SendButton>
             </styledElements.MessageInputContainer>
