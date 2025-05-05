@@ -9,7 +9,6 @@ export const getCrafterTemplates = async (crafterEmail) => {
   const templates = await TemplateRepository.getTemplatesByCrafter(
     crafterEmail
   );
-
   const crafter = await getUserByEmail(crafterEmail);
 
   const enrichedTemplates = templates.map((template) => ({
@@ -27,7 +26,7 @@ export const getAllTemplates = async () => {
     templates.map(async (template) => {
       const crafter = await getUserByEmail(template.crafterEmail);
       return {
-        ...(template.toObject?.() || template), // safely convert if needed
+        ...(template.toObject?.() || template),
         crafterName: crafter?.name || "Unknown",
       };
     })

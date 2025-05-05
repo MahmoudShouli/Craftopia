@@ -20,7 +20,6 @@ const startServer = async () => {
   app.use("/appointments", appointmentRoute);
   app.use("/templates", templateRoute);
   app.use("/likes", likeRoute);
-
   const server = http.createServer(app);
 
   server.listen(PORT, () => {

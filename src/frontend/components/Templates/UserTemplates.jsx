@@ -3,10 +3,12 @@ import {
   TemplateCard,
   TemplatesGrid,
 } from "./CrafterTemplates.styled";
-import { FilterBoxGroup } from "../userprofile/search/Search.styled";
+import { FilterBoxGroup , FilterBox } from "../userprofile/search/Search.styled";
 
 import TemplateItem from "./TemplateItem";
-import { getAllTemplates } from "../../api/templateService";
+import {
+  getMostLikedTemplates,
+} from "../../api/templateService";
 import { getUserLikedTemplates } from "../../api/likeService";
 import { toast } from "react-toastify";
 import SearchBar from "../userprofile/search/SearchBar";
@@ -19,14 +21,14 @@ const UserTemplates = () => {
   const [templates, setTemplates] = useState([]);
   const [likedTemplateIds, setLikedTemplateIds] = useState([]);
   const [selectedCraft, setSelectedCraft] = useState("");
+  const [isRecommended, setIsRecommended] = useState(false); // kept for future use
 
-
-  const fetchTemplates = async () => {
+  const fetchMostLiked = async () => {
     try {
-      const data = await getAllTemplates();
+      const data = await getMostLikedTemplates();
       setTemplates(data);
     } catch (err) {
-      toast.error("Failed to load templates");
+      toast.error("Failed to load templates by likes");
       console.error(err);
     }
   };
@@ -43,19 +45,20 @@ const UserTemplates = () => {
 
   useEffect(() => {
     if (user?.email) {
-      fetchTemplates();
+      fetchMostLiked();
       fetchLikes();
     }
   }, [user]);
 
+  const toggleView = () => {
+    toast.info("Recommendation feature coming soon.");
+    // Keep this function for future expansion
+    setIsRecommended(!isRecommended);
+  };
+
   return (
     <TemplateCard>
-      <SearchBar
-        // query={}
-        // setQuery={}
-        // onSearch={}
-        // onReset={}
-      />
+      <SearchBar />
 
       <FilterBoxGroup>
         <CraftDropdown
@@ -63,6 +66,10 @@ const UserTemplates = () => {
           selectedCraft={selectedCraft}
           onSelectCraft={setSelectedCraft}
         />
+
+        <FilterBox onClick={toggleView}>
+          Toggle View
+        </FilterBox>
       </FilterBoxGroup>
 
       <TemplatesGrid>

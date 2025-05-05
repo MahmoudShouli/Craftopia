@@ -112,10 +112,10 @@ const UserPage = () => {
         setSelectedIndex(2);
         break;
       case "Schedules":
-        setSelectedIndex(3);
+        setSelectedIndex(4);
         break;
       case "templates":
-        setSelectedIndex(4);
+        setSelectedIndex(3);
         break;
       default:
         setSelectedIndex(1);

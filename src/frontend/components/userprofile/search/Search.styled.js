@@ -67,7 +67,7 @@ export const FilterBoxGroup = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5rem;
+  gap: 1rem;
 `;
 
 export const FilterBox = styled.button`
