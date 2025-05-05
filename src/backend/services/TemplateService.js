@@ -25,7 +25,7 @@ const colorDistance = (c1, c2) => {
 
 // Check visual similarity
 const isColorSimilar = (userColor, templateColor) => {
-  return colorDistance(userColor, templateColor) < 100;
+  return colorDistance(userColor, templateColor) < 80;
 };
 
 // Main recommendation logic
@@ -35,7 +35,7 @@ export const getRecommendedTemplates = async (userEmail) => {
 
   const allTemplates = await getAllTemplates();
 
-  // ✅ Convert Mongoose Maps to plain JS objects safely
+  //  Convert Mongoose Maps to plain JS objects safely
   const favoriteColorsRaw =
     user.preferences?.favoriteColors instanceof Map
       ? Object.fromEntries(user.preferences.favoriteColors)
@@ -46,18 +46,9 @@ export const getRecommendedTemplates = async (userEmail) => {
       ? Object.fromEntries(user.preferences.preferredTags)
       : user.preferences?.preferredTags?.toObject?.() || {};
 
-  // ✅ Log raw data
-  console.log("🧾 Raw Preferences:", {
-    favoriteColorsRaw,
-    preferredTagsRaw,
-  });
-
-  // ✅ Convert to arrays of keys
+  // Convert to arrays of keys
   const favoriteColors = Object.keys(favoriteColorsRaw);
   const preferredTags = Object.keys(preferredTagsRaw);
-
-  console.log("🎨 Favorite Colors:", favoriteColors);
-  console.log("🏷️ Preferred Tags:", preferredTags);
 
   const normalizeColor = (c) => c.trim().toLowerCase();
 
@@ -68,7 +59,7 @@ export const getRecommendedTemplates = async (userEmail) => {
     const matchedColors = [];
     const matchedTags = [];
 
-    // ✅ Color matching
+    //  Color matching
     for (const userColor of favoriteColors) {
       for (const templateColor of template.availableColors || []) {
         const uColor = normalizeColor(userColor);
@@ -82,7 +73,7 @@ export const getRecommendedTemplates = async (userEmail) => {
       }
     }
 
-    // ✅ Tag matching
+    //  Tag matching
     for (const tag of template.tags || []) {
       if (preferredTags.includes(tag)) {
         tagScore += TAG_WEIGHT;
@@ -92,25 +83,13 @@ export const getRecommendedTemplates = async (userEmail) => {
 
     const totalScore = colorScore + tagScore;
 
-    // ✅ Template debug log
-    console.log({
-      templateName: template.name,
-      templateTags: template.tags,
-      templateColors: template.availableColors,
-      matchedTags,
-      matchedColors,
-      tagScore,
-      colorScore,
-      totalScore,
-    });
-
     return {
       ...(template.toObject?.() || template),
       score: totalScore,
     };
   });
 
-  // ✅ Filter and sort
+  // Filter and sort
   const recommended = scoredTemplates
     .filter((t) => t.score > 0)
     .sort((a, b) => b.score - a.score);
