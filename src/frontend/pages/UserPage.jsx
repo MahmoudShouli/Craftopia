@@ -27,7 +27,7 @@ const UserPage = () => {
   const [activeView, setActiveView] = useState("profile");
   const [selectedIndex, setSelectedIndex] = useState(1); // sidebar highlight
   const [crafterForSchedule, setCrafterForSchedule] = useState(null);
-  const [crafterForChat, setCrafterForChat] = useState(null);
+  const [userForChat, setUserForChat] = useState(null);
 
 
   const fileInputRef = useRef();
@@ -108,7 +108,7 @@ const UserPage = () => {
 
     // Clear crafterForChat if leaving the chat view
     if (activeView === "Chatting" && view !== "Chatting") {
-      setCrafterForChat(null);
+      setUserForChat(null);
     }
 
     setActiveView(view);
@@ -171,10 +171,10 @@ const UserPage = () => {
         {activeView === "Schedules" && crafterForSchedule && (
           <UserSchedulesPage
             crafter={crafterForSchedule}
-            setCrafterForChat={(crafter) => {
+            setUserForChat={(crafter) => {
               setActiveView("Chatting");
               setSelectedIndex(5);
-              setCrafterForChat(crafter);
+              setUserForChat(crafter);
             }}
             setView={setActiveView}
           />
@@ -184,7 +184,7 @@ const UserPage = () => {
         {activeView === "templates" && <UserTemplates />}
 
         {activeView === "Chatting" && (
-          <ChatBox crafterToChatWith={crafterForChat} />
+          <ChatBox userToChatWith={userForChat} />
         )}
 
       </ProfileContainer>

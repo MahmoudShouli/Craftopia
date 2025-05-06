@@ -10,15 +10,15 @@ import { FiMaximize, FiMinimize, FiImage } from "react-icons/fi";
 const socket = io.connect("http://localhost:3000");
 
 
-const ChatBox = ( { crafterToChatWith }) => {
+const ChatBox = ( { userToChatWith }) => {
   const { user } = useUser();
   const fileInputRef = useRef();
   const bottomRef = useRef(null);
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
-  const [contactedCrafters, setContactedCrafters] = useState([]);
-  const [selectedCrafter, setSelectedCrafter] = useState(null);
+  const [contactedUsers, setContactedUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
@@ -27,16 +27,16 @@ const ChatBox = ( { crafterToChatWith }) => {
 
   useEffect(() => {
     const loadCrafters = async () => {
-      const chattedWithCrafters = await messageService.getCraftersChattedWith(user.email); 
+      const contacts = await messageService.getContacts(user.email); 
   
       let merged = [];
-      if (crafterToChatWith) {
-        const alreadyExists = chattedWithCrafters.some(c => c.email === crafterToChatWith.email);
-        merged = alreadyExists ? chattedWithCrafters : [...chattedWithCrafters, crafterToChatWith];
-        setContactedCrafters(merged);
+      if (userToChatWith) {
+        const alreadyExists = contacts.some(c => c.email === userToChatWith.email);
+        merged = alreadyExists ? contacts : [...contacts, userToChatWith];
+        setContactedUsers(merged);
       }
       else {
-        setContactedCrafters(chattedWithCrafters);
+        setContactedUsers(contacts);
       }
       
     };
@@ -87,26 +87,15 @@ const ChatBox = ( { crafterToChatWith }) => {
     };
   }, []);
 
-  useEffect(() => {
-    socket.on("user_offline", (email) => {
-      setOnlineUsers(onlineUsers - email);
-    });
-  
-    return () => {
-      socket.off("online_users");
-    };
-  }, []);
-
-  
   const selectCrafter = async (crafter) => {
-    setSelectedCrafter(crafter);
+    setSelectedUser(crafter);
     const chat = await messageService.getChatMessages(user.email, crafter.email);
     setMessages(chat);
   };
 
   const handleSend = async () => {
     let sender = user.email;
-    let receiver = selectedCrafter.email;
+    let receiver = selectedUser.email;
     let content = messageInput;
     let timestamp = new Date().toISOString()
 
@@ -131,7 +120,7 @@ const ChatBox = ( { crafterToChatWith }) => {
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file || !selectedCrafter) return;
+    if (!file || !selectedUser) return;
   
     const formData = new FormData();
     formData.append("image", file);
@@ -146,7 +135,7 @@ const ChatBox = ( { crafterToChatWith }) => {
       const imageUrl = data.url;
   
       const sender = user.email;
-      const receiver = selectedCrafter.email;
+      const receiver = selectedUser.email;
       const content = imageUrl;
       let timestamp = new Date().toISOString()
 
@@ -172,7 +161,7 @@ const ChatBox = ( { crafterToChatWith }) => {
         {isFullscreen ? <FiMinimize /> : <FiMaximize />}
       </styledElements.FullscreenToggle>
       <styledElements.Sidebar>
-        {contactedCrafters.length === 0 ? (
+        {contactedUsers.length === 0 ? (
             <div style={{
             padding: "2rem",
             textAlign: "center",
@@ -182,21 +171,21 @@ const ChatBox = ( { crafterToChatWith }) => {
             No chats yet!
             </div>
         ) : (
-            contactedCrafters.map((crafter) => (
+            contactedUsers.map((chatter) => (
             <styledElements.CrafterItem
-                key={crafter.email}
-                onClick={() => selectCrafter(crafter)}
-                selected={selectedCrafter?.email === crafter.email}
+                key={chatter.email}
+                onClick={() => selectCrafter(chatter)}
+                selected={selectedUser?.email === chatter.email}
             >
                 <styledElements.Avatar> 
                     <img
-                        src={crafter.avatarUrl || "/default-avatar.png"}
+                        src={chatter.avatarUrl || "/default-avatar.png"}
                         alt="avatar"
                         style={{ width: "100%", height: "100%", borderRadius: "50%" }}
                     />
-                    {onlineUsers.includes(crafter.email) ? <styledElements.OnlineDot /> : <styledElements.OfflineDot/>}
+                    {onlineUsers.includes(chatter.email) ? <styledElements.OnlineDot /> : <styledElements.OfflineDot/>}
                 </styledElements.Avatar>
-                <styledElements.CrafterName>{crafter.name}</styledElements.CrafterName>
+                <styledElements.CrafterName>{chatter.name}</styledElements.CrafterName>
             </styledElements.CrafterItem>
             ))
         )}
@@ -204,7 +193,7 @@ const ChatBox = ( { crafterToChatWith }) => {
 
 
       <styledElements.MessageArea>
-        {selectedCrafter ? (
+        {selectedUser ? (
           <>
             <styledElements.MessageList>
               {messages.map((msg) => (

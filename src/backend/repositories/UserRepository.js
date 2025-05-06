@@ -11,7 +11,7 @@ export const getChattedWith = async (userEmail) => {
   return await User.find({ email: { $in: user.chattedWith } });
 };
 
-export const addCrafterToChattedWith = async (userEmail, crafterEmail) => {
+export const addToChattedWith = async (userEmail, crafterEmail) => {
   return await User.updateOne(
     { email: userEmail },
     { $addToSet: { chattedWith: crafterEmail } } // avoids duplicates

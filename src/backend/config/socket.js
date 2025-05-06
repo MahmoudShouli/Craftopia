@@ -20,6 +20,11 @@ const configureSocket = (server) => {
       io.emit("online_users", Array.from(onlineUsers));
     });
 
+    socket.on("user_offline", (email) => {
+      onlineUsers.delete(email);
+      io.emit("online_users", Array.from(onlineUsers)); // rebroadcast
+    });
+
     socket.on("disconnect", () => {
       io.emit("online_users", Array.from(onlineUsers));
     });

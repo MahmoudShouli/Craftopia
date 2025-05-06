@@ -28,9 +28,9 @@ export const sendMessage = async ({ sender, receiver, content }) => {
   }
 };
 
-export const getCraftersChattedWith = async (userEmail) => {
+export const getContacts = async (userEmail) => {
   try {
-    const response = await axios.get(`${API_URL}/get-contacted-crafters`, {
+    const response = await axios.get(`${API_URL}/get-contacts`, {
       params: { userEmail },
     });
     return response.data;
@@ -43,7 +43,7 @@ export const getCraftersChattedWith = async (userEmail) => {
 const messageService = {
   getChatMessages,
   sendMessage,
-  getCraftersChattedWith,
+  getContacts,
 };
 
 export default messageService;

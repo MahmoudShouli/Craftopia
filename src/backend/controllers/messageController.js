@@ -27,17 +27,17 @@ export const addMessage = async (req, res) => {
       content,
     });
 
-    await MessageService.recordCrafterChat(sender, receiver);
+    await MessageService.recordChat(sender, receiver);
     res.status(201).json(newMessage);
   } catch (err) {
     res.status(500).json({ error: "Failed to send message" });
   }
 };
 
-export const getCraftersChattedWith = async (req, res) => {
+export const getContacts = async (req, res) => {
   try {
     const { userEmail } = req.query;
-    const crafters = await MessageService.getCraftersChattedWith(userEmail);
+    const crafters = await MessageService.getContacts(userEmail);
     res.json(crafters);
   } catch (err) {
     res.status(500).json({ error: "Failed to retrieve chatted-with list" });

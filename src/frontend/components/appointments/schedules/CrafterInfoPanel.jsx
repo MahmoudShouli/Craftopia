@@ -14,7 +14,7 @@ import { FaCalendarAlt, FaClock, FaUser } from "react-icons/fa";
 import UserAvatar from "../../../components/useravatar/UserAvatar";
 import Button from "../../../components/button/Button"; 
 
-const CrafterInfoPanel = ({ crafter, selectedDate, step, setCrafterForChat, setView }) => (
+const CrafterInfoPanel = ({ crafter, selectedDate, step, setUserForChat, setView }) => (
   <LeftSection>
     <UserAvatar
       previewUrl={crafter.avatarUrl}
@@ -53,7 +53,7 @@ const CrafterInfoPanel = ({ crafter, selectedDate, step, setCrafterForChat, setV
           size="medium"
           color="#6a380f"
           onClick={() => {
-            setCrafterForChat(crafter);
+            setUserForChat(crafter);
             setView("Chatting");
           }} 
         />

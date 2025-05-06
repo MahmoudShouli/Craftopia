@@ -16,7 +16,7 @@ import CrafterInfoPanel from "./CrafterInfoPanel";
 import BookingSection from "./BookingSection";
 import AppointmentsPanel from "./AppointmentsPanel";
 
-const UserSchedulesPage = ({ crafter, setCrafterForChat, setView }) => {
+const UserSchedulesPage = ({ crafter, setUserForChat, setView }) => {
   const { user } = useUser();
   const [selectedDate, setSelectedDate] = useState(null);
   const [step, setStep] = useState(1);
@@ -84,7 +84,7 @@ const UserSchedulesPage = ({ crafter, setCrafterForChat, setView }) => {
   <SchedulesInnerWrapper>
     {crafter ? (
       <>
-        <CrafterInfoPanel crafter={crafter} selectedDate={selectedDate} step={step} setCrafterForChat={setCrafterForChat} setView={setView} />
+        <CrafterInfoPanel crafter={crafter} selectedDate={selectedDate} step={step} setUserForChat={setUserForChat} setView={setView} />
         <BookingSection
           selectedDate={selectedDate}
           setSelectedDate={(date) => {
