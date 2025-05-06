@@ -62,7 +62,7 @@ const MessageItem = ({ msg, isFromSelf, handleLike, onDelete, avatar }) => {
 
         {showDelete && isFromSelf && (
           <DeleteIcon onClick={() => onDelete(msg._id)}>
-            ❌ 
+            Delete 
           </DeleteIcon>
         )}
   

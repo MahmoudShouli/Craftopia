@@ -177,18 +177,12 @@ const ChatBox = ( { userToChatWith }) => {
       const sender = user.email;
       const receiver = selectedUser.email;
       const content = imageUrl;
-      let timestamp = new Date().toISOString()
-
-      let tempMessage = {
-        sender,
-        receiver,
-        content,
-        timestamp
-      };
+    
   
-      setMessages((prevMessages) => [...prevMessages, tempMessage]);
-      await messageService.sendMessage({ sender, receiver, content });
-      socket.emit('send_message', tempMessage); 
+      
+      const newMessage = await messageService.sendMessage({ sender, receiver, content });
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      socket.emit('send_message', newMessage); 
     } catch (err) {
       console.error("Image upload failed:", err);
     }
@@ -262,7 +256,7 @@ const ChatBox = ( { userToChatWith }) => {
                         alt="avatar"
                         style={{ width: "100%", height: "100%", borderRadius: "50%" }}
                     />
-                    {onlineUsers.includes(chatter.email) ? <styledElements.OnlineDot /> : <styledElements.OfflineDot/>}
+                    {onlineUsers.includes(chatter.email) ? <styledElements.OnlineDot title="Online" /> : <styledElements.OfflineDot title="Offline"/>}
                 </styledElements.Avatar>
                 <styledElements.CrafterName>{chatter.name}</styledElements.CrafterName>
             </styledElements.CrafterItem>

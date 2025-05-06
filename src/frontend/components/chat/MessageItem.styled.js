@@ -54,18 +54,18 @@ export const DeleteIcon = styled.div`
   position: absolute;
   top: 8px;
   right: 8px;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: red;
   cursor: pointer;
   z-index: 2;
   user-select: none;
   background-color: white;
   border-radius: 50%;
-  padding: 0.3rem;
+  padding: 0.5rem;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    background-color: #ffe5e5;
+    background-color: rgb(100, 64, 64);
   }
 `;
 
