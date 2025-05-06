@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef} from "react";
-import { MessageBubble, LikeIcon, DeleteIcon } from "./MessageItem.styled";
+import { MessageBubble, LikeIcon, DeleteIcon, Avatar } from "./MessageItem.styled";
 
-const MessageItem = ({ msg, isFromSelf, handleLike, onDelete }) => {
+const MessageItem = ({ msg, isFromSelf, handleLike, onDelete, avatar }) => {
     const [animateLike, setAnimateLike] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
     const prevLikedRef = useRef(msg.liked);
@@ -16,7 +16,16 @@ const MessageItem = ({ msg, isFromSelf, handleLike, onDelete }) => {
     }, [msg.liked]);
   
     return (
-      <MessageBubble
+      <div style={{display: "flex"}}>
+        <Avatar> 
+            <img
+                src={avatar || "/default-avatar.png"}
+                alt="avatar"
+                style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+            />
+        </Avatar>
+
+        <MessageBubble
         fromSelf={isFromSelf}
         onContextMenu={(e) => {
           e.preventDefault();
@@ -42,15 +51,14 @@ const MessageItem = ({ msg, isFromSelf, handleLike, onDelete }) => {
         </div>
   
         {msg.content.startsWith("http") && msg.content.includes("cloudinary") ? (
-          /\.(webm|mp3)$/.test(msg.content) ? (
-            <audio controls src={msg.content} style={{ maxWidth: "100%" }} />
-          ) : (
-            <img src={msg.content} alt="sent" style={{ maxWidth: "100%", borderRadius: "0.5rem" }} />
-          )
+          <img
+            src={msg.content}
+            alt="sent"
+            style={{ maxWidth: "100%", borderRadius: "0.5rem" }}
+          />
         ) : (
           <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
         )}
-
 
         {showDelete && isFromSelf && (
           <DeleteIcon onClick={() => onDelete(msg._id)}>
@@ -64,6 +72,8 @@ const MessageItem = ({ msg, isFromSelf, handleLike, onDelete }) => {
           </LikeIcon>
         )}
       </MessageBubble>
+      </div>
+     
     );
   };
   

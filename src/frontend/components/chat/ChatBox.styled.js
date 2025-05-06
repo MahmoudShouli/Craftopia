@@ -85,7 +85,7 @@ const MessageInputContainer = styled.div`
   border-top: 1px solid #ddd;
 `;
 
-const MessageInput = styled.input`
+const MessageInput = styled.textarea`
   flex: 1;
   padding: 0.75rem;
   border: 1px solid #ccc;
@@ -158,6 +158,20 @@ const OfflineDot = styled.div`
   border: 2px solid white;
 `;
 
+const SidebarToggle = styled.button`
+  position: absolute;
+  top: ${({ sidebarVisible }) => (sidebarVisible ? "10px" : "5px")};
+  left: ${({ sidebarVisible }) => (sidebarVisible ? "14.5%" : "0.8%")};
+  z-index: 10;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 40%;
+  padding: ${({ sidebarVisible }) => (sidebarVisible ? "0.5rem" : "0.1rem")};
+  cursor: pointer;
+  transition: left 0.3s ease;
+`;
+
 const styledElements = {
   ChatCard,
   Sidebar,
@@ -173,6 +187,7 @@ const styledElements = {
   ImageUploadButton,
   OnlineDot,
   OfflineDot,
+  SidebarToggle,
 };
 
 export default styledElements;

@@ -5,6 +5,8 @@ import messageService from "../../api/messageService";
 import { useUser } from "../../context/UserContext";
 import styledElements from "./ChatBox.styled";
 import { FiMaximize, FiMinimize, FiImage } from "react-icons/fi";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
 import MessageItem from "./MessageItem";
 import { socket } from "../../../utils/socket";
 
@@ -24,12 +26,9 @@ const ChatBox = ( { userToChatWith }) => {
   const [messageInput, setMessageInput] = useState("");
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
 
-  const [isRecording, setIsRecording] = useState(false);
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
-
-
+  
   useEffect(() => {
     const loadCrafters = async () => {
       const contacts = await messageService.getContacts(user.email); 
@@ -231,7 +230,16 @@ const ChatBox = ( { userToChatWith }) => {
       <styledElements.FullscreenToggle onClick={() => setIsFullscreen(!isFullscreen)}>
         {isFullscreen ? <FiMinimize /> : <FiMaximize />}
       </styledElements.FullscreenToggle>
-      <styledElements.Sidebar>
+
+      <styledElements.SidebarToggle
+        sidebarVisible={showSidebar}
+        onClick={() => setShowSidebar(!showSidebar)}
+      >
+        {showSidebar ? <FaChevronLeft /> : <FaChevronRight />}
+      </styledElements.SidebarToggle>
+
+      {showSidebar && (
+        <styledElements.Sidebar>
         {contactedUsers.length === 0 ? (
             <div style={{
             padding: "2rem",
@@ -260,7 +268,9 @@ const ChatBox = ( { userToChatWith }) => {
             </styledElements.CrafterItem>
             ))
         )}
-      </styledElements.Sidebar>
+        </styledElements.Sidebar>
+      )}
+      
 
 
       <styledElements.MessageArea>
@@ -274,6 +284,7 @@ const ChatBox = ( { userToChatWith }) => {
                   isFromSelf={msg.sender === user.email}
                   handleLike={handleLike}
                   onDelete={handleDelete}
+                  avatar = {msg.sender === user.email ? user.avatarUrl : selectedUser.avatarUrl}
                 />
               ))}
               <div ref={bottomRef} />

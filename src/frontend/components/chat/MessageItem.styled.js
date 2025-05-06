@@ -68,3 +68,17 @@ export const DeleteIcon = styled.div`
     background-color: #ffe5e5;
   }
 `;
+
+export const Avatar = styled.div`
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background-color: #6a380f;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.9rem;
+`;
