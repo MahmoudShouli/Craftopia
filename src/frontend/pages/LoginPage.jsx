@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/authService';
 import { useUser } from '../context/UserContext';
+import { io } from "socket.io-client";
 import {
   PageWrapper,
   LeftPanel,
@@ -24,6 +25,7 @@ import {
   Eye
 } from '../styles/LoginPage.styled'
 
+const socket = io.connect("http://localhost:3000");
 
 const LoginPage = () => {
 
@@ -39,7 +41,9 @@ const LoginPage = () => {
       data.user
     );
   
+     socket.emit("user_online", data.user.email);
      navigate('/');
+
   };
 
   return (

@@ -18,6 +18,7 @@ const getCraftersChattedWith = async (userEmail) => {
 
 const recordCrafterChat = async (userEmail, crafterEmail) => {
   await addCrafterToChattedWith(userEmail, crafterEmail);
+  await addCrafterToChattedWith(crafterEmail, userEmail);
 };
 
 export default {

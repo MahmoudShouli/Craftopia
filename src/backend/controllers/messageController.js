@@ -15,8 +15,7 @@ export const getChat = async (req, res) => {
 
 export const addMessage = async (req, res) => {
   try {
-    const { sender, receiver, content } = req.body;
-    console.log("Incoming message data:", sender, receiver, content);
+    const { sender, receiver, content, date } = req.body;
 
     if (!sender || !receiver || !content) {
       return res.status(400).json({ error: "Missing required fields" });

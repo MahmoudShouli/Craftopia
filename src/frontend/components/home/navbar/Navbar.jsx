@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import logo from '../../../assets/logo.png';
 import { FaUser, FaBars } from 'react-icons/fa';
 import { Link as ScrollLink } from 'react-scroll';
+import { io } from "socket.io-client";
 import {
   NavWrapper,
   LeftSection,
@@ -17,6 +18,8 @@ import {
 import { useUser } from '../../../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import UserAvatar from '../../useravatar/UserAvatar';
+
+const socket = io.connect("http://localhost:3000");
 
 const NavbarComponent = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -52,7 +55,8 @@ const NavbarComponent = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    socket.emit("user_offline", user.email);
+    sessionStorage.removeItem('user');
     setUser(null); // Clear context
     navigate('/');
   };

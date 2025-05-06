@@ -48,6 +48,7 @@ const CrafterItem = styled.div`
 `;
 
 const Avatar = styled.div`
+  position: relative;
   width: 70px;
   height: 70px;
   background-color: #6a380f;
@@ -79,11 +80,12 @@ const MessageList = styled.div`
 `;
 
 const MessageBubble = styled.div`
-  align-self: ${({ fromSelf }) => (fromSelf ? "flex-start" : "flex-end")};
-  background-color: ${({ fromSelf }) => (fromSelf ? "#DDDDDD" : "#f0f0f0")};
+  align-self: "flex-start";
   padding: 0.75rem 1rem;
   border-radius: 20px;
   max-width: 60%;
+  width: fit-content;
+  word-break: break-word;
   margin-bottom: 1rem;
 `;
 
@@ -144,6 +146,28 @@ const ImageUploadButton = styled.button`
   }
 `;
 
+const OnlineDot = styled.div`
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: #00c853;
+  border-radius: 50%;
+  border: 2px solid white;
+`;
+
+const OfflineDot = styled.div`
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: rgb(154, 167, 159);
+  border-radius: 50%;
+  border: 2px solid white;
+`;
+
 const styledElements = {
   ChatCard,
   Sidebar,
@@ -158,6 +182,8 @@ const styledElements = {
   SendButton,
   FullscreenToggle,
   ImageUploadButton,
+  OnlineDot,
+  OfflineDot,
 };
 
 export default styledElements;

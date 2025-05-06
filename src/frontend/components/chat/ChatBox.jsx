@@ -15,6 +15,7 @@ const ChatBox = ( { crafterToChatWith }) => {
   const fileInputRef = useRef();
   const bottomRef = useRef(null);
 
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const [contactedCrafters, setContactedCrafters] = useState([]);
   const [selectedCrafter, setSelectedCrafter] = useState(null);
@@ -43,9 +44,58 @@ const ChatBox = ( { crafterToChatWith }) => {
   },[]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    const lastMessage = messages[messages.length - 1];
+  
+    if (lastMessage?.content?.includes("cloudinary")) {
+      // wait for image to load
+      const img = new Image();
+      img.src = lastMessage.content;
+  
+      img.onload = () => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+      };
+    } else {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
   
+
+  useEffect(() => {
+    if (!user?.email) return;
+  
+    socket.emit('join', user.email);
+  
+    const handler = (data) => {
+      setMessages((prevMessages) => [...prevMessages, data]);
+    };
+  
+    socket.on('receive_message', handler);
+  
+    return () => {
+      socket.off('receive_message', handler);
+    };
+  }, [user.email]);
+  
+  
+  useEffect(() => {
+    socket.on("online_users", (list) => {
+      setOnlineUsers(list);
+    });
+  
+    return () => {
+      socket.off("online_users");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("user_offline", (email) => {
+      setOnlineUsers(onlineUsers - email);
+    });
+  
+    return () => {
+      socket.off("online_users");
+    };
+  }, []);
 
   
   const selectCrafter = async (crafter) => {
@@ -58,18 +108,20 @@ const ChatBox = ( { crafterToChatWith }) => {
     let sender = user.email;
     let receiver = selectedCrafter.email;
     let content = messageInput;
+    let timestamp = new Date().toISOString()
 
     let tempMessage = {
       sender,
       receiver,
-      content
+      content,
+      timestamp
     };
 
     setMessages((prevMessages) => [...prevMessages, tempMessage]);
 
     try {
       await messageService.sendMessage({sender, receiver, content});
-      //socket.emit('send_message', tempMessage); 
+      socket.emit('send_message', tempMessage); 
     } catch (error) {
         console.error('Error creating message:', error);
     }
@@ -96,9 +148,18 @@ const ChatBox = ( { crafterToChatWith }) => {
       const sender = user.email;
       const receiver = selectedCrafter.email;
       const content = imageUrl;
+      let timestamp = new Date().toISOString()
+
+      let tempMessage = {
+        sender,
+        receiver,
+        content,
+        timestamp
+      };
   
-      setMessages((prev) => [...prev, { sender, receiver, content }]);
+      setMessages((prevMessages) => [...prevMessages, tempMessage]);
       await messageService.sendMessage({ sender, receiver, content });
+      socket.emit('send_message', tempMessage); 
     } catch (err) {
       console.error("Image upload failed:", err);
     }
@@ -132,7 +193,8 @@ const ChatBox = ( { crafterToChatWith }) => {
                         src={crafter.avatarUrl || "/default-avatar.png"}
                         alt="avatar"
                         style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-                        />
+                    />
+                    {onlineUsers.includes(crafter.email) ? <styledElements.OnlineDot /> : <styledElements.OfflineDot/>}
                 </styledElements.Avatar>
                 <styledElements.CrafterName>{crafter.name}</styledElements.CrafterName>
             </styledElements.CrafterItem>
@@ -147,15 +209,37 @@ const ChatBox = ( { crafterToChatWith }) => {
             <styledElements.MessageList>
               {messages.map((msg) => (
                 <styledElements.MessageBubble
-                  key={msg._id || `${msg.sender}-${Math.random()}`} // fallback key
+                  key={msg._id || `${msg.sender}-${Math.random()}`}
                   fromSelf={msg.sender === user.email}
                 >
+                  <div style={{ marginBottom: "0.3rem" }}>
+                    <span style={{ fontWeight: "bold", fontSize: "1rem", marginRight: "0.5rem" }}>
+                      {msg.senderName || msg.sender.split("@")[0]}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", fontWeight: "normal", color: "#888" }}>
+                      {new Date(msg.timestamp).toLocaleString("en-US", {
+                        month: "numeric",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </span>
+                  </div>
+                
                   {msg.content.startsWith("http") && msg.content.includes("cloudinary") ? (
-                    <img src={msg.content} alt="sent" style={{ maxWidth: "100%", borderRadius: "0.5rem" }} />
+                    <img
+                      src={msg.content}
+                      alt="sent"
+                      style={{ maxWidth: "100%", borderRadius: "0.5rem" }}
+                    />
                   ) : (
-                    msg.content
+                    <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
                   )}
                 </styledElements.MessageBubble>
+              
+              
               ))}
               <div ref={bottomRef} />
             </styledElements.MessageList>
