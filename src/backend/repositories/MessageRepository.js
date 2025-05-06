@@ -14,7 +14,17 @@ const addMessage = async (messageData) => {
   return await message.save();
 };
 
+const findById = async (id) => {
+  return await MessageModel.findById(id);
+};
+
+const deleteMessageById = async (id) => {
+  return await MessageModel.findByIdAndDelete(id);
+};
+
 export default {
   getChat,
   addMessage,
+  findById,
+  deleteMessageById,
 };

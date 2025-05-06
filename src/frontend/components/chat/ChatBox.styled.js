@@ -24,7 +24,7 @@ export const ChatCard = styled.div`
 `;
 
 const Sidebar = styled.div`
-  width: 14%;
+  width: 16%;
   background-color: #f4f4f4;
   border-right: 1px solid #ddd;
   display: flex;
@@ -77,16 +77,6 @@ const MessageList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-`;
-
-const MessageBubble = styled.div`
-  align-self: "flex-start";
-  padding: 0.75rem 1rem;
-  border-radius: 20px;
-  max-width: 60%;
-  width: fit-content;
-  word-break: break-word;
-  margin-bottom: 1rem;
 `;
 
 const MessageInputContainer = styled.div`
@@ -176,7 +166,6 @@ const styledElements = {
   CrafterName,
   MessageArea,
   MessageList,
-  MessageBubble,
   MessageInputContainer,
   MessageInput,
   SendButton,

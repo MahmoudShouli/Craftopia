@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import MessageService from "../services/MessageService.js";
+import { getSocketIO } from "../config/socket.js";
 
 export const getChat = async (req, res) => {
   try {
@@ -51,5 +52,38 @@ export const cloudinaryImageUpload = async (req, res) => {
   } catch (error) {
     console.error("Cloudinary upload failed:", error);
     res.status(500).json({ error: "Failed to upload image" });
+  }
+};
+
+export const toggleLikeMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const updated = await MessageService.toggleLike(messageId);
+
+    const io = getSocketIO();
+    io.emit("message_liked", {
+      messageId: messageId,
+      liked: updated.liked,
+    });
+
+    res.json({ success: true, message: updated });
+  } catch (err) {
+    console.error("Error toggling like:", err.message);
+    res.status(500).json({ error: err.message || "Server error" });
+  }
+};
+
+export const deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const deleted = await MessageService.deleteMessage(messageId);
+
+    const io = getSocketIO();
+    io.emit("message_deleted", { messageId });
+
+    res.json({ success: true, message: "Message deleted", data: deleted });
+  } catch (err) {
+    console.error("Error deleting message:", err.message);
+    res.status(500).json({ error: err.message || "Server error" });
   }
 };

@@ -6,14 +6,15 @@ import { useUser } from "../../context/UserContext";
 import styledElements from "./ChatBox.styled";
 import { io } from "socket.io-client";
 import { FiMaximize, FiMinimize, FiImage } from "react-icons/fi";
-
-const socket = io.connect("http://localhost:3000");
-
+import MessageItem from "./MessageItem";
+import { socket } from "../../../utils/socket";
 
 const ChatBox = ( { userToChatWith }) => {
   const { user } = useUser();
   const fileInputRef = useRef();
   const bottomRef = useRef(null);
+  const shouldScrollRef = useRef(true);
+
 
   const [onlineUsers, setOnlineUsers] = useState([]);
 
@@ -44,13 +45,13 @@ const ChatBox = ( { userToChatWith }) => {
   },[]);
 
   useEffect(() => {
+    if (!shouldScrollRef.current) return; // block scroll
+  
     const lastMessage = messages[messages.length - 1];
   
     if (lastMessage?.content?.includes("cloudinary")) {
-      // wait for image to load
       const img = new Image();
       img.src = lastMessage.content;
-  
       img.onload = () => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
       };
@@ -58,6 +59,7 @@ const ChatBox = ( { userToChatWith }) => {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+  
   
 
   useEffect(() => {
@@ -76,16 +78,56 @@ const ChatBox = ( { userToChatWith }) => {
     };
   }, [user.email]);
   
-  
+
   useEffect(() => {
-    socket.on("online_users", (list) => {
+    const handleOnlineUsers = (list) => {
       setOnlineUsers(list);
-    });
+    };
+  
+    socket.on("online_users", handleOnlineUsers);
   
     return () => {
-      socket.off("online_users");
+      socket.off("online_users", handleOnlineUsers);
     };
   }, []);
+
+  useEffect(() => {
+    socket.emit("get_online_users");
+  
+    const handleOnlineUsers = (list) => {
+      setOnlineUsers(list);
+    };
+  
+    socket.on("take_online_users", handleOnlineUsers);
+  
+    return () => {
+      socket.off("take_online_users", handleOnlineUsers);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleLikeUpdate = ({ messageId, liked }) => {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg._id === messageId ? { ...msg, liked } : msg
+        )
+      );
+    };
+  
+    socket.on("message_liked", handleLikeUpdate);
+    return () => socket.off("message_liked", handleLikeUpdate);
+  }, []);
+  
+  
+  useEffect(() => {
+    socket.on("message_deleted", ({ messageId }) => {
+      setMessages((prev) => prev.filter((m) => m._id !== messageId));
+    });
+  
+    return () => socket.off("message_deleted");
+  }, []);
+  
+    
 
   const selectCrafter = async (crafter) => {
     setSelectedUser(crafter);
@@ -94,23 +136,18 @@ const ChatBox = ( { userToChatWith }) => {
   };
 
   const handleSend = async () => {
+
+    shouldScrollRef.current = true;
+    
     let sender = user.email;
     let receiver = selectedUser.email;
     let content = messageInput;
-    let timestamp = new Date().toISOString()
-
-    let tempMessage = {
-      sender,
-      receiver,
-      content,
-      timestamp
-    };
-
-    setMessages((prevMessages) => [...prevMessages, tempMessage]);
-
+   
     try {
-      await messageService.sendMessage({sender, receiver, content});
-      socket.emit('send_message', tempMessage); 
+      const newMessage = await messageService.sendMessage({sender, receiver, content});
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+
+      socket.emit('send_message', newMessage); 
     } catch (error) {
         console.error('Error creating message:', error);
     }
@@ -154,6 +191,36 @@ const ChatBox = ( { userToChatWith }) => {
     }
   };
 
+
+  const handleLike = async (msg) => {
+
+    shouldScrollRef.current = false;
+
+    if (!msg._id || msg.sender === user.email) return; // prevent like if no ID or from self
+  
+    try {
+      const updated = await messageService.likeMessage(msg._id);
+      setMessages((prev) =>
+        prev.map((m) => (m._id === updated._id ? updated : m))
+      );
+    } catch (err) {
+      console.error("Failed to toggle like:", err);
+    }
+  };
+  
+
+  const handleDelete = async (id) => {
+
+    shouldScrollRef.current = false;
+
+    try {
+      await messageService.deleteMessage(id);
+      setMessages((prev) => prev.filter((m) => m._id !== id));
+    } catch (err) {
+      console.error("Failed to delete:", err);
+    }
+  };
+  
  
   return (
     <styledElements.ChatCard fullscreen={isFullscreen}>
@@ -197,38 +264,13 @@ const ChatBox = ( { userToChatWith }) => {
           <>
             <styledElements.MessageList>
               {messages.map((msg) => (
-                <styledElements.MessageBubble
+                <MessageItem 
                   key={msg._id || `${msg.sender}-${Math.random()}`}
-                  fromSelf={msg.sender === user.email}
-                >
-                  <div style={{ marginBottom: "0.3rem" }}>
-                    <span style={{ fontWeight: "bold", fontSize: "1rem", marginRight: "0.5rem" }}>
-                      {msg.senderName || msg.sender.split("@")[0]}
-                    </span>
-                    <span style={{ fontSize: "0.75rem", fontWeight: "normal", color: "#888" }}>
-                      {new Date(msg.timestamp).toLocaleString("en-US", {
-                        month: "numeric",
-                        day: "numeric",
-                        year: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
-                        hour12: true,
-                      })}
-                    </span>
-                  </div>
-                
-                  {msg.content.startsWith("http") && msg.content.includes("cloudinary") ? (
-                    <img
-                      src={msg.content}
-                      alt="sent"
-                      style={{ maxWidth: "100%", borderRadius: "0.5rem" }}
-                    />
-                  ) : (
-                    <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
-                  )}
-                </styledElements.MessageBubble>
-              
-              
+                  msg={msg}
+                  isFromSelf={msg.sender === user.email}
+                  handleLike={handleLike}
+                  onDelete={handleDelete}
+                />
               ))}
               <div ref={bottomRef} />
             </styledElements.MessageList>

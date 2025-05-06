@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/authService';
 import { useUser } from '../context/UserContext';
-import { io } from "socket.io-client";
+import { socket } from '../../utils/socket';
 import {
   PageWrapper,
   LeftPanel,
@@ -25,7 +25,6 @@ import {
   Eye
 } from '../styles/LoginPage.styled'
 
-const socket = io.connect("http://localhost:3000");
 
 const LoginPage = () => {
 

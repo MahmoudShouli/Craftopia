@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from './context/UserContext';
 import { ToastContainer } from "react-toastify";
+import SocketManager from './context/SocketManager';
 import "react-toastify/dist/ReactToastify.css";
 import 'leaflet/dist/leaflet.css';
 
@@ -17,6 +18,7 @@ import CrafterPage from './pages/CrafterPage';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <UserProvider>
+      <SocketManager />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />

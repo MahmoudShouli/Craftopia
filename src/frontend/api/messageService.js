@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:3000/messages";
 
-export const getChatMessages = async (sender, receiver) => {
+const getChatMessages = async (sender, receiver) => {
   try {
     const response = await axios.get(`${API_URL}/get-chat`, {
       params: { sender, receiver },
@@ -14,7 +14,7 @@ export const getChatMessages = async (sender, receiver) => {
   }
 };
 
-export const sendMessage = async ({ sender, receiver, content }) => {
+const sendMessage = async ({ sender, receiver, content }) => {
   try {
     const response = await axios.post(`${API_URL}/add-message`, {
       sender,
@@ -28,7 +28,7 @@ export const sendMessage = async ({ sender, receiver, content }) => {
   }
 };
 
-export const getContacts = async (userEmail) => {
+const getContacts = async (userEmail) => {
   try {
     const response = await axios.get(`${API_URL}/get-contacts`, {
       params: { userEmail },
@@ -40,10 +40,22 @@ export const getContacts = async (userEmail) => {
   }
 };
 
+const likeMessage = async (messageId) => {
+  const response = await axios.put(`${API_URL}/like/${messageId}`);
+  return response.data.message;
+};
+
+const deleteMessage = async (messageId) => {
+  const response = await axios.delete(`${API_URL}/delete/${messageId}`);
+  return response.data.deleted;
+};
+
 const messageService = {
   getChatMessages,
   sendMessage,
   getContacts,
+  likeMessage,
+  deleteMessage,
 };
 
 export default messageService;

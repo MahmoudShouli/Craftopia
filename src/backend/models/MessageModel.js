@@ -5,6 +5,7 @@ const MessageSchema = mongoose.Schema({
   receiver: { type: String, required: true },
   content: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
+  liked: { type: Boolean, default: false },
 });
 
 const MessageModel = mongoose.model("Message", MessageSchema, "messages");

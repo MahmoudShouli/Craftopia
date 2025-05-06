@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import lightLogo from "../../assets/light-logo.png";
 import { useUser } from "../../context/UserContext"; 
+import { io } from "socket.io-client";
 import {
   Sidebar,
   LogoWrapper,
@@ -9,6 +10,7 @@ import {
   SidebarItem
 } from "./Dashboard.styled";
 
+const socket = io.connect("http://localhost:3000");
 // Sidebar items for customers
 const customerSidebarItems = [
   { icon: "🏠", label: "Home", route: "/" },
@@ -43,7 +45,8 @@ const Dashboard = ({ selectedIndex, onItemSelect }) => {
   
     setTimeout(() => {
       if (item.label === "Logout") {
-        localStorage.removeItem("user");
+        socket.emit("user_offline", user.email);
+        sessionStorage.removeItem("user");
         setUser(null);
         navigate("/");
       } else if (item.label === "Search & filter") {
