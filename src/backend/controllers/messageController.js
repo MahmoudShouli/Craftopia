@@ -44,3 +44,13 @@ export const getCraftersChattedWith = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve chatted-with list" });
   }
 };
+
+export const cloudinaryImageUpload = async (req, res) => {
+  try {
+    const imageUrl = req.file.path; // Cloudinary returns the hosted URL here
+    res.status(200).json({ url: imageUrl });
+  } catch (error) {
+    console.error("Cloudinary upload failed:", error);
+    res.status(500).json({ error: "Failed to upload image" });
+  }
+};

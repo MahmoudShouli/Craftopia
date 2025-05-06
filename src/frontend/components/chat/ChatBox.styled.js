@@ -37,7 +37,10 @@ const CrafterItem = styled.div`
   align-items: center;
   gap: 1rem;
   cursor: pointer;
-  background-color: ${({ selected }) => (selected ? "#e0e0e0" : "transparent")};
+  background-color: ${({ selected }) => (selected ? "#ddd" : "transparent")};
+  border-left: ${({ selected }) =>
+    selected ? "4px solid #6a380f" : "4px solid transparent"};
+  transition: background-color 0.2s ease;
 
   &:hover {
     background-color: #ddd;
@@ -77,7 +80,7 @@ const MessageList = styled.div`
 
 const MessageBubble = styled.div`
   align-self: ${({ fromSelf }) => (fromSelf ? "flex-start" : "flex-end")};
-  background-color: ${({ fromSelf }) => (fromSelf ? "#d1e7dd" : "#f0f0f0")};
+  background-color: ${({ fromSelf }) => (fromSelf ? "#DDDDDD" : "#f0f0f0")};
   padding: 0.75rem 1rem;
   border-radius: 20px;
   max-width: 60%;
@@ -114,7 +117,7 @@ const SendButton = styled.button`
 const FullscreenToggle = styled.button`
   position: absolute;
   top: 1rem;
-  right: 1rem;
+  right: 2rem;
   background: none;
   border: none;
   cursor: pointer;
@@ -132,8 +135,9 @@ const ImageUploadButton = styled.button`
   border: none;
   cursor: pointer;
   color: #6a380f;
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
+  font-size: 2rem;
+  margin-right: 0.6rem;
+  margin-top: 0.2rem;
 
   &:hover {
     color: #4e2709;
