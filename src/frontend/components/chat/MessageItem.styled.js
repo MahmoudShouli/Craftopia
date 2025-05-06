@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 export const MessageBubble = styled.div`
   position: relative;
@@ -19,9 +19,16 @@ const pop = keyframes`
 `;
 
 export const LikeIcon = styled.div`
-  margin-top: 5px;
-  font-size: 1rem;
-  animation: ${({ animate }) => (animate ? pop : "none")} 0.3s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(138, 131, 131);
+  color: #007bff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  margin-top: 4px;
 
   outline: none;
 
@@ -34,7 +41,13 @@ export const LikeIcon = styled.div`
   }
 
   user-select: none;
-  cursor: default;
+  cursor: pointer;
+
+  ${({ animate }) =>
+    animate &&
+    css`
+      animation: ${pop} 0.3s ease-in-out;
+    `}
 `;
 
 export const DeleteIcon = styled.div`

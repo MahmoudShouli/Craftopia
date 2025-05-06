@@ -1,16 +1,18 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState, useRef} from "react";
 import { MessageBubble, LikeIcon, DeleteIcon } from "./MessageItem.styled";
 
 const MessageItem = ({ msg, isFromSelf, handleLike, onDelete }) => {
     const [animateLike, setAnimateLike] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
+    const prevLikedRef = useRef(msg.liked);
   
     useEffect(() => {
-      if (msg.liked) {
+      if (!prevLikedRef.current && msg.liked) {
         setAnimateLike(true);
         const timeout = setTimeout(() => setAnimateLike(false), 300);
         return () => clearTimeout(timeout);
       }
+      prevLikedRef.current = msg.liked;
     }, [msg.liked]);
   
     return (
