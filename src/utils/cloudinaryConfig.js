@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "avatars",
-    allowed_formats: ["jpg", "jpeg", "png"],
+    allowed_formats: ["jpg", "jpeg", "png", "webm", "mp3", "m4a"],
   },
 });
 

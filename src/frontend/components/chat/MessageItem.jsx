@@ -42,14 +42,15 @@ const MessageItem = ({ msg, isFromSelf, handleLike, onDelete }) => {
         </div>
   
         {msg.content.startsWith("http") && msg.content.includes("cloudinary") ? (
-          <img
-            src={msg.content}
-            alt="sent"
-            style={{ maxWidth: "100%", borderRadius: "0.5rem" }}
-          />
+          /\.(webm|mp3)$/.test(msg.content) ? (
+            <audio controls src={msg.content} style={{ maxWidth: "100%" }} />
+          ) : (
+            <img src={msg.content} alt="sent" style={{ maxWidth: "100%", borderRadius: "0.5rem" }} />
+          )
         ) : (
           <div style={{ whiteSpace: "pre-wrap" }}>{msg.content}</div>
         )}
+
 
         {showDelete && isFromSelf && (
           <DeleteIcon onClick={() => onDelete(msg._id)}>

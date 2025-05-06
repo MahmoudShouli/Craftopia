@@ -129,7 +129,7 @@ const ImageUploadButton = styled.button`
   color: #6a380f;
   font-size: 2rem;
   margin-right: 0.6rem;
-  margin-top: 0.2rem;
+  margin-top: 0.4rem;
 
   &:hover {
     color: #4e2709;

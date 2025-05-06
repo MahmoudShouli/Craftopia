@@ -4,7 +4,6 @@ import React, { useEffect, useState, useRef } from "react";
 import messageService from "../../api/messageService";
 import { useUser } from "../../context/UserContext";
 import styledElements from "./ChatBox.styled";
-import { io } from "socket.io-client";
 import { FiMaximize, FiMinimize, FiImage } from "react-icons/fi";
 import MessageItem from "./MessageItem";
 import { socket } from "../../../utils/socket";
@@ -25,6 +24,11 @@ const ChatBox = ( { userToChatWith }) => {
   const [messageInput, setMessageInput] = useState("");
 
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
 
   useEffect(() => {
     const loadCrafters = async () => {
@@ -138,7 +142,7 @@ const ChatBox = ( { userToChatWith }) => {
   const handleSend = async () => {
 
     shouldScrollRef.current = true;
-    
+
     let sender = user.email;
     let receiver = selectedUser.email;
     let content = messageInput;
@@ -221,7 +225,7 @@ const ChatBox = ( { userToChatWith }) => {
     }
   };
   
- 
+
   return (
     <styledElements.ChatCard fullscreen={isFullscreen}>
       <styledElements.FullscreenToggle onClick={() => setIsFullscreen(!isFullscreen)}>
@@ -300,8 +304,7 @@ const ChatBox = ( { userToChatWith }) => {
                 <FiImage />
               </styledElements.ImageUploadButton>
 
-
-              <styledElements.SendButton onClick={handleSend}>Send</styledElements.SendButton>
+             
             </styledElements.MessageInputContainer>
           </>
         ) : (

@@ -55,6 +55,16 @@ export const cloudinaryImageUpload = async (req, res) => {
   }
 };
 
+export const cloudinaryAudioUpload = async (req, res) => {
+  try {
+    const url = req.file.path;
+    res.json({ url });
+  } catch (err) {
+    console.error("Audio upload error:", err);
+    res.status(500).json({ error: "Audio upload failed" });
+  }
+};
+
 export const toggleLikeMessage = async (req, res) => {
   try {
     const { messageId } = req.params;
