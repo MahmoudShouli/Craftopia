@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import logo from '../../../assets/logo.png';
 import { FaUser, FaBars } from 'react-icons/fa';
 import { Link as ScrollLink } from 'react-scroll';
+import { socket } from '../../../../utils/socket';
 import {
   NavWrapper,
   LeftSection,
@@ -52,7 +53,8 @@ const NavbarComponent = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    socket.emit("user_offline", user.email);
+    sessionStorage.removeItem('user');
     setUser(null); // Clear context
     navigate('/');
   };

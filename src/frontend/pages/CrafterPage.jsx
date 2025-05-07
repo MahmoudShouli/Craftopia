@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useUser } from "../context/UserContext";
@@ -7,6 +8,7 @@ import UserProfileCard from "../components/userprofile/userprofilecard/UserProfi
 import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
 import CrafterSchedulesPage from "../components/appointments/schedules/Crafter/CrafterSchedulesPage";
 import CrafterTemplates from "../components/Templates/CrafterTemplates";
+import ChatBox from "../components/chat/ChatBox";
 
 import {
   PageWrapper,
@@ -111,6 +113,9 @@ const CrafterPage = () => {
       case "templates":
         setSelectedIndex(3);
         break;
+      case "Chatting":
+        setSelectedIndex(4);
+        break;
       default:
         setSelectedIndex(1);
     }
@@ -132,6 +137,9 @@ const CrafterPage = () => {
 
         {activeView === "Schedules" && <CrafterSchedulesPage />}
         {activeView === "templates" && <CrafterTemplates />}
+        {activeView === "Chatting" && (
+          <ChatBox/>
+        )}
       </ProfileContainer>
     </PageWrapper>
   );

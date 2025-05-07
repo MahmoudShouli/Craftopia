@@ -14,7 +14,7 @@ import { FaCalendarAlt, FaClock, FaUser } from "react-icons/fa";
 import UserAvatar from "../../../components/useravatar/UserAvatar";
 import Button from "../../../components/button/Button"; 
 
-const CrafterInfoPanel = ({ crafter, selectedDate, step }) => (
+const CrafterInfoPanel = ({ crafter, selectedDate, step, setUserForChat, setView }) => (
   <LeftSection>
     <UserAvatar
       previewUrl={crafter.avatarUrl}
@@ -52,7 +52,10 @@ const CrafterInfoPanel = ({ crafter, selectedDate, step }) => (
           text="Chat with the Crafter"
           size="medium"
           color="#6a380f"
-          onClick={() => console.log("chat with the crafter")} // this should render the chat page
+          onClick={() => {
+            setUserForChat(crafter);
+            setView("Chatting");
+          }} 
         />
       </StepItem>
     </StepIndicator>

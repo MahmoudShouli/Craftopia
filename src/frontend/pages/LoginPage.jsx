@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/authService';
 import { useUser } from '../context/UserContext';
+import { socket } from '../../utils/socket';
 import {
   PageWrapper,
   LeftPanel,
@@ -39,7 +40,9 @@ const LoginPage = () => {
       data.user
     );
   
+     socket.emit("user_online", data.user.email);
      navigate('/');
+
   };
 
   return (
