@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   SingleTemplateCard,
   TemplateAvatarWrapper,
@@ -20,7 +20,13 @@ import { useUser } from "../../context/UserContext";
 import { FaTimes, FaHeart } from "react-icons/fa";
 import { toggleLike } from "../../api/likeService";
 
-const TemplateItem = ({ template, onEdit, onDelete, initiallyLiked = false }) => {
+const TemplateItem = ({
+  template,
+  onEdit,
+  onDelete,
+  initiallyLiked = false,
+  onLikeChange,
+}) => {
   const { user } = useUser();
   const [showDetails, setShowDetails] = useState(false);
   const [liked, setLiked] = useState(initiallyLiked);
@@ -29,6 +35,11 @@ const TemplateItem = ({ template, onEdit, onDelete, initiallyLiked = false }) =>
   const isCrafter = user?.role === "crafter";
   const isUser = user?.role === "customer";
 
+  useEffect(() => {
+    // Keep liked state in sync with props if it changes
+    setLiked(initiallyLiked);
+  }, [initiallyLiked]);
+
   if (!template) return null;
 
   const handleCardClick = () => {
@@ -36,9 +47,7 @@ const TemplateItem = ({ template, onEdit, onDelete, initiallyLiked = false }) =>
   };
 
   const handleSaveEdit = (updatedTemplate) => {
-    if (onEdit) {
-      onEdit(updatedTemplate);
-    }
+    if (onEdit) onEdit(updatedTemplate);
     setShowDetails(false);
   };
 
@@ -48,6 +57,8 @@ const TemplateItem = ({ template, onEdit, onDelete, initiallyLiked = false }) =>
       const res = await toggleLike(user.email, template._id);
       setLiked(res.liked);
       setLocalLikesCount((prev) => prev + (res.liked ? 1 : -1));
+
+      if (onLikeChange) onLikeChange(); // Notify parent to refresh templates
     } catch (err) {
       console.error("Failed to toggle like:", err);
     }

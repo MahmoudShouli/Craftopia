@@ -1,5 +1,8 @@
 import express from "express";
-import { uploadAvatar } from "../controllers/userController.js";
+import {
+  updatePreferences,
+  uploadAvatar,
+} from "../controllers/userController.js";
 import { upload } from "../../utils/cloudinaryConfig.js";
 import { updateUserProfile } from "../controllers/userController.js";
 import { searchCrafters } from "../controllers/userController.js";
@@ -11,5 +14,6 @@ userRouter.post("/uploadAvatar", upload.single("avatar"), uploadAvatar);
 userRouter.put("/update-profile/:id", updateUserProfile);
 userRouter.get("/search", searchCrafters);
 userRouter.get("/email/:email", getUserByEmail);
+userRouter.put("/preferences", updatePreferences);
 
 export default userRouter;

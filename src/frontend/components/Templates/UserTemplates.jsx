@@ -1,88 +1,123 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   TemplateCard,
   TemplatesGrid,
 } from "./CrafterTemplates.styled";
-import { FilterBoxGroup } from "../userprofile/search/Search.styled";
-
+import { FilterBoxGroup, FilterBox } from "../userprofile/search/Search.styled";
 import TemplateItem from "./TemplateItem";
-import { getAllTemplates } from "../../api/templateService";
-import { getUserLikedTemplates } from "../../api/likeService";
 import { toast } from "react-toastify";
 import SearchBar from "../userprofile/search/SearchBar";
 import CraftDropdown from "../craftdropdown/CraftDropdown";
 import { useUser } from "../../context/UserContext";
+import { CraftValues } from "../../constants/craftsEnum";
+import { fetchSortedTemplates, fetchRecommendedTemplates } from "../../api/templateService";
+import { getUserLikedTemplates } from "../../api/likeService";
+import { useLocation } from "react-router-dom";
 
 const UserTemplates = () => {
   const { user } = useUser();
+  const location = useLocation();
+
   const [templates, setTemplates] = useState([]);
   const [likedTemplateIds, setLikedTemplateIds] = useState([]);
   const [selectedCraft, setSelectedCraft] = useState("");
+  const [query, setQuery] = useState("");
+  const [isRecommended, setIsRecommended] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const crafts = [
-    "Plumber",
-    "Electrician",
-    "Painter",
-    "Carpenter",
-    "Tiler",
-    "Cleaner",
-    "Plasterer",
-    "Aluminum and Glass Technician",
-  ];
-
-  const fetchTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
-      const data = await getAllTemplates();
-      setTemplates(data);
-    } catch (err) {
-      toast.error("Failed to load templates");
-      console.error(err);
-    }
-  };
+      setIsLoading(true);
 
-  const fetchLikes = async () => {
-    try {
-      const ids = await getUserLikedTemplates(user.email);
-      setLikedTemplateIds(ids);
+      const [templateData, likedIds] = await Promise.all([
+        isRecommended
+          ? fetchRecommendedTemplates(user.email)
+          : fetchSortedTemplates(),
+        getUserLikedTemplates(user.email),
+      ]);
+
+      if (Array.isArray(templateData)) {
+        setTemplates(templateData);
+        setLikedTemplateIds(likedIds || []);
+      } else {
+        setTemplates([]);
+        toast.error("Unexpected response format.");
+      }
     } catch (err) {
-      toast.error("Failed to load likes");
       console.error(err);
+      toast.error("Failed to load templates.");
+      setTemplates([]);
+      setLikedTemplateIds([]);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [user.email, isRecommended]);
 
   useEffect(() => {
-    if (user?.email) {
-      fetchTemplates();
-      fetchLikes();
-    }
-  }, [user]);
+    loadTemplates();
+  }, [location.pathname, loadTemplates]);
+
+  const toggleView = () => {
+    setIsRecommended((prev) => !prev);
+  };
+
+  const handleTemplateLikeChanged = () => {
+    loadTemplates();
+  };
+
+  const handleReset = () => {
+    setQuery("");
+    setSelectedCraft("");
+    loadTemplates();
+  };
+
+  const filteredTemplates = templates.filter((template) => {
+    const matchesCraft =
+      !selectedCraft || template.craftType === selectedCraft;
+
+    const matchesSearch =
+      !query ||
+      template.name.toLowerCase().includes(query.toLowerCase()) ||
+      template.tags?.some((tag) =>
+        tag.toLowerCase().includes(query.toLowerCase())
+      );
+
+    return matchesCraft && matchesSearch;
+  });
 
   return (
     <TemplateCard>
       <SearchBar
-        // query={}
-        // setQuery={}
-        // onSearch={}
-        // onReset={}
+        query={query}
+        setQuery={setQuery}
+        onReset={handleReset}
       />
 
       <FilterBoxGroup>
         <CraftDropdown
-          crafts={crafts}
+          crafts={CraftValues}
           selectedCraft={selectedCraft}
-          onSelectCraft={setSelectedCraft}
+          onSelectCraft={(craft) => setSelectedCraft(craft)}
         />
+        <FilterBox onClick={toggleView}>
+          {isRecommended ? "All" : "Recommended"}
+        </FilterBox>
       </FilterBoxGroup>
 
-      <TemplatesGrid>
-        {templates.map((template) => (
-          <TemplateItem
-            key={template._id}
-            template={template}
-            initiallyLiked={likedTemplateIds.includes(template._id)}
-          />
-        ))}
-      </TemplatesGrid>
+      {isLoading ? (
+        <p>Loading templates...</p>
+      ) : (
+        <TemplatesGrid>
+          {filteredTemplates.map((template) => (
+            <TemplateItem
+              key={template._id}
+              template={template}
+              initiallyLiked={likedTemplateIds.includes(template._id)}
+              onLikeChange={handleTemplateLikeChanged}
+            />
+          ))}
+        </TemplatesGrid>
+      )}
     </TemplateCard>
   );
 };

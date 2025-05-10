@@ -120,11 +120,11 @@ const UserPage = () => {
       case "search":
         setSelectedIndex(2);
         break;
-      case "templates":
-        setSelectedIndex(3);
-        break;
       case "Schedules":
         setSelectedIndex(4);
+        break;
+      case "templates":
+        setSelectedIndex(3);
         break;
       case "Chatting":
         setSelectedIndex(5);

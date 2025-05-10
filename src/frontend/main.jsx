@@ -13,6 +13,7 @@ import SignupPage from './pages/SignupPage';
 import Homepage from './pages/Homepage';
 import UserPage from './pages/UserPage';
 import CrafterPage from './pages/CrafterPage';
+import SetPreferencesPage from './pages/SetPreferencesPage';
 
 
 createRoot(document.getElementById('root')).render(
@@ -26,6 +27,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/signin" element={<LoginPage />} />
           <Route path="/userprofile" element={<UserPage />} />
           <Route path="/crafterprofile" element={<CrafterPage />} />
+          <Route path="/setPreferences" element={<SetPreferencesPage />} />
         </Routes>
         <ToastContainer 
           position="top-right"
