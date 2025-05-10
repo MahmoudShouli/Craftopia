@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, required: true },
   craft: { type: String, required: false },
   avatarUrl: { type: String, required: false },
-
+  chattedWith: [{ type: String }],
   preferences: {
     favoriteColors: {
       type: Map,
@@ -31,7 +31,6 @@ const UserSchema = new mongoose.Schema({
       default: {},
     },
   },
-  chattedWith: [{ type: String }],
 });
 
 // 🧭 Add the 2dsphere index for geospatial queries

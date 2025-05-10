@@ -20,14 +20,14 @@ export const updatePreferencesInDb = async (email, colorMap, tagMap) => {
 };
 
 export const getChattedWith = async (userEmail) => {
-  const user = await User.findOne({ email: userEmail });
+  const user = await UserModel.findOne({ email: userEmail });
   if (!user || !user.chattedWith || user.chattedWith.length === 0) return [];
 
-  return await User.find({ email: { $in: user.chattedWith } });
+  return await UserModel.find({ email: { $in: user.chattedWith } });
 };
 
 export const addToChattedWith = async (userEmail, crafterEmail) => {
-  return await User.updateOne(
+  return await UserModel.updateOne(
     { email: userEmail },
     { $addToSet: { chattedWith: crafterEmail } } // avoids duplicates
   );
