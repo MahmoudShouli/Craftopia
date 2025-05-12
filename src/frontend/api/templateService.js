@@ -48,7 +48,7 @@ export const uploadImage = async (file) => {
 export const fetchSortedTemplates = async () => {
   const response = await axios.get("http://localhost:3000/templates/sorted");
   console.log("Fetched templates response:", response.data);
-  return response.data.data;
+  return response.data;
 };
 
 export const fetchRecommendedTemplates = async (email) => {
@@ -57,4 +57,37 @@ export const fetchRecommendedTemplates = async (email) => {
   );
   console.log("Fetched recommended templates:", response.data);
   return response.data;
+};
+
+export const extractColorsFromImage = async (imageUrl) => {
+  const res = await fetch("http://localhost:3000/templates/extract-colors", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageUrl }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Color extraction failed");
+  }
+
+  const data = await res.json();
+  return data.colors || [];
+};
+
+export const generateFromImage = async (imageUrl) => {
+  const res = await fetch(
+    "http://localhost:3000/templates/generate-description",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ imageUrl }),
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to generate from image");
+  }
+
+  const data = await res.json();
+  return data;
 };

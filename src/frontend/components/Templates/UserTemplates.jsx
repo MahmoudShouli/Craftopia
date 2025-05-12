@@ -4,7 +4,7 @@ import {
   TemplatesGrid,
 } from "./CrafterTemplates.styled";
 import { FilterBoxGroup, FilterBox } from "../userprofile/search/Search.styled";
-import TemplateItem from "./TemplateItem";
+import TemplateItem from "../Templates/TemplateItem";
 import { toast } from "react-toastify";
 import SearchBar from "../userprofile/search/SearchBar";
 import CraftDropdown from "../craftdropdown/CraftDropdown";
@@ -13,6 +13,8 @@ import { CraftValues } from "../../constants/craftsEnum";
 import { fetchSortedTemplates, fetchRecommendedTemplates } from "../../api/templateService";
 import { getUserLikedTemplates } from "../../api/likeService";
 import { useLocation } from "react-router-dom";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
 const UserTemplates = () => {
   const { user } = useUser();
@@ -24,6 +26,7 @@ const UserTemplates = () => {
   const [query, setQuery] = useState("");
   const [isRecommended, setIsRecommended] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [priceRange, setPriceRange] = useState([0, 100000]); 
 
   const loadTemplates = useCallback(async () => {
     try {
@@ -68,6 +71,7 @@ const UserTemplates = () => {
   const handleReset = () => {
     setQuery("");
     setSelectedCraft("");
+    setPriceRange([0, 100000]);
     loadTemplates();
   };
 
@@ -82,7 +86,12 @@ const UserTemplates = () => {
         tag.toLowerCase().includes(query.toLowerCase())
       );
 
-    return matchesCraft && matchesSearch;
+    const matchesPrice =
+      typeof template.price === "number" &&
+      template.price >= priceRange[0] &&
+      template.price <= priceRange[1];
+
+    return matchesCraft && matchesSearch && matchesPrice;
   });
 
   return (
@@ -99,10 +108,33 @@ const UserTemplates = () => {
           selectedCraft={selectedCraft}
           onSelectCraft={(craft) => setSelectedCraft(craft)}
         />
+
         <FilterBox onClick={toggleView}>
           {isRecommended ? "All" : "Recommended"}
         </FilterBox>
       </FilterBoxGroup>
+        <FilterBoxGroup>
+                  <div style={{ width: "100%", marginTop: "1rem" }}>
+                  <label
+                    style={{
+                      fontWeight: "bold",
+                      display: "block",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    Price Range (${priceRange[0]} - ${priceRange[1]})
+                  </label>
+                  <Slider
+                    range
+                    min={0}
+                    max={1000}
+                    step={10}
+                    value={priceRange}
+                    onChange={(range) => setPriceRange(range)}
+                    allowCross={false}
+                  />
+                </div>
+        </FilterBoxGroup>
 
       {isLoading ? (
         <p>Loading templates...</p>

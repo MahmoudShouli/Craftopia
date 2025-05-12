@@ -62,3 +62,18 @@ export const getAllTemplatesSortedByLikes = async () => {
 
   return templates;
 };
+
+export const getTemplatesByFilter = async (filters = {}) => {
+  const templates = await TemplateModel.find(filters);
+  return await Promise.all(
+    templates.map(async (template) => {
+      const crafter = await import("../repositories/UserRepository.js").then(
+        (mod) => mod.getUserByEmail(template.crafterEmail)
+      );
+      return {
+        ...(template.toObject?.() || template),
+        crafterName: crafter?.name || "Unknown",
+      };
+    })
+  );
+};

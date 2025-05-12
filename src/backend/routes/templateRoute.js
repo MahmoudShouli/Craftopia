@@ -33,4 +33,11 @@ templateRoute.get(
   TemplateController.fetchRecommendedTemplates
 );
 
+templateRoute.post("/extract-colors", TemplateController.handleColorExtraction);
+
+templateRoute.post(
+  "/generate-description",
+  TemplateController.handleGenerateFromImage
+);
+
 export default templateRoute;

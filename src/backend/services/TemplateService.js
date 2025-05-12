@@ -1,6 +1,7 @@
 import * as TemplateRepository from "../repositories/TemplateRepository.js";
 import { getUserByEmail } from "../repositories/UserRepository.js";
 import { getLikedTemplatesByUser } from "../repositories/LikeRepository.js";
+import getColors from "get-image-colors";
 
 const COLOR_WEIGHT = 5;
 const TAG_WEIGHT = 3;
@@ -139,6 +140,50 @@ export const updateTemplate = async (id, templateData) => {
   return await TemplateRepository.updateTemplate(id, templateData);
 };
 
-export const fetchSortedTemplates = async () => {
-  return await TemplateRepository.getAllTemplatesSortedByLikes();
+export const fetchSortedTemplates = async (filters = {}) => {
+  return await TemplateRepository.getTemplatesByFilter(filters);
+};
+
+export const extractColorsFromImage = async (imageUrl) => {
+  const colors = await getColors(imageUrl, { type: "image/jpeg" });
+  return colors.map((c) => c.hex());
+};
+
+export const generateTitleAndDescription = async ({ imageUrl }) => {
+  const prompt = `
+      You are given a product image of a handmade craft. Based on the visual impression of the image at the following URL, generate with a basic english a professional
+      that describes the image:
+
+      1. A short and catchy title (3–6 words max)
+      2. A friendly, customer-focused 2–3 sentence product description
+
+      Image URL: ${imageUrl}
+
+      Respond strictly in this format:
+      Title: <title>
+      Description: <description>
+      `;
+
+  const res = await fetch("http://localhost:11434/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "llama2:7b",
+      prompt,
+      stream: false,
+    }),
+  });
+
+  const data = await res.json();
+  const lines = data.response.split("\n").filter((line) => line.trim() !== "");
+
+  const titleLine = lines.find((l) => l.toLowerCase().startsWith("title:"));
+  const descriptionLine = lines.find((l) =>
+    l.toLowerCase().startsWith("description:")
+  );
+
+  return {
+    title: titleLine?.replace(/^title:\s*/i, "").trim() || "Untitled",
+    description: descriptionLine?.replace(/^description:\s*/i, "").trim() || "",
+  };
 };

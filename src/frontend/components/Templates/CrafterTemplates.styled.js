@@ -5,25 +5,13 @@ import { FaHeart } from "react-icons/fa";
 export const TemplateCard = styled.div`
   background-color: white;
   border-radius: 16px;
-  padding: 2.5rem;
+  padding: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   height: 700px;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: #6a380f;
-    border-radius: 3px;
-  }
-  &::-webkit-scrollbar-track {
-    background-color: #f9f5f2;
-  }
 `;
 
 export const TopSection = styled.div`
@@ -48,12 +36,39 @@ export const AddButtonWrapper = styled.div`
 
 /* Template Item */
 export const TemplatesGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  padding-left: 2rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  margin-top: 5rem;
   width: 100%;
   margin-top: 20px;
+  overflow-y: auto;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #6a380f;
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #f9f5f2;
+  }
 `;
 
 export const SingleTemplateCard = styled.div`
@@ -497,4 +512,11 @@ export const ColorPickerWrapper = styled.div`
   align-items: center;
   margin-top: 1rem;
   gap: 0.5rem;
+`;
+
+export const PriceLabel = styled.div`
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #6a380f;
 `;
