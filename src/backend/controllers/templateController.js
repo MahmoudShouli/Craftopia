@@ -66,11 +66,25 @@ export const updateTemplate = async (req, res) => {
 
 export const getSortedTemplates = async (req, res) => {
   try {
-    const templates = await TemplateService.fetchSortedTemplates();
-    res.status(200).json({ success: true, data: templates });
+    const { minPrice, maxPrice, craft } = req.query;
+
+    const filters = {};
+
+    if (minPrice || maxPrice) {
+      filters.price = {};
+      if (minPrice) filters.price.$gte = parseFloat(minPrice);
+      if (maxPrice) filters.price.$lte = parseFloat(maxPrice);
+    }
+
+    if (craft) {
+      filters.craftType = craft;
+    }
+
+    const templates = await TemplateService.fetchSortedTemplates(filters);
+    res.status(200).json(templates);
   } catch (error) {
     console.error("Error fetching sorted templates:", error);
-    res.status(500).json({ success: false, error: "Server Error" });
+    res.status(500).json({ error: "Server Error" });
   }
 };
 
@@ -84,5 +98,39 @@ export const fetchRecommendedTemplates = async (req, res) => {
   } catch (err) {
     console.error("Error in recommendation:", err);
     res.status(500).json({ error: "Failed to fetch recommendations" });
+  }
+};
+
+export const handleColorExtraction = async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    if (!imageUrl) {
+      return res.status(400).json({ error: "imageUrl is required" });
+    }
+
+    const colors = await TemplateService.extractColorsFromImage(imageUrl);
+    res.status(200).json({ colors });
+  } catch (err) {
+    console.error("Color extraction failed:", err);
+    res.status(500).json({ error: "Color extraction failed" });
+  }
+};
+
+export const handleGenerateFromImage = async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    if (!imageUrl) {
+      return res.status(400).json({ error: "imageUrl is required" });
+    }
+
+    const result = await TemplateService.generateTitleAndDescription({
+      imageUrl,
+    });
+    res.status(200).json(result);
+  } catch (err) {
+    console.error("Ollama generation error:", err);
+    res
+      .status(500)
+      .json({ error: "Failed to generate title and description." });
   }
 };

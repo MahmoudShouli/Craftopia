@@ -11,6 +11,7 @@ import {
   HeartIcon,
   DeleteIconWrapper,
   HeartIconWrapper,
+  PriceLabel,
 } from "./CrafterTemplates.styled";
 
 import UserAvatar from "../useravatar/UserAvatar";
@@ -36,7 +37,6 @@ const TemplateItem = ({
   const isUser = user?.role === "customer";
 
   useEffect(() => {
-    // Keep liked state in sync with props if it changes
     setLiked(initiallyLiked);
   }, [initiallyLiked]);
 
@@ -57,8 +57,7 @@ const TemplateItem = ({
       const res = await toggleLike(user.email, template._id);
       setLiked(res.liked);
       setLocalLikesCount((prev) => prev + (res.liked ? 1 : -1));
-
-      if (onLikeChange) onLikeChange(); // Notify parent to refresh templates
+      if (onLikeChange) onLikeChange();
     } catch (err) {
       console.error("Failed to toggle like:", err);
     }
@@ -112,7 +111,14 @@ const TemplateItem = ({
           </ColorsWrapper>
         )}
 
-        {/* Show likes count for crafters only */}
+        {/* Price at the bottom */}
+        {template.price && (
+          <PriceLabel>
+            {Number(template.price).toFixed(2)}$
+          </PriceLabel>
+        )}
+
+        {/* Likes count for crafters */}
         {isCrafter && (
           <LikesWrapper>
             <HeartIcon />
