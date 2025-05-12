@@ -33,12 +33,12 @@ const UserSchedulesPage = ({ crafter, setUserForChat, setView }) => {
             if (!crafterMap[app.crafterEmail]) {
               try {
                 const fetchedCrafter = await getUserByEmail(app.crafterEmail);
-                crafterMap[app.crafterEmail] = fetchedCrafter.name;
+                crafterMap[app.crafterEmail] = fetchedCrafter?.name || app.crafterEmail;
               } catch {
                 crafterMap[app.crafterEmail] = "Unknown";
               }
             }
-            return { ...app, crafterName: crafterMap[app.crafterEmail], id: app._id };
+              return { ...app, crafterName: crafterMap[app.crafterEmail], id: app._id };
           })
         );
         setAppointments(enriched);

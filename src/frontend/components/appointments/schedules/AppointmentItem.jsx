@@ -34,14 +34,23 @@ const AppointmentItem = ({
   const { user } = useUser();
 
   const handleCancel = async () => {
-    try {
-      const res = await deleteAppointment(id , user.role);
-      if (res.success) {
-        toast.success("Appointment canceled");
-        onDelete?.(id);
+    if (isCrafter) {
+      onDelete?.({ id, date, userEmail }); // Crafter triggers reason modal
+    } else {
+      if (status !== "pending") {
+        toast.error("You can only cancel a pending appointment.");
+        return;
       }
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Cannot cancel appointment.");
+
+      try {
+        const res = await deleteAppointment(id, user.role);
+        if (res.success) {
+          toast.success("Appointment canceled");
+          onDelete?.(id);
+        }
+      } catch (err) {
+        toast.error(err.response?.data?.error || "Cannot cancel appointment.");
+      }
     }
   };
 
@@ -88,10 +97,9 @@ const AppointmentItem = ({
 
       {isCrafter ? (
         <AppointmentCrafter>Booked By: {bookedByName}</AppointmentCrafter>
-      ):(
-        <AppointmentCrafter>Crafter: {bookedByName}</AppointmentCrafter>
-      )
-      }
+      ) : (
+        <AppointmentCrafter>Crafter: {crafterName}</AppointmentCrafter>
+      )}
 
       {!isCrafter && status === "completed" && (
         <ReviewBox
