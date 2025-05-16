@@ -193,41 +193,44 @@ export const generateTitleAndDescription = async ({ imageUrl }) => {
 };
 
 export const importTemplatesFromProfile = async (profileUrl, email) => {
-  const crafter = await UserRepo.getUserByEmail(email);
-  if (!crafter) throw new Error("Crafter not found with the provided email.");
+  try {
+    const crafter = await UserRepo.getUserByEmail(email);
+    if (!crafter) throw new Error("Crafter not found with the provided email.");
 
-  const scrapedTemplates = await scrapePinterestPins(profileUrl);
-  if (!scrapedTemplates.length) {
-    console.warn("⚠️ No templates found on the profile.");
-  }
-
-  const savedTemplates = [];
-
-  for (const item of scrapedTemplates) {
-    try {
-      const uploadedImage = await uploadImage(item.image);
-      if (!uploadedImage) continue;
-
-      const dominantColors = await getDominantColors(item.image);
-
-      const data = {
-        name: item.title?.trim() || "Untitled", // ✅ REAL title from pin <h1>
-        description: item.description?.trim() || "No description provided.",
-        mainImage: uploadedImage,
-        crafterEmail: email,
-        craftType: crafter.craft || "Uncategorized",
-        galleryImages: [uploadedImage],
-        availableColors: dominantColors,
-        tags: [],
-        likes: 0,
-      };
-
-      const saved = await TemplateRepository.createTemplate(data);
-      savedTemplates.push(saved);
-    } catch (err) {
-      console.error("❌ Error processing template:", err.message, item);
+    const scrapedTemplates = await scrapePinterestPins(profileUrl, 10);
+    if (!scrapedTemplates.length) {
+      throw new Error("No templates found on the Pinterest profile.");
     }
-  }
 
-  return savedTemplates;
+    const savedTemplates = [];
+
+    for (const item of scrapedTemplates) {
+      try {
+        const uploadedImage = await uploadImage(item.image);
+        const dominantColors = await getDominantColors(item.image);
+
+        const data = {
+          name: item.title?.trim() || "Untitled",
+          description: item.description?.trim() || "No description provided.",
+          mainImage: uploadedImage,
+          galleryImages: [uploadedImage],
+          availableColors: dominantColors,
+          crafterEmail: email,
+          craftType: crafter.craft || "Uncategorized",
+          tags: [],
+          likes: 0,
+        };
+
+        const saved = await TemplateRepository.createTemplate(data);
+        savedTemplates.push(saved);
+      } catch (innerErr) {
+        console.warn("Skipping item due to error:", innerErr.message);
+      }
+    }
+
+    return savedTemplates;
+  } catch (err) {
+    console.error("Import Service error:", err.message);
+    throw err;
+  }
 };

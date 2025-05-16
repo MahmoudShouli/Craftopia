@@ -33,11 +33,15 @@ export const scrapePinterestPins = async (profileUrl, maxPins = 10) => {
       return links;
     });
 
+    console.log(`🔗 Found ${pinUrls.length} unique pins`);
+
     const results = [];
 
     for (let i = 0; i < Math.min(pinUrls.length, maxPins); i++) {
       const pinUrl = pinUrls[i];
       const pinPage = await browser.newPage();
+
+      console.log(`🔍 Scraping pin ${i + 1}/${pinUrls.length}: ${pinUrl}`);
 
       try {
         await pinPage.setCacheEnabled(false);
@@ -46,33 +50,36 @@ export const scrapePinterestPins = async (profileUrl, maxPins = 10) => {
           timeout: 60000,
         });
 
+        await new Promise((res) => setTimeout(res, 2000));
+
         await pinPage.waitForSelector("img", { timeout: 10000 });
-        await pinPage.waitForSelector("h1", { timeout: 10000 });
 
         const data = await pinPage.evaluate(() => {
           const h1El = document.querySelector("h1");
           const imgEl = document.querySelector("img[src*='i.pinimg.com']");
 
-          let title = h1El?.innerText?.trim() || "";
+          const title = h1El?.innerText?.trim() || "";
           const description = imgEl?.alt?.trim() || "";
           let image = imgEl?.src || "";
-
-          // Fallback title from alt text if h1 is missing
-          if (!title && description) {
-            title = description.split(" ").slice(0, 7).join(" ") + "...";
-          }
 
           if (image.includes("/236x/")) {
             image = image.replace("/236x/", "/736x/");
           }
 
-          // Skip if title is still missing or matches description exactly
-          if (!title || !image || title === description) return null;
+          if (!title) console.warn("⚠️ Missing title");
+          if (!image) console.warn("⚠️ Missing image");
+
+          if (!title || !image) return null;
 
           return { title, description, image };
         });
 
-        if (data) results.push(data);
+        if (data) {
+          results.push(data);
+          console.log(`✅ Scraped: ${pinUrl}`);
+        } else {
+          console.warn(`⚠️ Skipped (missing data): ${pinUrl}`);
+        }
       } catch (err) {
         console.warn(`❌ Failed to scrape ${pinUrl}: ${err.message}`);
       }
@@ -81,9 +88,11 @@ export const scrapePinterestPins = async (profileUrl, maxPins = 10) => {
     }
 
     await browser.close();
+    console.log(`✅ Finished: ${results.length} templates scraped`);
     return results;
   } catch (err) {
     await browser.close();
+    console.error("Pinterest scraping failed:", err.message);
     throw new Error("Pinterest scraping failed: " + err.message);
   }
 };

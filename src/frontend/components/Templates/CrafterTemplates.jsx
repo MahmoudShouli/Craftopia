@@ -15,16 +15,37 @@ import {
   getTemplatesByCrafter,
   createTemplate,
   updateTemplate,
-  deleteTemplate, // ✅ import deleteTemplate
+  deleteTemplate,
+  importTemplatesFromProfile, // ✅ NEW: Pinterest importer API
 } from "../../api/templateService";
 import { toast } from "react-toastify";
+import styled from "styled-components";
+import { ClipLoader } from "react-spinners"; // ✅ Spinner component
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 300px;
+`;
+
+const Input = styled.input`
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+`;
 
 const CrafterTemplates = () => {
   const { user } = useUser();
   const [templates, setTemplates] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
-  const [popupMode, setPopupMode] = useState("add"); // 'add' or 'edit'
+  const [popupMode, setPopupMode] = useState("add");
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+
+  const [showScrapeModal, setShowScrapeModal] = useState(false); // ✅ Pinterest modal
+  const [scrapeUrl, setScrapeUrl] = useState("");
+  const [scraping, setScraping] = useState(false);
 
   const fetchTemplates = async () => {
     try {
@@ -69,7 +90,7 @@ const CrafterTemplates = () => {
         await updateTemplate(newTemplate._id, newTemplate);
         toast.success("Template updated!");
       }
-  
+
       setShowPopup(false);
       setSelectedTemplate(null);
       await fetchTemplates();
@@ -90,26 +111,74 @@ const CrafterTemplates = () => {
     }
   };
 
+  const handleScrape = async () => {
+    if (!scrapeUrl.trim()) return toast.error("Please enter a Pinterest URL");
+
+    try {
+      setScraping(true);
+      await importTemplatesFromProfile(scrapeUrl, user.email);
+      toast.success("Templates imported from Pinterest!");
+      setShowScrapeModal(false);
+      setScrapeUrl("");
+      await fetchTemplates();
+    } catch (err) {
+      toast.error("Failed to scrape Pinterest");
+      console.error(err);
+    } finally {
+      setScraping(false);
+    }
+  };
+
   return (
     <TemplateCard>
-      <TopSection>
-        <Title>Your Templates</Title>
-        <AddButtonWrapper>
-          <Button text="Add Template" size="medium" onClick={handleAddTemplate} />
-        </AddButtonWrapper>
-      </TopSection>
+      <TopSection style={{ marginTop: "1.5rem", marginBottom: "0" }}>
+          <Title
+            style={{
+              position: "absolute",
+              top: "2.5rem",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
+            Your Templates
+          </Title>
 
-      <TemplatesGrid>
+          <div
+            style={{
+              position: "absolute",
+              top: "1.5rem",
+              right: "2rem",
+              display: "flex",
+              gap: "1rem",
+            }}
+          >
+            <AddButtonWrapper style={{ position: "static" }}>
+              <Button text="Add Template" size="medium" onClick={handleAddTemplate} />
+            </AddButtonWrapper>
+            <AddButtonWrapper style={{ position: "static" }}>
+              <Button
+                text="Scrape from Pinterest"
+                size="medium"
+                color="gray"
+                onClick={() => setShowScrapeModal(true)}
+              />
+            </AddButtonWrapper>
+          </div>
+        </TopSection>
+
+
+      <TemplatesGrid style={{ marginTop: "8rem" }}>
         {templates.map((template) => (
           <TemplateItem
             key={template._id}
             template={template}
             onEdit={() => handleEditTemplate(template)}
-            onDelete={handleDeleteTemplate} 
+            onDelete={handleDeleteTemplate}
           />
         ))}
       </TemplatesGrid>
 
+      {/* ✅ Template modal */}
       {showPopup && (
         <PopUpPage onClose={() => setShowPopup(false)}>
           <TemplateDetails
@@ -119,6 +188,55 @@ const CrafterTemplates = () => {
           />
         </PopUpPage>
       )}
+
+      {/* ✅ Scrape modal */}
+      {showScrapeModal && (
+          <PopUpPage onClose={() => setShowScrapeModal(false)}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%", // full modal height
+              }}
+            >
+              <div
+                style={{
+                  backgroundColor: "white",
+                  padding: "2rem",
+                  borderRadius: "16px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+                  minWidth: "350px",
+                  maxWidth: "90%",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "1.2rem",
+                }}
+              >
+                <label htmlFor="pinterestUrl" style={{ fontWeight: "bold", fontSize: "1rem" }}>
+                  Pinterest Profile URL:
+                </label>
+                <Input
+                  id="pinterestUrl"
+                  type="text"
+                  value={scrapeUrl}
+                  onChange={(e) => setScrapeUrl(e.target.value)}
+                  placeholder="https://www.pinterest.com/..."
+                  style={{ width: "100%" }}
+                />
+                <Button
+                  text={scraping ? "Scraping..." : "Fetch Templates"}
+                  size="medium"
+                  disabled={scraping}
+                  onClick={handleScrape}
+                />
+                {scraping && <ClipLoader size={30} />}
+              </div>
+            </div>
+          </PopUpPage>
+        )}
+
     </TemplateCard>
   );
 };
