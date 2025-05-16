@@ -1,7 +1,10 @@
 import * as TemplateRepository from "../repositories/TemplateRepository.js";
 import { getUserByEmail } from "../repositories/UserRepository.js";
+import * as UserRepo from "../repositories/UserRepository.js";
 import { getLikedTemplatesByUser } from "../repositories/LikeRepository.js";
 import getColors from "get-image-colors";
+import { scrapePinterestPins } from "../../utils/scraper.js";
+import { uploadImage, getDominantColors } from "../../utils/imageProcessor.js";
 
 const COLOR_WEIGHT = 5;
 const TAG_WEIGHT = 3;
@@ -187,4 +190,44 @@ export const generateTitleAndDescription = async ({ imageUrl }) => {
     title: titleLine?.replace(/^title:\s*/i, "").trim() || "Untitled",
     description: descriptionLine?.replace(/^description:\s*/i, "").trim() || "",
   };
+};
+
+export const importTemplatesFromProfile = async (profileUrl, email) => {
+  const crafter = await UserRepo.getUserByEmail(email);
+  if (!crafter) throw new Error("Crafter not found with the provided email.");
+
+  const scrapedTemplates = await scrapePinterestPins(profileUrl);
+  if (!scrapedTemplates.length) {
+    console.warn("⚠️ No templates found on the profile.");
+  }
+
+  const savedTemplates = [];
+
+  for (const item of scrapedTemplates) {
+    try {
+      const uploadedImage = await uploadImage(item.image);
+      if (!uploadedImage) continue;
+
+      const dominantColors = await getDominantColors(item.image);
+
+      const data = {
+        name: item.title?.trim() || "Untitled", // ✅ REAL title from pin <h1>
+        description: item.description?.trim() || "No description provided.",
+        mainImage: uploadedImage,
+        crafterEmail: email,
+        craftType: crafter.craft || "Uncategorized",
+        galleryImages: [uploadedImage],
+        availableColors: dominantColors,
+        tags: [],
+        likes: 0,
+      };
+
+      const saved = await TemplateRepository.createTemplate(data);
+      savedTemplates.push(saved);
+    } catch (err) {
+      console.error("❌ Error processing template:", err.message, item);
+    }
+  }
+
+  return savedTemplates;
 };

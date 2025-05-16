@@ -46,20 +46,29 @@ export const scrapePinterestPins = async (profileUrl, maxPins = 10) => {
           timeout: 60000,
         });
 
-        await pinPage.waitForTimeout(2000); // allow rendering
+        await pinPage.waitForSelector("img", { timeout: 10000 });
+        await pinPage.waitForSelector("h1", { timeout: 10000 });
 
         const data = await pinPage.evaluate(() => {
-          const title = document.querySelector("h1")?.innerText?.trim() || "";
+          const h1El = document.querySelector("h1");
           const imgEl = document.querySelector("img[src*='i.pinimg.com']");
-          const rawImage = imgEl?.src || "";
-          const description = imgEl?.alt?.trim() || "";
 
-          let image = rawImage;
+          let title = h1El?.innerText?.trim() || "";
+          const description = imgEl?.alt?.trim() || "";
+          let image = imgEl?.src || "";
+
+          // Fallback title from alt text if h1 is missing
+          if (!title && description) {
+            title = description.split(" ").slice(0, 7).join(" ") + "...";
+          }
+
           if (image.includes("/236x/")) {
             image = image.replace("/236x/", "/736x/");
           }
 
-          if (!title || !image) return null;
+          // Skip if title is still missing or matches description exactly
+          if (!title || !image || title === description) return null;
+
           return { title, description, image };
         });
 
