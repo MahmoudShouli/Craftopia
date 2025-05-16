@@ -134,3 +134,31 @@ export const handleGenerateFromImage = async (req, res) => {
       .json({ error: "Failed to generate title and description." });
   }
 };
+
+export const handleTemplateImport = async (req, res) => {
+  try {
+    const { profileUrl, email } = req.body;
+
+    if (!profileUrl || !email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing profileUrl or email" });
+    }
+
+    console.log("Scraping Pinterest for:", profileUrl, "by", email);
+
+    const templates = await TemplateService.importTemplatesFromProfile(
+      profileUrl,
+      email
+    );
+
+    res.status(200).json({
+      success: true,
+      importedCount: templates.length,
+      data: templates,
+    });
+  } catch (error) {
+    console.error("❌ Template import error:", error); // full object not just .message
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

@@ -91,3 +91,11 @@ export const generateFromImage = async (imageUrl) => {
   const data = await res.json();
   return data;
 };
+
+export const importTemplatesFromProfile = async (profileUrl, email) => {
+  const res = await axios.post("http://localhost:3000/templates/profile", {
+    profileUrl,
+    email,
+  });
+  return res.data;
+};

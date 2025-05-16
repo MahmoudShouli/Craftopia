@@ -40,4 +40,6 @@ templateRoute.post(
   TemplateController.handleGenerateFromImage
 );
 
+templateRoute.post("/profile", TemplateController.handleTemplateImport);
+
 export default templateRoute;

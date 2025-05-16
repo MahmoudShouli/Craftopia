@@ -1,7 +1,10 @@
 import * as TemplateRepository from "../repositories/TemplateRepository.js";
 import { getUserByEmail } from "../repositories/UserRepository.js";
+import * as UserRepo from "../repositories/UserRepository.js";
 import { getLikedTemplatesByUser } from "../repositories/LikeRepository.js";
 import getColors from "get-image-colors";
+import { scrapePinterestPins } from "../../utils/scraper.js";
+import { uploadImage, getDominantColors } from "../../utils/imageProcessor.js";
 
 const COLOR_WEIGHT = 5;
 const TAG_WEIGHT = 3;
@@ -151,7 +154,8 @@ export const extractColorsFromImage = async (imageUrl) => {
 
 export const generateTitleAndDescription = async ({ imageUrl }) => {
   const prompt = `
-      You are given a product image of a handmade craft. Based on the visual impression of the image at the following URL, generate with a basic english a professional
+      You are given a product image of a handmade craft. Based on the visual impression of the image at the following URL, 
+      generate with a basic english a professional
       that describes the image:
 
       1. A short and catchy title (3–6 words max)
@@ -186,4 +190,47 @@ export const generateTitleAndDescription = async ({ imageUrl }) => {
     title: titleLine?.replace(/^title:\s*/i, "").trim() || "Untitled",
     description: descriptionLine?.replace(/^description:\s*/i, "").trim() || "",
   };
+};
+
+export const importTemplatesFromProfile = async (profileUrl, email) => {
+  try {
+    const crafter = await UserRepo.getUserByEmail(email);
+    if (!crafter) throw new Error("Crafter not found with the provided email.");
+
+    const scrapedTemplates = await scrapePinterestPins(profileUrl, 10);
+    if (!scrapedTemplates.length) {
+      throw new Error("No templates found on the Pinterest profile.");
+    }
+
+    const savedTemplates = [];
+
+    for (const item of scrapedTemplates) {
+      try {
+        const uploadedImage = await uploadImage(item.image);
+        const dominantColors = await getDominantColors(item.image);
+
+        const data = {
+          name: item.title?.trim() || "Untitled",
+          description: item.description?.trim() || "No description provided.",
+          mainImage: uploadedImage,
+          galleryImages: [uploadedImage],
+          availableColors: dominantColors,
+          crafterEmail: email,
+          craftType: crafter.craft || "Uncategorized",
+          tags: [],
+          likes: 0,
+        };
+
+        const saved = await TemplateRepository.createTemplate(data);
+        savedTemplates.push(saved);
+      } catch (innerErr) {
+        console.warn("Skipping item due to error:", innerErr.message);
+      }
+    }
+
+    return savedTemplates;
+  } catch (err) {
+    console.error("Import Service error:", err.message);
+    throw err;
+  }
 };
