@@ -79,10 +79,10 @@ export const SingleTemplateCard = styled.div`
   padding: 2rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
   width: 250px;
-  height: 340px;
+
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
   transition: 0.3s ease;
@@ -99,7 +99,7 @@ export const TemplateAvatarWrapper = styled.div`
 `;
 
 export const TemplateName = styled.h3`
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #333;
   margin-bottom: 0.5rem;
