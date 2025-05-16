@@ -151,7 +151,8 @@ export const extractColorsFromImage = async (imageUrl) => {
 
 export const generateTitleAndDescription = async ({ imageUrl }) => {
   const prompt = `
-      You are given a product image of a handmade craft. Based on the visual impression of the image at the following URL, generate with a basic english a professional
+      You are given a product image of a handmade craft. Based on the visual impression of the image at the following URL, 
+      generate with a basic english a professional
       that describes the image:
 
       1. A short and catchy title (3–6 words max)
