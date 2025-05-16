@@ -41,6 +41,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
   const [galleryImages, setGalleryImages] = useState([]);
   const [newColor, setNewColor] = useState("#6a380f");
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [lastUploadedImage, setLastUploadedImage] = useState(null);
 
   const [localTemplate, setLocalTemplate] = useState({
     _id: "",
@@ -109,41 +110,62 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
     fileInputRef.current?.click();
   };
 
-  const handleImageSelect = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+const handleImageSelect = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    try {
-      const uploaded = await uploadImage(file);
-      setGalleryImages((prev) => [...prev, uploaded]);
-      toast.success("Image uploaded successfully!");
+  try {
+    const uploaded = await uploadImage(file);
+    setGalleryImages((prev) => [...prev, uploaded]);
+    setLastUploadedImage(uploaded);
+    toast.success("Image uploaded successfully!");
 
-      // Extract colors
-      const colors = await extractColorsFromImage(uploaded);
-      if (colors.length) {
-        setLocalTemplate((prev) => ({
-          ...prev,
-          availableColors: [...new Set([...prev.availableColors, ...colors])],
-        }));
-        toast.success("Colors extracted successfully!");
-      }
+    // ✅ DO NOT generate anything here!
+  } catch (err) {
+    toast.error("Failed to upload image");
+    console.error(err);
+  }
+};
 
-      // Auto-generate title & description
-      const { title, description } = await generateFromImage(uploaded);
+const handleGenerateInfoFromImage = async () => {
+  if (!lastUploadedImage) return;
+
+  try {
+    // ✅ Clear all fields
+    setLocalTemplate((prev) => ({
+      ...prev,
+      name: "",
+      description: "",
+      availableColors: [],
+    }));
+
+    const colors = await extractColorsFromImage(lastUploadedImage);
+    if (colors.length) {
       setLocalTemplate((prev) => ({
         ...prev,
-        name: prev.name || title,
-        description: prev.description || description,
+        availableColors: [...new Set(colors)],
       }));
-      toast.success("Title and description generated!");
-    } catch (err) {
-      toast.error("Failed to process image");
-      console.error(err);
+      toast.success("Colors extracted!");
     }
-  };
+
+    const { title, description } = await generateFromImage(lastUploadedImage);
+    setLocalTemplate((prev) => ({
+      ...prev,
+      name: title,
+      description: description,
+    }));
+
+    toast.success("Title and description generated!");
+  } catch (err) {
+    toast.error("Failed to generate info from image");
+    console.error(err);
+  }
+};
 
   const handleImageRemove = (index) => {
+    const removed = galleryImages[index];
     setGalleryImages((prev) => prev.filter((_, idx) => idx !== index));
+    if (removed === lastUploadedImage) setLastUploadedImage(null);
     toast.info("Image removed from gallery");
   };
 
@@ -177,33 +199,45 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
     <DetailsWrapper>
       <TopContent>
         <LeftSection>
-          <div style={{ width: "100%" }}>
-            {galleryImages.length > 0 && (
-              <GalleryCarousel
-                images={galleryImages}
-                onImageRemove={isCrafter ? handleImageRemove : undefined}
-              />
-            )}
+  <div style={{ width: "100%" }}>
+    {galleryImages.length > 0 && (
+      <GalleryCarousel
+        images={galleryImages}
+        onImageRemove={isCrafter ? handleImageRemove : undefined}
+      />
+    )}
 
-            {isCrafter && (
-              <div style={{ marginTop: "1rem", textAlign: "center" }}>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageSelect}
-                  style={{ display: "none" }}
-                />
-                <Button
-                  text="Add Image"
-                  size="medium"
-                  color="#6a380f"
-                  onClick={handleUploadButtonClick}
-                />
-              </div>
-            )}
+    {isCrafter && (
+      <div style={{ marginTop: "1rem", textAlign: "center" }}>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageSelect}
+          style={{ display: "none" }}
+        />
+        <Button
+          text="Add Image"
+          size="medium"
+          color="#6a380f"
+          onClick={handleUploadButtonClick}
+        />
+
+        {lastUploadedImage && (
+          <div style={{ marginTop: "1rem" }}>
+            <Button
+              text="🪄 Generate Info from Image"
+              size="small"
+              color="#8e5c25"
+              onClick={handleGenerateInfoFromImage}
+            />
           </div>
-        </LeftSection>
+        )}
+      </div>
+    )}
+  </div>
+</LeftSection>
+
 
         <RightSection>
           <FieldWrapper>
