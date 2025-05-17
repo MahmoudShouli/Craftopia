@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { socket } from "../../../utils/socket";
 import Button from "../button/Button";
 import PopupCreateWorkshop from "./PopupCreateWorkshop";
+import StepsDiagram from "./StepsDiagram";
 
 
 const UserWorkshop = () => {
@@ -71,6 +72,9 @@ const UserWorkshop = () => {
       }
   };
 
+  if (!workshop || !workshop.checkpoints) {
+    return <styledElements.Spinner />; 
+  }
 
   
   return (
@@ -105,8 +109,14 @@ const UserWorkshop = () => {
         </div>
       )}
 
-      {hasAnyWP && (
-        <></>
+      {hasAnyWP &&  (
+        <StepsDiagram
+          checkpoints={workshop.checkpoints}
+          onAdvanceStep={(index) => {
+            // Optional: update backend with new status
+            console.log("Advance checkpoint:", index);
+          }}
+        />
       )}
       
 

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export const WorkshopCard = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "fullscreen",
@@ -41,9 +41,26 @@ const FullscreenToggle = styled.button`
   }
 `;
 
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const Spinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top: 4px solid #6a380f;
+  border-radius: 50%;
+  animation: ${spin} 0.8s linear infinite;
+  margin: auto;
+`;
+
 const styledElements = {
   WorkshopCard,
   FullscreenToggle,
+  Spinner,
 };
 
 export default styledElements;
