@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
-const WorkshopCard = styled.div`
+export const WorkshopCard = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "fullscreen",
+})`
   position: relative;
   display: flex;
   width: 100%;

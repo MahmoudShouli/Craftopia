@@ -5,6 +5,7 @@ import workshopService from "../../api/workshopService";
 import messageService from "../../api/messageService";
 import styledElements from "./Workshop.styled";
 import { FiMaximize, FiMinimize} from "react-icons/fi";
+import { toast } from "react-toastify";
 import { socket } from "../../../utils/socket";
 import Button from "../button/Button";
 import PopupCreateWorkshop from "./PopupCreateWorkshop";
@@ -15,8 +16,11 @@ const UserWorkshop = () => {
   const { user } = useUser();
 
   const [hasAnyWP, setHasAnyWP] = useState(false);
+  const [workshop, setWorkshop] = useState();
+
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
   const [chattedWithList, setChattedWithList] = useState([]);
 
 
@@ -29,6 +33,18 @@ const UserWorkshop = () => {
     checkAdminStatus();
   }, [user.email]);
 
+  useEffect(() => {
+    const fetchWorkshop = async () => {
+      if (hasAnyWP) {
+        const data = await workshopService.getWorkshopByAdmin(user.email);
+        setWorkshop(data);
+      }
+    };
+
+    fetchWorkshop();
+  }, [hasAnyWP, user.email]);
+
+
   // functions
   const openPopup = async () => {
     const list = await messageService.getContacts(user.email);
@@ -37,17 +53,24 @@ const UserWorkshop = () => {
   };
 
 
-  const handleCreateWorkshop = ({ workshopName, selectedCrafters, checkpoints }) => {
-    const workshop = {
-      name: workshopName,
-      admin: user.email,
-      crafters: selectedCrafters,
-      checkpoints: checkpoints.map(cp => ({ name: cp })),
-    }
+  const handleCreateWorkshop = async ({ workshopName, selectedCrafters, checkpoints }) => {
+      const workshop = {
+        name: workshopName,
+        admin: user.email,
+        crafters: selectedCrafters.map(c => ({email: c})),
+        checkpoints: checkpoints.map(cp => ({ name: cp})),
+      };
 
-    
-    console.log("✅ Final Workshop Object:", workshop);
+      try {
+        const saved = await workshopService.createWorkshop(workshop);
+        console.log("✅ Workshop created:", saved);
+        toast.success("Workshop created!");
+      } catch (err) {
+        console.error("❌ Error creating workshop:", err);
+        toast.error("Failed to create workshop.");
+      }
   };
+
 
   
   return (
@@ -57,6 +80,13 @@ const UserWorkshop = () => {
         {isFullscreen ? <FiMinimize /> : <FiMaximize />}
       </styledElements.FullscreenToggle>
 
+      {isPopupOpen && (
+        <PopupCreateWorkshop
+          onClose={() => setIsPopupOpen(false)}
+          crafters={chattedWithList}
+          onCreate={handleCreateWorkshop}
+        />
+      )}
 
       {!hasAnyWP && (
         <div
@@ -75,13 +105,10 @@ const UserWorkshop = () => {
         </div>
       )}
 
-       {isPopupOpen && (
-        <PopupCreateWorkshop
-          onClose={() => setIsPopupOpen(false)}
-          crafters={chattedWithList}
-          onCreate={handleCreateWorkshop}
-        />
+      {hasAnyWP && (
+        <></>
       )}
+      
 
     </styledElements.WorkshopCard>
   );

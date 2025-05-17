@@ -5,6 +5,16 @@ const isAdminOfAnyWorkshop = async (email) => {
   return !!result; // convert to boolean
 };
 
+const createWorkshop = async (data) => {
+  return await WorkshopRepository.createWorkshop(data);
+};
+
+const getWorkshopByAdmin = async (email) => {
+  return await WorkshopRepository.getWorkshopByAdmin(email);
+};
+
 export default {
   isAdminOfAnyWorkshop,
+  createWorkshop,
+  getWorkshopByAdmin,
 };
