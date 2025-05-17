@@ -8,7 +8,7 @@ import UserProfileHeader from "../components/userprofile/userheader/UserProfileH
 import Search from "../components/userprofile/search/Search";
 import UserSchedulesPage from "../components/appointments/schedules/UserSchedulesPage";
 import ChatBox from "../components/chat/ChatBox";
-import Workshop from "../components/workshop/Workshop";
+import UserWorkshop from "../components/workshop/UserWorkshop";
 
 import {
   PageWrapper,
@@ -191,7 +191,7 @@ const UserPage = () => {
           <ChatBox userToChatWith={userForChat} />
         )}
 
-        {activeView === "Workshop" && <Workshop />}
+        {activeView === "Workshop" && <UserWorkshop />}
 
       </ProfileContainer>
     </PageWrapper>
