@@ -8,6 +8,7 @@ import UserProfileHeader from "../components/userprofile/userheader/UserProfileH
 import Search from "../components/userprofile/search/Search";
 import UserSchedulesPage from "../components/appointments/schedules/UserSchedulesPage";
 import ChatBox from "../components/chat/ChatBox";
+import Workshop from "../components/workshop/Workshop";
 
 import {
   PageWrapper,
@@ -129,6 +130,9 @@ const UserPage = () => {
       case "Chatting":
         setSelectedIndex(5);
         break;
+      case "Workshop":
+        setSelectedIndex(6);
+        break;
       default:
         setSelectedIndex(1);
     }
@@ -186,6 +190,8 @@ const UserPage = () => {
         {activeView === "Chatting" && (
           <ChatBox userToChatWith={userForChat} />
         )}
+
+        {activeView === "Workshop" && <Workshop />}
 
       </ProfileContainer>
     </PageWrapper>

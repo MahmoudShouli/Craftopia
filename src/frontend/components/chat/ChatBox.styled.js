@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ChatCard = styled.div`
+const ChatCard = styled.div`
   position: relative;
   display: flex;
   width: 100%;
