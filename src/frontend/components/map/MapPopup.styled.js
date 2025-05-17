@@ -6,6 +6,18 @@ export const MapPopupContent = styled.div`
   height: 100%;
 `;
 
+export const OtherPopupContent = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  max-height: 90vh;
+  max-width: 90vw;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+`;
+
 export const PopupOverlay = styled.div`
   position: fixed;
   top: 0;
