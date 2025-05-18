@@ -1,5 +1,5 @@
 // WorkshopSteps.jsx
-import React, { useState } from "react";
+import React from "react";
 import {
   StepContainer,
   StepNode,
@@ -8,16 +8,28 @@ import {
   FlowWrapper,
   FlowOuterWrapper
 } from "./StepsDiagram.styled";
+import { updateCheckpointStatus } from "../../api/workshopService";
+import { useUser } from "../../context/UserContext";
 
-const WorkshopSteps = ({ checkpoints, onAdvanceStep }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+const WorkshopSteps = ({ checkpoints, setCheckpoints }) => {
+  const { user } = useUser();
 
-  const handleStepClick = (index) => {
-    if (index === currentIndex) {
-      onAdvanceStep(index);
-      setCurrentIndex((prev) => prev + 1);
+  const handleStepClick = async (index) => {
+    const cp = checkpoints[index];
+    if (cp.status === "in progress") {
+        try {
+        await updateCheckpointStatus(user.email, cp.name, "finished");
+
+        // Update local state to reflect the change
+        const updated = [...checkpoints];
+        updated[index].status = "finished";
+        setCheckpoints(updated); // passed in via props or lifted state
+        } catch (err) {
+        console.error("❌ Failed to update checkpoint status", err);
+        }
     }
   };
+
 
   return (
     <FlowOuterWrapper>
@@ -27,22 +39,18 @@ const WorkshopSteps = ({ checkpoints, onAdvanceStep }) => {
             <StepContainer>
                 <StepNode
                 status={
-                    index < currentIndex
-                    ? "finished"
-                    : index === currentIndex
-                    ? "in progress"
-                    : "upcoming"
+                    cp.status
                 }
                 onClick={() => handleStepClick(index)}
                 >
-                {index < currentIndex ? "✔" : index + 1}
+                {cp.status === "finished" ? "✔" : index + 1}
                 </StepNode>
                 <StepLabel>{cp.name}</StepLabel>
             </StepContainer>
 
             {index < checkpoints.length - 1 && (
                 <ArrowConnector
-                className={index < currentIndex ? "visible" : "hidden"}
+                className={cp.status === "finished" ? "visible" : "hidden"}
                 />
             )}
             </React.Fragment>

@@ -27,6 +27,20 @@ const getWorkshopByAdmin = async (adminEmail) => {
   }
 };
 
+export const updateCheckpointStatus = async (
+  adminEmail,
+  checkpointName,
+  newStatus
+) => {
+  const response = await axios.patch(`${API_URL}/checkpoint-status`, {
+    adminEmail,
+    checkpointName,
+    newStatus,
+  });
+
+  return response.data;
+};
+
 const workshopService = {
   isAdminOfAnyWorkshop,
   createWorkshop,

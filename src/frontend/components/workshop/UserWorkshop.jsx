@@ -23,6 +23,7 @@ const UserWorkshop = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const [chattedWithList, setChattedWithList] = useState([]);
+  const [checkpoints, setCheckpoints] = useState();
 
 
   // effects
@@ -112,10 +113,7 @@ const UserWorkshop = () => {
       {hasAnyWP &&  (
         <StepsDiagram
           checkpoints={workshop.checkpoints}
-          onAdvanceStep={(index) => {
-            // Optional: update backend with new status
-            console.log("Advance checkpoint:", index);
-          }}
+          setCheckpoints={setCheckpoints}
         />
       )}
       

@@ -13,8 +13,21 @@ const getWorkshopByAdmin = async (email) => {
   return await WorkshopRepository.getWorkshopByAdmin(email);
 };
 
+const updateCheckpointStatus = async (
+  adminEmail,
+  checkpointName,
+  newStatus
+) => {
+  return await WorkshopRepository.updateCheckpointStatus(
+    adminEmail,
+    checkpointName,
+    newStatus
+  );
+};
+
 export default {
   isAdminOfAnyWorkshop,
   createWorkshop,
   getWorkshopByAdmin,
+  updateCheckpointStatus,
 };
