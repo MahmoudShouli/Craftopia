@@ -1,20 +1,5 @@
 import styled from "styled-components";
 
-const sizeStyles = {
-  small: `
-    padding: 0.3rem 0.7rem;
-    font-size: 0.85rem;
-  `,
-  medium: `
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-  `,
-  large: `
-    padding: 0.7rem 1.4rem;
-    font-size: 1.15rem;
-  `,
-};
-
 export const StyledButton = styled.button`
   padding: ${({ size }) =>
     size === "small"

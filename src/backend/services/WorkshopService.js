@@ -1,16 +1,11 @@
 import WorkshopRepository from "../repositories/WorkshopRepository.js";
 
-const isAdminOfAnyWorkshop = async (email) => {
-  const result = await WorkshopRepository.isAdminOfAnyWorkshop(email);
-  return !!result; // convert to boolean
-};
-
 const createWorkshop = async (data) => {
   return await WorkshopRepository.createWorkshop(data);
 };
 
-const getWorkshopByAdmin = async (email) => {
-  return await WorkshopRepository.getWorkshopByAdmin(email);
+const getWorkshopsByAdmin = async (email) => {
+  return await WorkshopRepository.getWorkshopsByAdmin(email);
 };
 
 const updateCheckpointStatus = async (
@@ -33,9 +28,8 @@ const updateCheckpointOrder = async (adminEmail, newCheckpoints) => {
 };
 
 export default {
-  isAdminOfAnyWorkshop,
   createWorkshop,
-  getWorkshopByAdmin,
+  getWorkshopsByAdmin,
   updateCheckpointStatus,
   updateCheckpointOrder,
 };

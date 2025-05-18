@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState} from "react";
+import { useEffect, useState, useRef} from "react";
 import { useUser } from "../../context/UserContext";
 import workshopService from "../../api/workshopService";
 import messageService from "../../api/messageService";
 import styledElements from "./Workshop.styled";
 import { FiMaximize, FiMinimize} from "react-icons/fi";
-import Confetti from "react-confetti";
-import { useWindowSize } from "react-use"; 
+import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { socket } from "../../../utils/socket";
 import Button from "../button/Button";
@@ -19,17 +18,13 @@ const UserWorkshop = () => {
   // states
   const { user } = useUser();
 
-  const [activeTab, setActiveTab] = useState("progress");
+  const [activeTab, setActiveTab] = useState("chat");
 
-  const [hasAnyWP, setHasAnyWP] = useState(false);
-  const [workshop, setWorkshop] = useState();
+  const [allWorkshops, setAllWorkshops] = useState([]);
+  const [selectedWorkshop, setSelectedWorkshop] = useState(null);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [confettiPieces, setConfettiPieces] = useState(0);
-  const [celebrationTriggered, setCelebrationTriggered] = useState(false);
-  const { width, height } = useWindowSize();
 
 
   const [chattedWithList, setChattedWithList] = useState([]);
@@ -38,50 +33,13 @@ const UserWorkshop = () => {
 
   // effects
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      const hasWorkshop = await workshopService.isAdminOfAnyWorkshop(user.email);
-      setHasAnyWP(hasWorkshop);
+    const fetchAll = async () => {
+      const workshops = await workshopService.getWorkshopsByAdmin(user.email);
+      setAllWorkshops(workshops);
     };
-    checkAdminStatus();
+    fetchAll();
   }, [user.email]);
 
-  useEffect(() => {
-    const fetchWorkshop = async () => {
-      if (hasAnyWP) {
-        const data = await workshopService.getWorkshopByAdmin(user.email);
-        setWorkshop(data);
-        setCheckpoints(data.checkpoints)
-      }
-    };
-
-    fetchWorkshop();
-  }, [hasAnyWP, user.email]);
-
-  useEffect(() => {
-    if (!checkpoints || checkpoints.length === 0) return;
-
-    const allFinished = checkpoints.every(cp => cp.status === "finished");
-
-    if (allFinished && !celebrationTriggered) {
-      setCelebrationTriggered(true);
-      
-      // 🔁 force reset the confetti to restart cleanly
-      setShowConfetti(false);
-      setTimeout(() => {
-        setShowConfetti(true);
-        setConfettiPieces(300);
-      }, 100); // wait 100ms before re-enabling
-
-      toast.success("🎉 All steps completed!", { autoClose: 3000 });
-
-      const fadeOut = setTimeout(() => setConfettiPieces(0), 5000);
-      return () => clearTimeout(fadeOut);
-    }
-
-    if (!allFinished && celebrationTriggered) {
-      setCelebrationTriggered(false);
-    }
-  }, [checkpoints, celebrationTriggered]);
 
 
   // functions
@@ -102,7 +60,9 @@ const UserWorkshop = () => {
 
       try {
         const saved = await workshopService.createWorkshop(workshop);
-        console.log("✅ Workshop created:", saved);
+        setAllWorkshops(prev => [...prev, saved]);
+        setSelectedWorkshop(saved);
+        setCheckpoints(saved.checkpoints);
         toast.success("Workshop created!");
       } catch (err) {
         console.error("❌ Error creating workshop:", err);
@@ -110,43 +70,29 @@ const UserWorkshop = () => {
       }
   };
 
-  if (hasAnyWP && (!workshop || !workshop.checkpoints)) {
-    return <styledElements.Spinner />; 
-  }
+  // if (allWorkshops.length > 0 && (!workshop || !workshop.checkpoints)) {
+  //   return <styledElements.Spinner />; 
+  // }
 
   
   return (
     <styledElements.WorkshopCard fullscreen={isFullscreen}>
 
+      {selectedWorkshop && (
+        <styledElements.BackButton onClick={() => setSelectedWorkshop(null)}>
+        <FaArrowLeft />
+      </styledElements.BackButton>
+      )}
+      
+      {selectedWorkshop && (
+        <styledElements.WorkshopName>
+          {selectedWorkshop.name}
+        </styledElements.WorkshopName>
+      )}
+
       <styledElements.FullscreenToggle onClick={() => setIsFullscreen(!isFullscreen)}>
         {isFullscreen ? <FiMinimize /> : <FiMaximize />}
       </styledElements.FullscreenToggle>
-
-      <styledElements.Navbar>
-        <styledElements.NavItem
-          active={activeTab === "chat"}
-          onClick={() => setActiveTab("chat")}
-        >
-          Chat
-        </styledElements.NavItem>
-        <styledElements.NavItem
-          active={activeTab === "progress"}
-          onClick={() => setActiveTab("progress")}
-        >
-          Progress
-        </styledElements.NavItem>
-      </styledElements.Navbar>
-
-      {activeTab === "chat" && (
-        <ChatBox mode="group" workshopInfo={workshop} />
-      )}
-
-      {activeTab === "progress" && checkpoints && (
-        <StepsDiagram
-          checkpoints={checkpoints}
-          setCheckpoints={setCheckpoints}
-        />
-      )}
 
       {isPopupOpen && (
         <PopupCreateWorkshop
@@ -156,7 +102,7 @@ const UserWorkshop = () => {
         />
       )}
 
-      {!hasAnyWP && (
+      {allWorkshops.length === 0 && (
         <div
           style={{
             display: "flex",
@@ -173,8 +119,66 @@ const UserWorkshop = () => {
         </div>
       )}
 
-      {showConfetti && <Confetti width={width} height={height} numberOfPieces={confettiPieces} recycle={false} />
-}
+      {allWorkshops.length > 0 && !selectedWorkshop && (
+        <styledElements.CenteredWrapper>
+          <styledElements.WorkshopGrid>
+            {allWorkshops.map((wp) => (
+              <styledElements.WorkshopCardItem key={wp._id} onClick={() => {
+                setSelectedWorkshop(wp);
+                setCheckpoints(wp.checkpoints);
+              }}>
+                <h3>{wp.name}</h3>
+                <p>{wp.checkpoints.length} checkpoint(s)</p>
+                <p>{wp.crafters.length} crafter(s)</p>
+                <styledElements.StatusLabel finished={wp.checkpoints.every(cp => cp.status === "finished")}>
+                  {wp.checkpoints.every(cp => cp.status === "finished") ? "Finished" : "In Progress"}
+                </styledElements.StatusLabel>
+
+              </styledElements.WorkshopCardItem>
+            ))}
+          </styledElements.WorkshopGrid>
+          <Button text="Create a workshop" size="large" color="#6a380f" onClick={openPopup} />
+        </styledElements.CenteredWrapper>
+        
+      )}
+
+      {selectedWorkshop && (
+        <>
+          <styledElements.Navbar>
+            <styledElements.NavItem
+              active={activeTab === "chat"}
+              onClick={() => setActiveTab("chat")}
+            >
+              Chat
+            </styledElements.NavItem>
+            <styledElements.NavItem
+              active={activeTab === "progress"}
+              onClick={() => setActiveTab("progress")}
+            >
+              Progress
+            </styledElements.NavItem>
+
+          </styledElements.Navbar>
+
+          <styledElements.ContentWrapper>
+            {activeTab === "chat" && (
+              <ChatBox mode="group" workshopInfo={selectedWorkshop} />
+            )}
+
+            {activeTab === "progress" && (
+              <StepsDiagram
+                checkpoints={checkpoints}
+                setCheckpoints={setCheckpoints}
+              />
+            )}
+          </styledElements.ContentWrapper>
+
+            
+
+        </>
+      )}
+
+
     </styledElements.WorkshopCard>
   );
 };

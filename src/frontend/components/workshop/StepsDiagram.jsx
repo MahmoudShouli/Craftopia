@@ -14,6 +14,8 @@ import {
 } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use"; 
 import {
   StepContainer,
   StepNode,
@@ -23,7 +25,7 @@ import {
   FlowOuterWrapper,
 } from "./StepsDiagram.styled";
 import { toast } from "react-toastify";
-import { updateCheckpointStatus, updateCheckpointOrder } from "../../api/workshopService";
+import workshopService from "../../api/workshopService";
 import { useUser } from "../../context/UserContext";
 
 const SortableStep = ({ cp, index, currentIndex, onClick, length }) => {
@@ -69,6 +71,10 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
     checkpoints.findIndex((cp) => cp.status === "in progress")
   );
 
+    const [showConfetti, setShowConfetti] = useState(false);
+  const [confettiPieces, setConfettiPieces] = useState(0);
+  const { width, height } = useWindowSize();
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
@@ -87,7 +93,7 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
 
     // persist new order
     try {
-      await updateCheckpointOrder(user.email, reordered);
+      await workshopService.updateCheckpointOrder(user.email, reordered);
     } catch (err) {
       console.error("❌ Failed to save new checkpoint order", err);
     }
@@ -104,17 +110,18 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
         return;
       }
       try {
-        await updateCheckpointStatus(user.email, cp.name, "finished");
+        await workshopService.updateCheckpointStatus(user.email, cp.name, "finished");
         updated[index].status = "finished";
         toast.success("Well done! 😁");
         setCheckpoints(updated);
         setCurrentIndex(checkpoints.findIndex((cp) => cp.status === "in progress"));
+        checkComplete(updated)
       } catch (err) {
         console.error("❌ Failed to update checkpoint status", err);
       }
     } else if (cp.status === "finished") {
       try {
-        await updateCheckpointStatus(user.email, cp.name, "in progress");
+        await workshopService.updateCheckpointStatus(user.email, cp.name, "in progress");
         updated[index].status = "in progress";
         setCheckpoints(updated);
         setCurrentIndex(checkpoints.findIndex((cp) => cp.status === "in progress"));
@@ -124,6 +131,24 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
     }
   };
 
+  const checkComplete = (checkpoints) => {
+    if (!checkpoints || checkpoints.length === 0) return;
+
+    const allFinished = checkpoints.every(cp => cp.status === "finished");
+
+    if (allFinished) {
+      setShowConfetti(false);
+      setTimeout(() => {
+        setShowConfetti(true);
+        setConfettiPieces(300);
+      }, 100); 
+
+      toast.success("🎉 All steps completed!", { autoClose: 3000 });
+
+      const fadeOut = setTimeout(() => setConfettiPieces(0), 5000);
+      return () => clearTimeout(fadeOut);
+    }
+  };
   
 
   return (
@@ -147,6 +172,7 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
           </FlowWrapper>
         </SortableContext>
       </DndContext>
+      {showConfetti && <Confetti width={width} height={height} numberOfPieces={confettiPieces} recycle={false} />}
     </FlowOuterWrapper>
   );
 };

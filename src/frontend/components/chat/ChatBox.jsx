@@ -227,7 +227,7 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
         </styledElements.SidebarToggle>
       )}
 
-      {mode === "private" && showSidebar && (
+      {(mode === "private" && showSidebar) ? (
         <styledElements.Sidebar>
           {contactedUsers.length === 0 ? (
             <div style={{ padding: "2rem", textAlign: "center", color: "#888", fontWeight: "bold" }}>
@@ -253,7 +253,10 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
             ))
           )}
         </styledElements.Sidebar>
+      ) : (
+        <styledElements.Sidebar style={{ width: 0 }} />
       )}
+
 
       <styledElements.MessageArea>
         {(mode === "private" && selectedUser) || (mode === "group" && workshopInfo) ? (
