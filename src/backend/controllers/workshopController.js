@@ -50,6 +50,22 @@ export const getWorkshopsByAdmin = async (req, res) => {
   }
 };
 
+export const getWorkshopsByCrafter = async (req, res) => {
+  const { email } = req.params;
+
+  if (!email) {
+    return res.status(400).json({ error: "Crafter email is required." });
+  }
+
+  try {
+    const workshops = await WorkshopService.getWorkshopsByCrafter(email);
+    res.json(workshops);
+  } catch (err) {
+    console.error("❌ Failed to get workshops by crafter:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
 export const updateCheckpointStatus = async (req, res) => {
   try {
     const { adminEmail, checkpointName, newStatus } = req.body;

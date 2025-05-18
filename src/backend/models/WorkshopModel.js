@@ -13,8 +13,8 @@ const CraftersSchema = new mongoose.Schema({
   email: { type: String, required: true },
   status: {
     type: String,
-    enum: ["pending", "in"],
-    default: "pending",
+    enum: ["invited", "joined"],
+    default: "invited",
   },
 });
 

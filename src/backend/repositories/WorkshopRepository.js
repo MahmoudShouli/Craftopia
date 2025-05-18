@@ -9,6 +9,10 @@ const getWorkshopsByAdmin = async (email) => {
   return await WorkshopModel.find({ admin: email });
 };
 
+const getWorkshopsByCrafter = async (email) => {
+  return await WorkshopModel.find({ "crafters.email": email });
+};
+
 const updateCheckpointStatus = async (
   adminEmail,
   checkpointName,
@@ -34,4 +38,5 @@ export default {
   getWorkshopsByAdmin,
   updateCheckpointStatus,
   updateCheckpointOrder,
+  getWorkshopsByCrafter,
 };

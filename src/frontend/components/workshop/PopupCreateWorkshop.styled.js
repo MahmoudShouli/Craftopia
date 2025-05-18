@@ -108,6 +108,17 @@ export const NamePopupContainer = styled.div`
   width: 300px;
 `;
 
+export const InvitePopupContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  height: 30px;
+  width: 200px;
+  padding-bottom: 2rem;
+`;
+
 export const NameInput = styled.input`
   width: 100%;
   padding: 0.75rem 1rem;

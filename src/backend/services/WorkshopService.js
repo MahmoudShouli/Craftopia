@@ -8,6 +8,10 @@ const getWorkshopsByAdmin = async (email) => {
   return await WorkshopRepository.getWorkshopsByAdmin(email);
 };
 
+const getWorkshopsByCrafter = async (email) => {
+  return await WorkshopRepository.getWorkshopsByCrafter(email);
+};
+
 const updateCheckpointStatus = async (
   adminEmail,
   checkpointName,
@@ -32,4 +36,5 @@ export default {
   getWorkshopsByAdmin,
   updateCheckpointStatus,
   updateCheckpointOrder,
+  getWorkshopsByCrafter,
 };

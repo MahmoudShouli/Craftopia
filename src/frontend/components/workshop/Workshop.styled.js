@@ -163,8 +163,8 @@ const CenteredWrapper = styled.div`
 
 const StatusLabel = styled.p`
   font-weight: bold;
-  color: ${({ finished }) => (finished ? "#00C853" : "#FF6D00")};
-  background-color: ${({ finished }) => (finished ? "#e6f9ec" : "#fff4e6")};
+  color: #ff6d00;
+  background-color: ${({ color }) => color};
   border-radius: 8px;
   padding: 0.3rem 0.7rem;
   display: inline-block;
