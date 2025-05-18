@@ -18,6 +18,8 @@ const UserWorkshop = () => {
   // states
   const { user } = useUser();
 
+  const [activeTab, setActiveTab] = useState("progress");
+
   const [hasAnyWP, setHasAnyWP] = useState(false);
   const [workshop, setWorkshop] = useState();
 
@@ -119,6 +121,34 @@ const UserWorkshop = () => {
         {isFullscreen ? <FiMinimize /> : <FiMaximize />}
       </styledElements.FullscreenToggle>
 
+      <styledElements.Navbar>
+        <styledElements.NavItem
+          active={activeTab === "chat"}
+          onClick={() => setActiveTab("chat")}
+        >
+          Chat
+        </styledElements.NavItem>
+        <styledElements.NavItem
+          active={activeTab === "progress"}
+          onClick={() => setActiveTab("progress")}
+        >
+          Progress
+        </styledElements.NavItem>
+      </styledElements.Navbar>
+
+      {activeTab === "chat" && (
+        <div style={{ padding: "2rem", color: "#666" }}>
+          🛠️ Chat view placeholder (coming soon)
+        </div>
+      )}
+
+      {activeTab === "progress" && checkpoints && (
+        <StepsDiagram
+          checkpoints={checkpoints}
+          setCheckpoints={setCheckpoints}
+        />
+      )}
+
       {isPopupOpen && (
         <PopupCreateWorkshop
           onClose={() => setIsPopupOpen(false)}
@@ -144,13 +174,6 @@ const UserWorkshop = () => {
         </div>
       )}
 
-      {hasAnyWP && checkpoints && (
-        <StepsDiagram
-          checkpoints={checkpoints}
-          setCheckpoints={setCheckpoints}
-        />
-      )}
-      
       {showConfetti && <Confetti width={width} height={height} numberOfPieces={confettiPieces} recycle={false} />
 }
     </styledElements.WorkshopCard>

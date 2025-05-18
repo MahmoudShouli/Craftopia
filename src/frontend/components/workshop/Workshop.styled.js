@@ -5,6 +5,7 @@ export const WorkshopCard = styled.div.withConfig({
 })`
   position: relative;
   display: flex;
+  flex-direction: column; /* ensure vertical stacking */
   width: 100%;
   height: 80vh;
   background-color: #fff;
@@ -57,10 +58,35 @@ const Spinner = styled.div`
   margin: auto;
 `;
 
+const Navbar = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+  background: #f8f8f8;
+`;
+
+const NavItem = styled.div`
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1.2rem;
+  border-radius: 5px;
+  color: ${({ active }) => (active ? "#fff" : "#333")};
+  background-color: ${({ active }) => (active ? "#6a380f" : "transparent")};
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${({ active }) => (active ? "#5a2f0c" : "#eee")};
+  }
+`;
+
 const styledElements = {
   WorkshopCard,
   FullscreenToggle,
   Spinner,
+  Navbar,
+  NavItem,
 };
 
 export default styledElements;

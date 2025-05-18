@@ -12,16 +12,19 @@ const grow = keyframes`
 `;
 
 export const FlowOuterWrapper = styled.div`
-  width: 100%;
   display: flex;
+  flex: 1;
+  align-items: center;
   justify-content: center;
 `;
 
 export const FlowWrapper = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: row;
   justify-content: center;
+  align-items: center; /* ✅ This vertically centers the row */
   gap: 2rem;
+  flex-grow: 1;
   padding: 2rem;
   overflow-x: auto;
 `;
