@@ -25,9 +25,18 @@ const updateCheckpointStatus = async (
   );
 };
 
+const updateCheckpointOrder = async (adminEmail, newCheckpoints) => {
+  return await WorkshopModel.findOneAndUpdate(
+    { admin: adminEmail },
+    { $set: { checkpoints: newCheckpoints } },
+    { new: true }
+  );
+};
+
 export default {
   isAdminOfAnyWorkshop,
   createWorkshop,
   getWorkshopByAdmin,
   updateCheckpointStatus,
+  updateCheckpointOrder,
 };

@@ -25,9 +25,17 @@ const updateCheckpointStatus = async (
   );
 };
 
+const updateCheckpointOrder = async (adminEmail, newCheckpoints) => {
+  return await WorkshopRepository.updateCheckpointOrder(
+    adminEmail,
+    newCheckpoints
+  );
+};
+
 export default {
   isAdminOfAnyWorkshop,
   createWorkshop,
   getWorkshopByAdmin,
   updateCheckpointStatus,
+  updateCheckpointOrder,
 };

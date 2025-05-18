@@ -33,8 +33,8 @@ export const StepContainer = styled.div`
 `;
 
 export const StepNode = styled.div`
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background-color: ${({ status }) =>
     status === "finished"
@@ -48,7 +48,7 @@ export const StepNode = styled.div`
   font-weight: bold;
   font-size: 1.2rem;
   color: white;
-  cursor: ${({ status }) => (status === "in progress" ? "pointer" : "default")};
+  cursor: pointer;
   transition: background-color 0.3s ease;
 `;
 
@@ -61,11 +61,11 @@ export const StepLabel = styled.div`
 
 export const ArrowConnector = styled.div`
   position: relative;
-  height: 4px;
+  height: 6px;
   background-color: #4caf50;
-  border-radius: 2px;
+  border-radius: 4px;
   animation: ${grow} 0.5s ease-out forwards;
-  width: 60px;
+  width: 70px;
   opacity: 0;
 
   &.visible {
@@ -82,7 +82,7 @@ export const ArrowConnector = styled.div`
     top: 50%;
     right: -6px;
     transform: translateY(-50%) rotate(45deg);
-    width: 8px;
+    width: 10px;
     height: 8px;
     border-top: 2px solid #4caf50;
     border-right: 2px solid #4caf50;

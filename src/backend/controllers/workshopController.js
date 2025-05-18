@@ -92,3 +92,27 @@ export const updateCheckpointStatus = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const updateCheckpointOrder = async (req, res) => {
+  try {
+    const { adminEmail, checkpoints } = req.body;
+
+    if (!adminEmail || !Array.isArray(checkpoints)) {
+      return res.status(400).json({ error: "Missing or invalid fields" });
+    }
+
+    const updated = await WorkshopService.updateCheckpointOrder(
+      adminEmail,
+      checkpoints
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: "Workshop not found" });
+    }
+
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error("❌ Failed to update checkpoint order:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};

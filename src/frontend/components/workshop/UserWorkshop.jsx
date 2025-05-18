@@ -5,6 +5,8 @@ import workshopService from "../../api/workshopService";
 import messageService from "../../api/messageService";
 import styledElements from "./Workshop.styled";
 import { FiMaximize, FiMinimize} from "react-icons/fi";
+import Confetti from "react-confetti";
+import { useWindowSize } from "react-use"; 
 import { toast } from "react-toastify";
 import { socket } from "../../../utils/socket";
 import Button from "../button/Button";
@@ -21,6 +23,11 @@ const UserWorkshop = () => {
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [confettiPieces, setConfettiPieces] = useState(0);
+  const [celebrationTriggered, setCelebrationTriggered] = useState(false);
+  const { width, height } = useWindowSize();
+
 
   const [chattedWithList, setChattedWithList] = useState([]);
   const [checkpoints, setCheckpoints] = useState();
@@ -40,11 +47,38 @@ const UserWorkshop = () => {
       if (hasAnyWP) {
         const data = await workshopService.getWorkshopByAdmin(user.email);
         setWorkshop(data);
+        setCheckpoints(data.checkpoints)
       }
     };
 
     fetchWorkshop();
   }, [hasAnyWP, user.email]);
+
+  useEffect(() => {
+    if (!checkpoints || checkpoints.length === 0) return;
+
+    const allFinished = checkpoints.every(cp => cp.status === "finished");
+
+    if (allFinished && !celebrationTriggered) {
+      setCelebrationTriggered(true);
+      
+      // 🔁 force reset the confetti to restart cleanly
+      setShowConfetti(false);
+      setTimeout(() => {
+        setShowConfetti(true);
+        setConfettiPieces(300);
+      }, 100); // wait 100ms before re-enabling
+
+      toast.success("🎉 All steps completed!", { autoClose: 3000 });
+
+      const fadeOut = setTimeout(() => setConfettiPieces(0), 5000);
+      return () => clearTimeout(fadeOut);
+    }
+
+    if (!allFinished && celebrationTriggered) {
+      setCelebrationTriggered(false);
+    }
+  }, [checkpoints, celebrationTriggered]);
 
 
   // functions
@@ -110,14 +144,15 @@ const UserWorkshop = () => {
         </div>
       )}
 
-      {hasAnyWP &&  (
+      {hasAnyWP && checkpoints && (
         <StepsDiagram
-          checkpoints={workshop.checkpoints}
+          checkpoints={checkpoints}
           setCheckpoints={setCheckpoints}
         />
       )}
       
-
+      {showConfetti && <Confetti width={width} height={height} numberOfPieces={confettiPieces} recycle={false} />
+}
     </styledElements.WorkshopCard>
   );
 };

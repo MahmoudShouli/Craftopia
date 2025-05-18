@@ -31,11 +31,6 @@ const WorkshopSchema = new mongoose.Schema({
   crafters: [CraftersSchema],
   checkpoints: [CheckpointSchema], // ordered array of checkpoints
   messages: [MessageSchema],
-  status: {
-    type: String,
-    enum: ["in progress", "finished"],
-    default: "in progress",
-  },
 });
 
 const WorkshopModel = mongoose.model("Workshops", WorkshopSchema, "workshops");

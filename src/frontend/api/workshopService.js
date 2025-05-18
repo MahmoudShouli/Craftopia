@@ -41,6 +41,14 @@ export const updateCheckpointStatus = async (
   return response.data;
 };
 
+export const updateCheckpointOrder = async (adminEmail, checkpoints) => {
+  const response = await axios.patch(`${API_URL}/checkpoints-order`, {
+    adminEmail,
+    checkpoints,
+  });
+  return response.data;
+};
+
 const workshopService = {
   isAdminOfAnyWorkshop,
   createWorkshop,
