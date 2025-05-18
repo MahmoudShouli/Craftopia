@@ -6,52 +6,58 @@ import { useUser } from "../../context/UserContext";
 import styledElements from "./ChatBox.styled";
 import { FiMaximize, FiMinimize, FiImage } from "react-icons/fi";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
 import MessageItem from "./MessageItem";
 import { socket } from "../../../utils/socket";
 
-const ChatBox = ( { userToChatWith }) => {
+const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
   const { user } = useUser();
   const fileInputRef = useRef();
   const bottomRef = useRef(null);
   const shouldScrollRef = useRef(true);
 
-
   const [onlineUsers, setOnlineUsers] = useState([]);
-
   const [contactedUsers, setContactedUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [senderDetailsMap, setSenderDetailsMap] = useState({});
 
-  
   useEffect(() => {
-    const loadCrafters = async () => {
-      const contacts = await messageService.getContacts(user.email); 
-  
-      let merged = [];
-      if (userToChatWith) {
-        const alreadyExists = contacts.some(c => c.email === userToChatWith.email);
-        merged = alreadyExists ? contacts : [...contacts, userToChatWith];
+    const loadContacts = async () => {
+      const contacts = await messageService.getContacts(user.email);
+
+      if (mode === "group") {
+        setContactedUsers([]);
+      } else {
+        let merged = [];
+        if (userToChatWith) {
+          const exists = contacts.some(c => c.email === userToChatWith.email);
+          merged = exists ? contacts : [...contacts, userToChatWith];
+        } else {
+          merged = contacts;
+        }
         setContactedUsers(merged);
       }
-      else {
-        setContactedUsers(contacts);
-      }
-      
     };
-    loadCrafters();
-  },[]);
+    loadContacts();
+  }, []);
 
   useEffect(() => {
-    if (!shouldScrollRef.current) return; // block scroll
-  
+    const loadMessages = async () => {
+      if (mode === "group" && workshopInfo?.name) {
+        const chat = await messageService.getChatMessages(user.email, workshopInfo.name);
+        setMessages(chat);
+      }
+    };
+    loadMessages();
+  }, [mode, workshopInfo]);
+
+  useEffect(() => {
+    if (!shouldScrollRef.current) return;
     const lastMessage = messages[messages.length - 1];
-  
+
     if (lastMessage?.content?.includes("cloudinary")) {
       const img = new Image();
       img.src = lastMessage.content;
@@ -62,37 +68,6 @@ const ChatBox = ( { userToChatWith }) => {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  
-  
-
-  useEffect(() => {
-    if (!user?.email) return;
-  
-    socket.emit('join', user.email);
-  
-    const handler = (data) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
-    };
-  
-    socket.on('receive_message', handler);
-  
-    return () => {
-      socket.off('receive_message', handler);
-    };
-  }, [user.email]);
-  
-
-  useEffect(() => {
-    const handleOnlineUsers = (list) => {
-      setOnlineUsers(list);
-    };
-  
-    socket.on("online_users", handleOnlineUsers);
-  
-    return () => {
-      socket.off("online_users", handleOnlineUsers);
-    };
-  }, []);
 
   useEffect(() => {
     socket.emit("get_online_users");
@@ -109,28 +84,58 @@ const ChatBox = ( { userToChatWith }) => {
   }, []);
 
   useEffect(() => {
-    const handleLikeUpdate = ({ messageId, liked }) => {
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg._id === messageId ? { ...msg, liked } : msg
-        )
-      );
+    if (!user?.email) return;
+    socket.emit("join", user.email);
+
+    const handler = (data) => {
+      if (mode === "group" && data.receiver === workshopInfo?.name) {
+        setMessages((prev) => [...prev, data]);
+      } else if (mode === "private" && selectedUser && data.receiver === user.email) {
+        setMessages((prev) => [...prev, data]);
+      }
     };
-  
-    socket.on("message_liked", handleLikeUpdate);
-    return () => socket.off("message_liked", handleLikeUpdate);
+
+    socket.on("receive_message", handler);
+    return () => socket.off("receive_message", handler);
+  }, [user.email, selectedUser, mode, workshopInfo]);
+
+  useEffect(() => {
+    socket.on("online_users", (list) => setOnlineUsers(list));
+    socket.emit("get_online_users");
+    return () => socket.off("online_users");
   }, []);
-  
-  
+
+  useEffect(() => {
+    socket.on("message_liked", ({ messageId, liked }) => {
+      setMessages((prev) =>
+        prev.map((msg) => (msg._id === messageId ? { ...msg, liked } : msg))
+      );
+    });
+    return () => socket.off("message_liked");
+  }, []);
+
   useEffect(() => {
     socket.on("message_deleted", ({ messageId }) => {
       setMessages((prev) => prev.filter((m) => m._id !== messageId));
     });
-  
     return () => socket.off("message_deleted");
   }, []);
-  
-    
+
+  useEffect(() => {
+    const fetchSenderDetails = async () => {
+      const emails = [...new Set(messages.map((m) => m.sender))];
+      const map = {};
+      for (const email of emails) {
+        const profile = await messageService.getUserProfile(email);
+        map[email] = profile;
+      }
+      setSenderDetailsMap(map);
+    };
+
+    if (messages.length) {
+      fetchSenderDetails();
+    }
+  }, [messages]);
 
   const selectCrafter = async (crafter) => {
     setSelectedUser(crafter);
@@ -139,77 +144,63 @@ const ChatBox = ( { userToChatWith }) => {
   };
 
   const handleSend = async () => {
-
     shouldScrollRef.current = true;
+    const sender = user.email;
+    const receiver = mode === "group" ? workshopInfo.name : selectedUser.email;
+    const content = messageInput;
 
-    let sender = user.email;
-    let receiver = selectedUser.email;
-    let content = messageInput;
-   
     try {
-      const newMessage = await messageService.sendMessage({sender, receiver, content});
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-
-      socket.emit('send_message', newMessage); 
+      const newMessage = await messageService.sendMessage({ sender, receiver, content });
+      setMessages((prev) => [...prev, newMessage]);
+      socket.emit("send_message", newMessage);
     } catch (error) {
-        console.error('Error creating message:', error);
+      console.error("Error sending message:", error);
     }
-
     setMessageInput("");
-  }
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file || !selectedUser) return;
-  
+    if (!file) return;
+
     const formData = new FormData();
     formData.append("image", file);
-  
+
     try {
       const res = await fetch("http://localhost:3000/messages/upload-image", {
         method: "POST",
         body: formData,
       });
-  
+
       const data = await res.json();
       const imageUrl = data.url;
-  
+
       const sender = user.email;
-      const receiver = selectedUser.email;
+      const receiver = mode === "group" ? workshopInfo.name : selectedUser.email;
       const content = imageUrl;
-    
-  
-      
+
       const newMessage = await messageService.sendMessage({ sender, receiver, content });
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      socket.emit('send_message', newMessage); 
+      setMessages((prev) => [...prev, newMessage]);
+      socket.emit("send_message", newMessage);
     } catch (err) {
       console.error("Image upload failed:", err);
     }
   };
 
-
   const handleLike = async (msg) => {
-
     shouldScrollRef.current = false;
+    if (!msg._id || msg.sender === user.email) return;
 
-    if (!msg._id || msg.sender === user.email) return; // prevent like if no ID or from self
-  
     try {
       const updated = await messageService.likeMessage(msg._id);
-      setMessages((prev) =>
-        prev.map((m) => (m._id === updated._id ? updated : m))
-      );
+      setMessages((prev) => prev.map((m) => (m._id === updated._id ? updated : m)));
     } catch (err) {
       console.error("Failed to toggle like:", err);
     }
   };
-  
 
   const handleDelete = async (id) => {
-
     shouldScrollRef.current = false;
-
     try {
       await messageService.deleteMessage(id);
       setMessages((prev) => prev.filter((m) => m._id !== id));
@@ -217,68 +208,72 @@ const ChatBox = ( { userToChatWith }) => {
       console.error("Failed to delete:", err);
     }
   };
-  
 
   return (
-    <styledElements.ChatCard fullscreen={isFullscreen}>
-      <styledElements.FullscreenToggle onClick={() => setIsFullscreen(!isFullscreen)}>
+    <styledElements.ChatCard fullscreen={isFullscreen} group={mode === "group"}>
+      {mode === "private" && (
+        <styledElements.FullscreenToggle onClick={() => setIsFullscreen(!isFullscreen)}>
         {isFullscreen ? <FiMinimize /> : <FiMaximize />}
       </styledElements.FullscreenToggle>
-
-      <styledElements.SidebarToggle
-        sidebarVisible={showSidebar}
-        onClick={() => setShowSidebar(!showSidebar)}
-      >
-        {showSidebar ? <FaChevronLeft /> : <FaChevronRight />}
-      </styledElements.SidebarToggle>
-
-      {showSidebar && (
-        <styledElements.Sidebar>
-        {contactedUsers.length === 0 ? (
-            <div style={{
-            padding: "2rem",
-            textAlign: "center",
-            color: "#888",
-            fontWeight: "bold"
-            }}>
-            No chats yet!
-            </div>
-        ) : (
-            contactedUsers.map((chatter) => (
-            <styledElements.CrafterItem
-                key={chatter.email}
-                onClick={() => selectCrafter(chatter)}
-                selected={selectedUser?.email === chatter.email}
-            >
-                <styledElements.Avatar> 
-                    <img
-                        src={chatter.avatarUrl || "/default-avatar.png"}
-                        alt="avatar"
-                        style={{ width: "100%", height: "100%", borderRadius: "50%" }}
-                    />
-                    {onlineUsers.includes(chatter.email) ? <styledElements.OnlineDot title="Online" /> : <styledElements.OfflineDot title="Offline"/>}
-                </styledElements.Avatar>
-                <styledElements.CrafterName>{chatter.name}</styledElements.CrafterName>
-            </styledElements.CrafterItem>
-            ))
-        )}
-        </styledElements.Sidebar>
       )}
       
 
+      {mode === "private" && (
+        <styledElements.SidebarToggle
+          sidebarVisible={showSidebar}
+          onClick={() => setShowSidebar(!showSidebar)}
+        >
+          {showSidebar ? <FaChevronLeft /> : <FaChevronRight />}
+        </styledElements.SidebarToggle>
+      )}
+
+      {mode === "private" && showSidebar && (
+        <styledElements.Sidebar>
+          {contactedUsers.length === 0 ? (
+            <div style={{ padding: "2rem", textAlign: "center", color: "#888", fontWeight: "bold" }}>
+              No chats yet!
+            </div>
+          ) : (
+            contactedUsers.map((chatter) => (
+              <styledElements.CrafterItem
+                key={chatter.email}
+                onClick={() => selectCrafter(chatter)}
+                selected={selectedUser?.email === chatter.email}
+              >
+                <styledElements.Avatar>
+                  <img
+                    src={chatter.avatarUrl || "/default-avatar.png"}
+                    alt="avatar"
+                    style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                  />
+                  {onlineUsers.includes(chatter.email) ? <styledElements.OnlineDot /> : <styledElements.OfflineDot />}
+                </styledElements.Avatar>
+                <styledElements.CrafterName>{chatter.name}</styledElements.CrafterName>
+              </styledElements.CrafterItem>
+            ))
+          )}
+        </styledElements.Sidebar>
+      )}
 
       <styledElements.MessageArea>
-        {selectedUser ? (
+        {(mode === "private" && selectedUser) || (mode === "group" && workshopInfo) ? (
           <>
             <styledElements.MessageList>
               {messages.map((msg) => (
-                <MessageItem 
+                <MessageItem
                   key={msg._id || `${msg.sender}-${Math.random()}`}
                   msg={msg}
                   isFromSelf={msg.sender === user.email}
                   handleLike={handleLike}
                   onDelete={handleDelete}
-                  avatar = {msg.sender === user.email ? user.avatarUrl : selectedUser.avatarUrl}
+                  avatar={
+                    msg.sender === user.email
+                      ? user.avatarUrl
+                      : mode === "private"
+                        ? selectedUser?.avatarUrl || "/default-avatar.png"
+                        : senderDetailsMap[msg.sender]?.avatarUrl || "/default-avatar.png"
+                  }
+                  senderName={senderDetailsMap[msg.sender]?.name || msg.sender}
                 />
               ))}
               <div ref={bottomRef} />
@@ -291,7 +286,7 @@ const ChatBox = ( { userToChatWith }) => {
                 onChange={(e) => setMessageInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault(); // prevent new line
+                    e.preventDefault();
                     handleSend();
                   }
                 }}
@@ -308,8 +303,6 @@ const ChatBox = ( { userToChatWith }) => {
               <styledElements.ImageUploadButton onClick={() => fileInputRef.current.click()}>
                 <FiImage />
               </styledElements.ImageUploadButton>
-
-             
             </styledElements.MessageInputContainer>
           </>
         ) : (

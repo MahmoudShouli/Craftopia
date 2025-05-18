@@ -12,6 +12,7 @@ import { socket } from "../../../utils/socket";
 import Button from "../button/Button";
 import PopupCreateWorkshop from "./PopupCreateWorkshop";
 import StepsDiagram from "./StepsDiagram";
+import ChatBox from "../chat/ChatBox";
 
 
 const UserWorkshop = () => {
@@ -137,9 +138,7 @@ const UserWorkshop = () => {
       </styledElements.Navbar>
 
       {activeTab === "chat" && (
-        <div style={{ padding: "2rem", color: "#666" }}>
-          🛠️ Chat view placeholder (coming soon)
-        </div>
+        <ChatBox mode="group" workshopInfo={workshop} />
       )}
 
       {activeTab === "progress" && checkpoints && (
