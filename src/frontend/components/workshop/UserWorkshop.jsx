@@ -73,7 +73,7 @@ const UserWorkshop = () => {
       }
   };
 
-  if (!workshop || !workshop.checkpoints) {
+  if (hasAnyWP && (!workshop || !workshop.checkpoints)) {
     return <styledElements.Spinner />; 
   }
 
