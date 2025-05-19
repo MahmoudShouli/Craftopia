@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef } from "react";
 import messageService from "../../api/messageService";
+import { getUserByEmail } from "../../api/userService";
 import { useUser } from "../../context/UserContext";
 import styledElements from "./ChatBox.styled";
 import { FiMaximize, FiMinimize, FiImage } from "react-icons/fi";
@@ -25,29 +26,28 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
   const [senderDetailsMap, setSenderDetailsMap] = useState({});
 
   useEffect(() => {
-    const loadContacts = async () => {
-      const contacts = await messageService.getContacts(user.email);
-
-      if (mode === "group") {
-        setContactedUsers([]);
-      } else {
-        let merged = [];
-        if (userToChatWith) {
-          const exists = contacts.some(c => c.email === userToChatWith.email);
-          merged = exists ? contacts : [...contacts, userToChatWith];
-        } else {
-          merged = contacts;
-        }
+    const loadCrafters = async () => {
+      const contacts = await messageService.getContacts(user.email); 
+  
+      let merged = [];
+      if (userToChatWith) {
+        const alreadyExists = contacts.some(c => c.email === userToChatWith.email);
+        merged = alreadyExists ? contacts : [...contacts, userToChatWith];
         setContactedUsers(merged);
       }
+      else {
+        setContactedUsers(contacts);
+      }
+      
     };
-    loadContacts();
-  }, []);
+    if (mode == "private")
+      loadCrafters();
+  },[]);
 
   useEffect(() => {
     const loadMessages = async () => {
       if (mode === "group" && workshopInfo?.name) {
-        const chat = await messageService.getChatMessages(user.email, workshopInfo.name);
+        const chat = await messageService.getChatMessages("group", workshopInfo.name);
         setMessages(chat);
       }
     };
@@ -121,15 +121,18 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
     return () => socket.off("message_deleted");
   }, []);
 
+
   useEffect(() => {
     const fetchSenderDetails = async () => {
       const emails = [...new Set(messages.map((m) => m.sender))];
       const map = {};
       for (const email of emails) {
-        const profile = await messageService.getUserProfile(email);
+        const profile = await getUserByEmail(email);
+        console.log(profile);
         map[email] = profile;
       }
       setSenderDetailsMap(map);
+      console.log("✅ Sender details loaded:", map);
     };
 
     if (messages.length) {

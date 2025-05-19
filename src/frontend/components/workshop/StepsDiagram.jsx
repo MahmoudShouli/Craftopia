@@ -84,8 +84,12 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
   );
 
   const handleDragEnd = async (event) => {
+    if (user.role == "crafter"){
+      toast.error("Only creators can modify the progress.");
+      return;
+    }
     const { active, over } = event;
-    if (!over || active.id === over.id || user.role == "crafter") return;
+    if (!over || active.id === over.id) return;
 
     const oldIndex = checkpoints.findIndex((cp) => cp.name === active.id);
     const newIndex = checkpoints.findIndex((cp) => cp.name === over.id);
@@ -103,7 +107,10 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
 
   const handleStepClick = async (index) => {
 
-    if (user.role == "crafter") return;
+     if (user.role == "crafter"){
+      toast.error("Only creators can modify the progress.");
+      return;
+    }
     const cp = checkpoints[index];
     const updated = [...checkpoints];
 

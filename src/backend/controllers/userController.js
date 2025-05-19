@@ -106,10 +106,11 @@ export const searchCrafters = async (req, res) => {
 
 export const getUserByEmail = async (req, res) => {
   try {
-    const { email } = req.query;
+    const { email } = req.params;
     const user = await fetchUserByEmail(email);
     res.json(user);
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to get user by email" });
   }
 };
