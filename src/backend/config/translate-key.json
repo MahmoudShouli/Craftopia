@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "craftopia-459411",
+  "private_key_id": "b2841860b4736dad4bd3f273aee6d402c5bff72f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCsfWNwN9z0AZzC\nWQs3aA/ZAUxSziydRNtD2CUuMmBaF1Zl0K0GN/R3a6jv/xxeCISZKEsOOUXs12Ko\n7atdY9pkK9rBkPbRryWqhrx9IxgoHGe3Yb/FCgMecRY6P2GKpDOzknoNMxFjBcUo\nBCw6GDFbCl+4bBD8Hlk4OpZcwx6FD0IbqsQy6w8agABvg4Kw9/STUGm9UxNpPW/k\nw25V/Hv3gBeJzXNolnaQ41kF2TLcedap6uwFSpw6udcqDrA/GmBo4VwzLXfDYICM\ne2mPHdbgVxvP+S6wPJ0naR25cWGJQK3N+C7uHXmO8ZrTrCd3vJKPqMEqgNmmMH1c\nEGK45YgXAgMBAAECggEAONjuT8qpcGWjo02za6RJLMzHubanb4GE/hwbTNlfdfGh\nENcwXw9L65u4xrf+QmNuSAfGjL6FdCQcKO6Dfrjs/fySER9UqRCfSk8zic5qJLYP\n3JlDmY3OL1c36yR+YjHxtCn/PaBqB4ecTa7qYI8enRGTMHW1N1JNN0Hf0lygD1vH\nbryp98B/ly37dOOk3RVKwnc9110y6w7U8QVDBzn6oRsjfDOpjLtshk5maQ3VO+qP\nlffXSP4Lx0WTpGIf0DtwBzERdWk9hLwkoxViCinBWBcL1Wk3O7xBB1+BETucSqQO\nbpNIraVMowNv681qtsInsrGiF0RahJbyY5Nsg4mBqQKBgQDtrH6PdGmEJ2nNAIN3\nzgtoUwnf5E1Hs359AfQhqpViCQLlkdWcLVA5VWzyqIruigct3MLTLhdWtB3DirPN\nwM2/v2FL6RREXY23biN49SAMDHIPV6fZY+GRickMd+XS3yFhqc5NeHlO5VTDyLwq\nXBlsyx5k5rDsqvS6Tg8R7/uCMwKBgQC5yjW3FIBjl2/qgd409C3kWlO9B/Up2buV\nK7krpJlwraW2J4eyP1QFPqbVBmOiIwRa4KAEQUZ8ruFCmBGNNgtLSCS7sXR3EDq3\nBGkEh+Iid1i3mfRIwk4R3cmwFNFou99+vlfORXYm/A6cqrQs5Q78s3IEpCq9ySnU\nWl9T5wfmjQKBgQCrSiXsPXnORJl7pWMadOTDyxTSxzbq9fGzJjVMDiSbAuOTkAbj\nB8VJjMd4GwAF6nRCGVhP2mf3lNfelZgAMXQXPVZh3xk8LDB2gmoOQptWE6IgbIwL\noHBw81xyH/cCgs0MFdUZADptIdp1P7Zc0QOB5OGC1r+r0YmOu7MgulQJAQKBgBF9\nwhTcb0HxDe5MD7l4i6GGB4AycZhhEVH37dT4CCIdlw5RJmtXnvdncJl5ooOvPEe6\nAhakdphidn6ohm5++g06W4r4J/jVpFF6rtBoYpfQGKAgdGktMeBouwZCz3xGw8HQ\n9b9LttXwwQdq4s+fOQv9cOyS8BsyBygg4fyqMYo5AoGAbMLeT4Mdj1uqAy1hCd0n\nqFC7XdwsAkxHUnbTGISqhJs/9dSNiBMTvubo/IifbL+3fpSvbXwYtYJX3c+y/IX2\niN2lyBWm6KVbpiV8/sJHcV9+jFWjWp5z/qD7P+DEvriE2RR46dXC7ldcvS9eN7yj\nlTkTfdPTyhrcvMO+10TeBSE=\n-----END PRIVATE KEY-----\n",
+  "client_email": "translate@craftopia-459411.iam.gserviceaccount.com",
+  "client_id": "109394714287364463173",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/translate%40craftopia-459411.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

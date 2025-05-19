@@ -1,7 +1,7 @@
-// controllers/reviewController.js
 import ReviewModel from "../models/ReviewModel.js";
 import UserModel from "../models/UserModel.js";
 import { ReviewType } from "../models/enums/reviewType.js";
+import { analyzeReview } from "../services/sentimentService.js";
 
 export const addReview = async (req, res) => {
   const { email, message, rating, type, to } = req.body;
@@ -13,9 +13,17 @@ export const addReview = async (req, res) => {
   try {
     const review = new ReviewModel({ email, message, rating, type, to });
     await review.save();
-    res.status(201).json({ message: "Review saved successfully" });
+
+    const result = await analyzeReview(message);
+
+    res.status(201).json({
+      message: "Review saved",
+      sentiment: result.sentiment,
+      language: result.language,
+      translated: result.translatedText || null,
+    });
   } catch (error) {
-    console.error("Save review error:", error.message);
+    console.error("Save review error:", error); // changed from error.message to full error
     res.status(500).json({ error: "Failed to save review" });
   }
 };
@@ -23,11 +31,9 @@ export const addReview = async (req, res) => {
 export const getAllReviews = async (req, res) => {
   try {
     const reviews = await ReviewModel.find({ type: ReviewType.SITE });
-
     const enrichedReviews = await Promise.all(
       reviews.map(async (review) => {
         const user = await UserModel.findOne({ email: review.email });
-
         return {
           ...review.toObject(),
           user: user
@@ -40,10 +46,9 @@ export const getAllReviews = async (req, res) => {
         };
       })
     );
-
     res.status(200).json(enrichedReviews);
   } catch (error) {
-    console.error(" Get reviews error:", error);
+    console.error("Get reviews error:", error);
     res.status(500).json({ error: "Failed to get reviews" });
   }
 };
@@ -61,11 +66,9 @@ export const getReviewsByEmail = async (req, res) => {
       type: "Person",
     }).sort({ createdAt: -1 });
 
-    // Fetch user data for each review manually
     const enrichedReviews = await Promise.all(
       reviews.map(async (review) => {
         const user = await UserModel.findOne({ email: review.email });
-
         return {
           ...review.toObject(),
           user: user
