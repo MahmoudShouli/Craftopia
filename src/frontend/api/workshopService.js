@@ -49,12 +49,25 @@ const updateCheckpointOrder = async (adminEmail, checkpoints) => {
   return response.data;
 };
 
+const removeCrafterFromWorkshop = async (workshopId, crafterEmail) => {
+  try {
+    const res = await axios.put(`${API_URL}/remove-crafter/${workshopId}`, {
+      crafterEmail,
+    });
+    return res.data;
+  } catch (err) {
+    console.error("❌ Failed to remove crafter:", err);
+    throw err;
+  }
+};
+
 const workshopService = {
   createWorkshop,
   getWorkshopsByAdmin,
   getWorkshopsByCrafter,
   updateCheckpointOrder,
   updateCheckpointStatus,
+  removeCrafterFromWorkshop,
 };
 
 export default workshopService;

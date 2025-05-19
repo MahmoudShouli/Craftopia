@@ -116,3 +116,27 @@ export const updateCheckpointOrder = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const removeCrafter = async (req, res) => {
+  const { workshopId } = req.params;
+  const { crafterEmail } = req.body;
+
+  if (!workshopId || !crafterEmail) {
+    return res
+      .status(400)
+      .json({ error: "Workshop ID and crafter email are required." });
+  }
+
+  try {
+    const updated = await WorkshopService.removeCrafterFromWorkshop(
+      workshopId,
+      crafterEmail
+    );
+    if (!updated) return res.status(404).json({ error: "Workshop not found." });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("❌ Error removing crafter:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};

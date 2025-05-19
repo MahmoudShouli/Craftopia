@@ -33,10 +33,19 @@ const updateCheckpointOrder = async (adminEmail, newCheckpoints) => {
   );
 };
 
+const removeCrafterFromWorkshop = async (workshopId, crafterEmail) => {
+  return await WorkshopModel.findByIdAndUpdate(
+    workshopId,
+    { $pull: { crafters: { email: crafterEmail } } },
+    { new: true }
+  );
+};
+
 export default {
   createWorkshop,
   getWorkshopsByAdmin,
   updateCheckpointStatus,
   updateCheckpointOrder,
   getWorkshopsByCrafter,
+  removeCrafterFromWorkshop,
 };

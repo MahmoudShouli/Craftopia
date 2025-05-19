@@ -31,10 +31,18 @@ const updateCheckpointOrder = async (adminEmail, newCheckpoints) => {
   );
 };
 
+const removeCrafterFromWorkshop = async (workshopId, crafterEmail) => {
+  return await WorkshopRepository.removeCrafterFromWorkshop(
+    workshopId,
+    crafterEmail
+  );
+};
+
 export default {
   createWorkshop,
   getWorkshopsByAdmin,
   updateCheckpointStatus,
   updateCheckpointOrder,
   getWorkshopsByCrafter,
+  removeCrafterFromWorkshop,
 };

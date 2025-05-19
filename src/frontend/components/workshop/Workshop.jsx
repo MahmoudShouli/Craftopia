@@ -24,6 +24,7 @@ const Workshop = () => {
 
   const [allWorkshops, setAllWorkshops] = useState([]);
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
+  const [tempWorkshop, setTempWorkshop] = useState(null);
 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -76,12 +77,19 @@ const Workshop = () => {
       return;
     }
   
+    setTempWorkshop(wp);
     openPopup("invite")
 
   };
 
-  const handleInviteAnswer = (option) => {
-    console.log(option);
+  const handleInviteAnswer = async (option) => {
+    if (option === "reject"){
+      await workshopService.removeCrafterFromWorkshop(tempWorkshop._id, user.email);
+      setAllWorkshops(allWorkshops.filter(wp => wp._id !== tempWorkshop._id));
+    }
+    else if (option === "accept"){
+      //
+    }
   }
 
   const handleCreateWorkshop = async ({ workshopName, selectedCrafters, checkpoints }) => {
