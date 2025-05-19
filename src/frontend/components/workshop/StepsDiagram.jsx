@@ -28,7 +28,7 @@ import { toast } from "react-toastify";
 import workshopService from "../../api/workshopService";
 import { useUser } from "../../context/UserContext";
 
-const SortableStep = ({ cp, index, currentIndex, onClick, length }) => {
+const SortableStep = ({ cp, index, currentIndex, onClick, length, isAdmin }) => {
   const isDraggable = cp.status !== "finished";
 
   const {
@@ -51,6 +51,7 @@ const SortableStep = ({ cp, index, currentIndex, onClick, length }) => {
       <StepContainer ref={setNodeRef} style={style} {...attributes} {...(isDraggable ? listeners : {})}>
         <StepNode
           status={cp.status === "finished" ? cp.status : index === currentIndex ? cp.status : "upcoming"}
+          admin = {isAdmin}
           onClick={() => onClick(index)}
         >
           {cp.status === "finished" ? "✔" : index + 1}
@@ -67,11 +68,12 @@ const SortableStep = ({ cp, index, currentIndex, onClick, length }) => {
 
 const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
   const { user } = useUser();
+
   const [currentIndex, setCurrentIndex] = useState(
     checkpoints.findIndex((cp) => cp.status === "in progress")
   );
 
-    const [showConfetti, setShowConfetti] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const [confettiPieces, setConfettiPieces] = useState(0);
   const { width, height } = useWindowSize();
 
@@ -83,7 +85,7 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id || user.role == "crafter") return;
 
     const oldIndex = checkpoints.findIndex((cp) => cp.name === active.id);
     const newIndex = checkpoints.findIndex((cp) => cp.name === over.id);
@@ -100,6 +102,8 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
   };
 
   const handleStepClick = async (index) => {
+
+    if (user.role == "crafter") return;
     const cp = checkpoints[index];
     const updated = [...checkpoints];
 
@@ -167,6 +171,7 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
                 currentIndex={currentIndex}
                 onClick={handleStepClick}
                 length={checkpoints.length}
+                isAdmin = {user.role === "customer"}
               />
             ))}
           </FlowWrapper>

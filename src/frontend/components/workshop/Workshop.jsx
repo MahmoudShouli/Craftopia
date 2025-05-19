@@ -112,8 +112,7 @@ const Workshop = () => {
         setCheckpoints(saved.checkpoints);
         toast.success("Workshop created!");
       } catch (err) {
-        console.error("❌ Error creating workshop:", err);
-        toast.error("Failed to create workshop.");
+        toast.error("Don't leave empty fields.");
       }
   };
 

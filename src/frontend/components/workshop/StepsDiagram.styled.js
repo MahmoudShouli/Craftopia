@@ -51,7 +51,7 @@ export const StepNode = styled.div`
   font-weight: bold;
   font-size: 1.2rem;
   color: white;
-  cursor: pointer;
+  cursor: ${({ admin }) => (admin ? "pointer" : "default")};
   transition: background-color 0.3s ease;
 `;
 
