@@ -66,6 +66,18 @@ export const getWorkshopsByCrafter = async (req, res) => {
   }
 };
 
+export const getCheckpointsByWorkshopId = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const checkpoints = await WorkshopService.getCheckpointsByWorkshopId(id);
+    res.json(checkpoints);
+  } catch (err) {
+    console.error("❌ Failed to retrieve checkpoints:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 export const updateCheckpointStatus = async (req, res) => {
   try {
     const { adminEmail, checkpointName, newStatus } = req.body;

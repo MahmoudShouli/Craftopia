@@ -1,5 +1,5 @@
 // WorkshopStepsDnD.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   DndContext,
   closestCenter,
@@ -27,6 +27,7 @@ import {
 import { toast } from "react-toastify";
 import workshopService from "../../api/workshopService";
 import { useUser } from "../../context/UserContext";
+import { socket } from "../../../utils/socket";
 
 const SortableStep = ({ cp, index, currentIndex, onClick, length, isAdmin }) => {
   const isDraggable = cp.status !== "finished";
@@ -77,6 +78,21 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
   const [confettiPieces, setConfettiPieces] = useState(0);
   const { width, height } = useWindowSize();
 
+
+  useEffect(() => {
+  
+    const handler = (data) => {
+      setCheckpoints(data);
+      setCurrentIndex(data.findIndex((cp) => cp.status === "in progress"));
+    };
+  
+    socket.on('receive_updated_cps', handler);
+  
+    return () => {
+      socket.off('receive_updated_cps', handler);
+    };
+  },);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
@@ -96,6 +112,8 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
     const reordered = arrayMove(checkpoints, oldIndex, newIndex);
 
     setCheckpoints(reordered);
+
+    socket.emit('updated_checkpoints', reordered);
 
     // persist new order
     try {
@@ -126,7 +144,9 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
         toast.success("Well done! 😁");
         setCheckpoints(updated);
         setCurrentIndex(checkpoints.findIndex((cp) => cp.status === "in progress"));
+        socket.emit('updated_checkpoints', updated);
         checkComplete(updated)
+        
       } catch (err) {
         console.error("❌ Failed to update checkpoint status", err);
       }
@@ -136,6 +156,7 @@ const StepsDiargam = ({ checkpoints, setCheckpoints }) => {
         updated[index].status = "in progress";
         setCheckpoints(updated);
         setCurrentIndex(checkpoints.findIndex((cp) => cp.status === "in progress"));
+        socket.emit('updated_checkpoints', updated);
       } catch (err) {
         console.error("❌ Failed to update checkpoint status", err);
       }

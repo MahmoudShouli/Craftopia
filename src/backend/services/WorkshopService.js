@@ -12,6 +12,10 @@ const getWorkshopsByCrafter = async (email) => {
   return await WorkshopRepository.getWorkshopsByCrafter(email);
 };
 
+const getCheckpointsByWorkshopId = async (workshopId) => {
+  return await WorkshopRepository.getCheckpointsByWorkshopId(workshopId);
+};
+
 const updateCheckpointStatus = async (
   adminEmail,
   checkpointName,
@@ -49,6 +53,7 @@ const removeCrafterFromWorkshop = async (workshopId, crafterEmail) => {
 export default {
   createWorkshop,
   getWorkshopsByAdmin,
+  getCheckpointsByWorkshopId,
   updateCheckpointStatus,
   updateCheckpointOrder,
   getWorkshopsByCrafter,

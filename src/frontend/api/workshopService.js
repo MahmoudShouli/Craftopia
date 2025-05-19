@@ -27,6 +27,16 @@ const getWorkshopsByCrafter = async (email) => {
   }
 };
 
+const getCheckpointsByWorkshopId = async (workshopId) => {
+  try {
+    const res = await axios.get(`${API_URL}/checkpoints/${workshopId}`);
+    return res.data;
+  } catch (err) {
+    console.error("❌ Failed to fetch checkpoints:", err);
+    throw err;
+  }
+};
+
 const updateCheckpointStatus = async (
   adminEmail,
   checkpointName,
@@ -85,6 +95,7 @@ const workshopService = {
   createWorkshop,
   getWorkshopsByAdmin,
   getWorkshopsByCrafter,
+  getCheckpointsByWorkshopId,
   updateCheckpointOrder,
   updateCheckpointStatus,
   updateCrafterStatus,

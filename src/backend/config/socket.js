@@ -19,6 +19,10 @@ const configureSocket = (server) => {
       socket.broadcast.emit("receive_message", data);
     });
 
+    socket.on("updated_checkpoints", (data) => {
+      socket.broadcast.emit("receive_updated_cps", data);
+    });
+
     socket.on("user_online", (email) => {
       onlineUsers.add(email);
       socketIdToEmail.set(socket.id, email);

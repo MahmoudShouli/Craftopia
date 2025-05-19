@@ -128,11 +128,9 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
       const map = {};
       for (const email of emails) {
         const profile = await getUserByEmail(email);
-        console.log(profile);
         map[email] = profile;
       }
       setSenderDetailsMap(map);
-      console.log("✅ Sender details loaded:", map);
     };
 
     if (messages.length) {

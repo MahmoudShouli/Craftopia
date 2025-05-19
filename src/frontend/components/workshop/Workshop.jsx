@@ -7,12 +7,12 @@ import styledElements from "./Workshop.styled";
 import { FiMaximize, FiMinimize} from "react-icons/fi";
 import { FaArrowLeft } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { socket } from "../../../utils/socket";
 import Button from "../button/Button";
 import PopupCreateWorkshop from "./PopupCreateWorkshop";
 import StepsDiagram from "./StepsDiagram";
 import ChatBox from "../chat/ChatBox";
 import InvitePopup from "./InvitePopup";
+import { socket } from "../../../utils/socket";
 
 
 
@@ -69,11 +69,11 @@ const Workshop = () => {
     
   };
 
-  const handleCardClick = (wp) => {
+  const handleCardClick = async (wp) => {
 
     if (user.role == "customer" || wp.crafters.find(c => c.email === user.email).status === "joined") {
       setSelectedWorkshop(wp);
-      setCheckpoints(wp.checkpoints);
+      setCheckpoints(await workshopService.getCheckpointsByWorkshopId(wp._id));
       return;
     }
   

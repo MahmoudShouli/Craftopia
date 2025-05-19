@@ -3,6 +3,7 @@ import {
   createWorkshop,
   getWorkshopsByAdmin,
   getWorkshopsByCrafter,
+  getCheckpointsByWorkshopId,
   updateCheckpointStatus,
   updateCheckpointOrder,
   updateCrafterStatus,
@@ -18,5 +19,6 @@ workshopRouter.patch("/checkpoint-status", updateCheckpointStatus);
 workshopRouter.patch("/checkpoints-order", updateCheckpointOrder);
 workshopRouter.put("/remove-crafter/:workshopId", removeCrafter);
 workshopRouter.put("/update-crafter-status/:workshopId", updateCrafterStatus);
+workshopRouter.get("/checkpoints/:id", getCheckpointsByWorkshopId);
 
 export default workshopRouter;
