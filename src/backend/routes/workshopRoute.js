@@ -5,6 +5,7 @@ import {
   getWorkshopsByCrafter,
   updateCheckpointStatus,
   updateCheckpointOrder,
+  updateCrafterStatus,
   removeCrafter,
 } from "../controllers/workshopController.js";
 
@@ -16,5 +17,6 @@ workshopRouter.get("/crafter-workshop/:email", getWorkshopsByCrafter);
 workshopRouter.patch("/checkpoint-status", updateCheckpointStatus);
 workshopRouter.patch("/checkpoints-order", updateCheckpointOrder);
 workshopRouter.put("/remove-crafter/:workshopId", removeCrafter);
+workshopRouter.put("/update-crafter-status/:workshopId", updateCrafterStatus);
 
 export default workshopRouter;

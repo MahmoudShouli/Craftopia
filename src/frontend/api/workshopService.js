@@ -49,6 +49,26 @@ const updateCheckpointOrder = async (adminEmail, checkpoints) => {
   return response.data;
 };
 
+export const updateCrafterStatus = async (
+  workshopId,
+  crafterEmail,
+  newStatus
+) => {
+  try {
+    const res = await axios.put(
+      `${API_URL}/update-crafter-status/${workshopId}`,
+      {
+        crafterEmail,
+        newStatus,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("❌ Failed to update crafter status:", err);
+    throw err;
+  }
+};
+
 const removeCrafterFromWorkshop = async (workshopId, crafterEmail) => {
   try {
     const res = await axios.put(`${API_URL}/remove-crafter/${workshopId}`, {
@@ -67,6 +87,7 @@ const workshopService = {
   getWorkshopsByCrafter,
   updateCheckpointOrder,
   updateCheckpointStatus,
+  updateCrafterStatus,
   removeCrafterFromWorkshop,
 };
 

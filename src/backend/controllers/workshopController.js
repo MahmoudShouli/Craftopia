@@ -117,6 +117,30 @@ export const updateCheckpointOrder = async (req, res) => {
   }
 };
 
+export const updateCrafterStatus = async (req, res) => {
+  const { workshopId } = req.params;
+  const { crafterEmail, newStatus } = req.body;
+
+  if (!workshopId || !crafterEmail || !newStatus) {
+    return res.status(400).json({ error: "Missing required fields." });
+  }
+
+  try {
+    const updated = await WorkshopService.updateCrafterStatus(
+      workshopId,
+      crafterEmail,
+      newStatus
+    );
+    if (!updated)
+      return res.status(404).json({ error: "Workshop or crafter not found." });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("❌ Error updating crafter status:", err);
+    res.status(500).json({ error: "Server error." });
+  }
+};
+
 export const removeCrafter = async (req, res) => {
   const { workshopId } = req.params;
   const { crafterEmail } = req.body;

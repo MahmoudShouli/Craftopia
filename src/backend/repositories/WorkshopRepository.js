@@ -33,6 +33,14 @@ const updateCheckpointOrder = async (adminEmail, newCheckpoints) => {
   );
 };
 
+const updateCrafterStatus = async (workshopId, crafterEmail, newStatus) => {
+  return await WorkshopModel.findOneAndUpdate(
+    { _id: workshopId, "crafters.email": crafterEmail },
+    { $set: { "crafters.$.status": newStatus } },
+    { new: true }
+  );
+};
+
 const removeCrafterFromWorkshop = async (workshopId, crafterEmail) => {
   return await WorkshopModel.findByIdAndUpdate(
     workshopId,
@@ -48,4 +56,5 @@ export default {
   updateCheckpointOrder,
   getWorkshopsByCrafter,
   removeCrafterFromWorkshop,
+  updateCrafterStatus,
 };

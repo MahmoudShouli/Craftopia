@@ -86,9 +86,14 @@ const Workshop = () => {
     if (option === "reject"){
       await workshopService.removeCrafterFromWorkshop(tempWorkshop._id, user.email);
       setAllWorkshops(allWorkshops.filter(wp => wp._id !== tempWorkshop._id));
+      setTempWorkshop(null);
     }
     else if (option === "accept"){
-      //
+      await workshopService.updateCrafterStatus(tempWorkshop._id, user.email, "joined");
+
+      const updated = await workshopService.getWorkshopsByCrafter(user.email);
+      setAllWorkshops(updated);
+      setTempWorkshop(null);
     }
   }
 
@@ -160,7 +165,9 @@ const Workshop = () => {
           }}
         >
           <h2 style={{ marginBottom: "1rem" }}>You have no current workshops yet.</h2>
-          <Button text="Create a workshop" size="large" color="#6a380f" onClick={() => openPopup("main")} />
+          {user.role === "customer" && (
+            <Button text="Create a workshop" size="large" color="#6a380f" onClick={() => openPopup("main")} />
+          )}
         </div>
       )}
 
