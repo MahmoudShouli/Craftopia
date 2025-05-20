@@ -1,6 +1,12 @@
 import MessageModel from "../models/MessageModel.js";
 
 const getChat = async (sender, receiver) => {
+  if (sender === "group") {
+    // Return all messages where receiver is the group name
+    return await MessageModel.find({ receiver }).sort({ timestamp: 1 });
+  }
+
+  // Private 1-to-1 chat logic
   return await MessageModel.find({
     $or: [
       { sender, receiver },

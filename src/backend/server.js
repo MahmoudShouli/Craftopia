@@ -10,6 +10,7 @@ import appointmentRoute from "./routes/appointmentRoute.js";
 import templateRoute from "./routes/templateRoute.js";
 import messageRouter from "./routes/messageRoute.js";
 import likeRoute from "./routes/likeRoutes.js";
+import workshopRouter from "./routes/workshopRoute.js";
 
 const startServer = async () => {
   const app = express();
@@ -25,6 +26,7 @@ const startServer = async () => {
   app.use("/templates", templateRoute);
   app.use("/likes", likeRoute);
   app.use("/messages", messageRouter);
+  app.use("/workshop", workshopRouter);
 
   const server = http.createServer(app);
   configureSocket(server);

@@ -27,7 +27,6 @@ import {
 
 const UserProfileCard = ({ user }) => {
 
-
   const { setUser } = useUser();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -35,9 +34,10 @@ const UserProfileCard = ({ user }) => {
   const [newPassword, setNewPassword] = useState('');
   const [previewUrl, setPreviewUrl] = useState(user?.avatarUrl || '');
   const [location, setLocation] = useState(user?.location || '');
-  const [city, setCity] = useState(user?.location || '');
+  const [city, setCity] = useState(user?.location.coordinates || '');
   const [uploading, setUploading] = useState(false);
   const [showMap, setShowMap] = useState(false);
+
 
   const fileInputRef = useRef();
 

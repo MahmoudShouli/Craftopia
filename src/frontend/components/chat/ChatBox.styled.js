@@ -1,10 +1,11 @@
 import styled from "styled-components";
 
-export const ChatCard = styled.div`
+const ChatCard = styled.div`
   position: relative;
   display: flex;
+  flex-direction: ${({ group }) => (group ? "column" : "row")};
   width: 100%;
-  height: 80vh;
+  height: ${({ group }) => (group ? "100%" : "80vh")};
   background-color: #fff;
   border-radius: 1rem;
   overflow: hidden;
@@ -68,6 +69,8 @@ const MessageArea = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  height: 100%; /* ✅ important in group (column) layout */
 `;
 
 const MessageList = styled.div`

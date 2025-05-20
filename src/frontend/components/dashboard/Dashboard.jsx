@@ -18,8 +18,9 @@ const customerSidebarItems = [
   { icon: "🔎", label: "Search & filter" },  
   { icon: "🛠️", label: "Templates" },
   { icon: "📅", label: "Schedules" },
-  { icon: "📄", label: "Chatting" },
-  { icon: "🚪", label: "Logout", route: "/" },
+  { icon: "💬", label: "Chatting" },
+  { icon: "👥", label: "Workshop" },
+  { icon: "↪", label: "Logout", route: "/" },
 ];
 
 // Sidebar items for crafters
@@ -28,8 +29,9 @@ const crafterSidebarItems = [
   { icon: "👤", label: "Profile", route: "/userprofile" },
   { icon: "📅", label: "Schedules" },
   { icon: "🛠️", label: "Templates" },
-  { icon: "📄", label: "Chatting" },
-  { icon: "🚪", label: "Logout", route: "/" },
+  { icon: "💬", label: "Chatting" },
+  { icon: "👥", label: "Workshop" },
+  { icon: "↪", label: "Logout", route: "/" },
 ];
 
 const Dashboard = ({ selectedIndex, onItemSelect }) => {
@@ -59,6 +61,8 @@ const Dashboard = ({ selectedIndex, onItemSelect }) => {
         onItemSelect?.("templates");
       } else if (item.label === "Chatting") {
         onItemSelect?.("Chatting");
+      } else if (item.label === "Workshop") {
+        onItemSelect?.("Workshop");
       } else if (item.route) {
         navigate(item.route);
       }

@@ -96,7 +96,7 @@ export const getDisabledDates = async (req, res) => {
 
     res.json(disabledAppointments.map((a) => a.date));
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch disabled dates" });
+    res.status(500).json({ error: err.message });
   }
 };
 

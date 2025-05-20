@@ -9,6 +9,7 @@ import UserProfileHeader from "../components/userprofile/userheader/UserProfileH
 import CrafterSchedulesPage from "../components/appointments/schedules/Crafter/CrafterSchedulesPage";
 import CrafterTemplates from "../components/Templates/CrafterTemplates";
 import ChatBox from "../components/chat/ChatBox";
+import Workshop from "../components/workshop/Workshop";
 
 import {
   PageWrapper,
@@ -116,6 +117,9 @@ const CrafterPage = () => {
       case "Chatting":
         setSelectedIndex(4);
         break;
+      case "Workshop":
+        setSelectedIndex(5);
+        break;
       default:
         setSelectedIndex(1);
     }
@@ -139,6 +143,9 @@ const CrafterPage = () => {
         {activeView === "templates" && <CrafterTemplates />}
         {activeView === "Chatting" && (
           <ChatBox/>
+        )}
+        {activeView === "Workshop" && (
+          <Workshop/>
         )}
       </ProfileContainer>
     </PageWrapper>
