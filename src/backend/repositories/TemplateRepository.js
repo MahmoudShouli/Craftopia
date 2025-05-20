@@ -64,7 +64,8 @@ export const getAllTemplatesSortedByLikes = async () => {
 };
 
 export const getTemplatesByFilter = async (filters = {}) => {
-  const templates = await TemplateModel.find(filters);
+  const templates = await TemplateModel.find(filters).sort({ likes: -1 });
+
   return await Promise.all(
     templates.map(async (template) => {
       const crafter = await import("../repositories/UserRepository.js").then(
