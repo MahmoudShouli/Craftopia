@@ -11,7 +11,7 @@ import {
   FieldWrapper,
   FieldGroup,
   VerticalFieldWrapper,
-  Label,
+ Label,
   StyledInput,
   StyledTextarea,
   InfoTitle,
@@ -51,6 +51,8 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
     availableColors: [],
     tags: [],
   });
+
+  const [isGenerating, setIsGenerating] = useState(false); // 🆕
 
   useEffect(() => {
     if (template) {
@@ -114,59 +116,65 @@ const handleImageSelect = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  try {
-    const uploaded = await uploadImage(file);
-    setGalleryImages((prev) => [...prev, uploaded]);
-    setLastUploadedImage(uploaded);
-    toast.success("Image uploaded successfully!");
+    try {
+      const uploaded = await uploadImage(file);
+      setGalleryImages((prev) => [...prev, uploaded]);
+      setLastUploadedImage(uploaded);
+      toast.success("Image uploaded successfully!");
+    } catch (err) {
+      toast.error("Failed to upload image");
+      console.error(err);
+    }
+  };
 
-    // ✅ DO NOT generate anything here!
-  } catch (err) {
-    toast.error("Failed to upload image");
-    console.error(err);
-  }
-};
+  const handleGenerateInfo = async () => {
+    if (!lastUploadedImage) return;
 
-const handleGenerateInfoFromImage = async () => {
-  if (!lastUploadedImage) return;
+    try {
+      setIsGenerating(true); // 🆕 Show spinner & disable
 
-  try {
-    // ✅ Clear all fields
-    setLocalTemplate((prev) => ({
-      ...prev,
-      name: "",
-      description: "",
-      availableColors: [],
-    }));
+      // Fade out
+      document.getElementById("info-fields").style.opacity = "0.4";
 
-    const colors = await extractColorsFromImage(lastUploadedImage);
-    if (colors.length) {
       setLocalTemplate((prev) => ({
         ...prev,
-        availableColors: [...new Set(colors)],
+        name: "",
+        description: "",
+        availableColors: [],
       }));
-      toast.success("Colors extracted!");
+
+      await new Promise((r) => setTimeout(r, 400)); // Allow fade-out to complete
+
+      const colors = await extractColorsFromImage(lastUploadedImage);
+      const { title, description } = await generateFromImage(lastUploadedImage);
+
+      setLocalTemplate((prev) => ({
+        ...prev,
+        availableColors: colors,
+        name: title,
+        description: description,
+      }));
+
+      toast.success("Info regenerated!");
+    } catch (err) {
+      toast.error("Failed to regenerate info");
+      console.error(err);
+    } finally {
+      setTimeout(() => {
+        document.getElementById("info-fields").style.opacity = "1"; // Fade in
+        setIsGenerating(false); // Re-enable button
+      }, 300);
     }
-
-    const { title, description } = await generateFromImage(lastUploadedImage);
-    setLocalTemplate((prev) => ({
-      ...prev,
-      name: title,
-      description: description,
-    }));
-
-    toast.success("Title and description generated!");
-  } catch (err) {
-    toast.error("Failed to generate info from image");
-    console.error(err);
-  }
-};
+  };
 
   const handleImageRemove = (index) => {
     const removed = galleryImages[index];
     setGalleryImages((prev) => prev.filter((_, idx) => idx !== index));
-    if (removed === lastUploadedImage) setLastUploadedImage(null);
-    toast.info("Image removed from gallery");
+    toast.info("Image removed");
+
+    if (removed === lastUploadedImage) {
+      setLastUploadedImage(null);
+    }
   };
 
   const handleSaveChanges = () => {
@@ -207,103 +215,109 @@ const handleGenerateInfoFromImage = async () => {
       />
     )}
 
-    {isCrafter && (
-      <div style={{ marginTop: "1rem", textAlign: "center" }}>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleImageSelect}
-          style={{ display: "none" }}
-        />
-        <Button
-          text="Add Image"
-          size="medium"
-          color="#6a380f"
-          onClick={handleUploadButtonClick}
-        />
-
-        {lastUploadedImage && (
-          <div style={{ marginTop: "1rem" }}>
-            <Button
-              text="🪄 Generate Info from Image"
-              size="small"
-              color="#8e5c25"
-              onClick={handleGenerateInfoFromImage}
-            />
+            {isCrafter && (
+              <div style={{ marginTop: "1rem", textAlign: "center" }}>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  style={{ display: "none" }}
+                />
+                <Button
+                  text="Add Image"
+                  size="medium"
+                  color="#6a380f"
+                  onClick={handleUploadButtonClick}
+                />
+                {lastUploadedImage && (
+                  <div style={{ marginTop: "0.5rem" }}>
+                    <Button
+                      text={
+                        isGenerating ? "Generating..." : "Generate Info from Image"
+                      }
+                      size="small"
+                      color="#4e2c0b"
+                      onClick={handleGenerateInfo}
+                      disabled={isGenerating} // 🆕
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    )}
-  </div>
-</LeftSection>
-
+        </LeftSection>
 
         <RightSection>
-          <FieldWrapper>
-            <FieldGroup>
-              <Label>Name</Label>
-              <StyledInput
-                type="text"
-                value={localTemplate.name}
-                onChange={(e) => handleChange("name", e.target.value)}
+          <div
+            id="info-fields"
+            style={{ transition: "opacity 0.3s ease" }} // 🆕 Fade effect
+          >
+            <FieldWrapper>
+              <FieldGroup>
+                <Label>Name</Label>
+                <StyledInput
+                  type="text"
+                  value={localTemplate.name}
+                  onChange={(e) => handleChange("name", e.target.value)}
+                  disabled={!isCrafter}
+                />
+              </FieldGroup>
+            </FieldWrapper>
+
+            <FieldWrapper>
+              <FieldGroup>
+                <Label>Craft Type</Label>
+                <StyledInput
+                  type="text"
+                  value={template?.craftType || user.craft}
+                  disabled
+                />
+              </FieldGroup>
+            </FieldWrapper>
+
+            <FieldWrapper>
+              <FieldGroup>
+                <Label>Crafter</Label>
+                <StyledInput
+                  type="text"
+                  value={template?.crafterName || user.name}
+                  disabled
+                />
+              </FieldGroup>
+            </FieldWrapper>
+
+            <VerticalFieldWrapper>
+              <Label>Description</Label>
+              <StyledTextarea
+                value={localTemplate.description}
+                onChange={(e) => handleChange("description", e.target.value)}
                 disabled={!isCrafter}
               />
-            </FieldGroup>
-          </FieldWrapper>
+            </VerticalFieldWrapper>
 
-          <FieldWrapper>
-            <FieldGroup>
-              <Label>Craft Type</Label>
-              <StyledInput
-                type="text"
-                value={template?.craftType || user.craft}
-                disabled
-              />
-            </FieldGroup>
-          </FieldWrapper>
-
-          <FieldWrapper>
-            <FieldGroup>
-              <Label>Crafter</Label>
-              <StyledInput
-                type="text"
-                value={template?.crafterName || user.name}
-                disabled
-              />
-            </FieldGroup>
-          </FieldWrapper>
-
-          <VerticalFieldWrapper>
-            <Label>Description</Label>
-            <StyledTextarea
-              value={localTemplate.description}
-              onChange={(e) => handleChange("description", e.target.value)}
-              disabled={!isCrafter}
-            />
-          </VerticalFieldWrapper>
-
-          <FieldWrapper>
-            <FieldGroup>
-              <Label>Price</Label>
-              <StyledInput
-                type="number"
-                min="0"
-                step="0.01"
-                placeholder="Enter price in USD"
-                value={localTemplate.price}
-                onChange={(e) => handleChange("price", e.target.value)}
-                disabled={!isCrafter}
-              />
-            </FieldGroup>
-          </FieldWrapper>
+            <FieldWrapper>
+              <FieldGroup>
+                <Label>Price</Label>
+                <StyledInput
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Enter price in USD"
+                  value={localTemplate.price}
+                  onChange={(e) => handleChange("price", e.target.value)}
+                  disabled={!isCrafter}
+                />
+              </FieldGroup>
+            </FieldWrapper>
+          </div>
         </RightSection>
       </TopContent>
 
       <BottomSection>
         <div>
           <InfoTitle>Available Colors</InfoTitle>
-          <ColorsWrapper>
+          <ColorsWrapper style={{ transition: "opacity 0.3s ease" }}>
             {localTemplate.availableColors.map((color, idx) => (
               <div
                 key={idx}
