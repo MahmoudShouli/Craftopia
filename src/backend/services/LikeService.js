@@ -1,3 +1,4 @@
+// services/LikeService.js
 import * as LikeRepository from "../repositories/LikeRepository.js";
 import TemplateModel from "../models/TemplateModel.js";
 

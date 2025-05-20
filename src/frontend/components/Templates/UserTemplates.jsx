@@ -10,7 +10,10 @@ import SearchBar from "../userprofile/search/SearchBar";
 import CraftDropdown from "../craftdropdown/CraftDropdown";
 import { useUser } from "../../context/UserContext";
 import { CraftValues } from "../../constants/craftsEnum";
-import { fetchSortedTemplates, fetchRecommendedTemplates } from "../../api/templateService";
+import {
+  fetchSortedTemplates,
+  fetchRecommendedTemplates,
+} from "../../api/templateService";
 import { getUserLikedTemplates } from "../../api/likeService";
 import { useLocation } from "react-router-dom";
 import Slider from "rc-slider";
@@ -26,12 +29,11 @@ const UserTemplates = () => {
   const [query, setQuery] = useState("");
   const [isRecommended, setIsRecommended] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [priceRange, setPriceRange] = useState([0, 100000]); 
+  const [priceRange, setPriceRange] = useState([0, 100000]);
 
   const loadTemplates = useCallback(async () => {
     try {
       setIsLoading(true);
-
       const [templateData, likedIds] = await Promise.all([
         isRecommended
           ? fetchRecommendedTemplates(user.email)
@@ -43,14 +45,13 @@ const UserTemplates = () => {
         setTemplates(templateData);
         setLikedTemplateIds(likedIds || []);
       } else {
-        setTemplates([]);
         toast.error("Unexpected response format.");
+        setTemplates([]);
+        setLikedTemplateIds([]);
       }
     } catch (err) {
       console.error(err);
       toast.error("Failed to load templates.");
-      setTemplates([]);
-      setLikedTemplateIds([]);
     } finally {
       setIsLoading(false);
     }
@@ -64,10 +65,6 @@ const UserTemplates = () => {
     setIsRecommended((prev) => !prev);
   };
 
-  const handleTemplateLikeChanged = () => {
-    loadTemplates();
-  };
-
   const handleReset = () => {
     setQuery("");
     setSelectedCraft("");
@@ -75,34 +72,42 @@ const UserTemplates = () => {
     loadTemplates();
   };
 
+const handleTemplateLikeChanged = (templateId, newLiked) => {
+  setLikedTemplateIds((prev) =>
+    newLiked
+      ? [...prev, templateId]
+      : prev.filter((id) => id !== templateId)
+  );
+
+  // Optional delayed refresh
+  setTimeout(() => {
+    loadTemplates();
+  }, 400);
+};
+
   const filteredTemplates = templates.filter((template) => {
-  const matchesCraft =
-    !selectedCraft || template.craftType === selectedCraft;
+    const matchesCraft =
+      !selectedCraft || template.craftType === selectedCraft;
 
-  const matchesSearch =
-    !query ||
-    template.name?.toLowerCase().includes(query.toLowerCase()) ||
-    template.tags?.some((tag) =>
-      tag.toLowerCase().includes(query.toLowerCase())
-    ) ||
-    template.crafterName?.toLowerCase().includes(query.toLowerCase()); 
+    const matchesSearch =
+      !query ||
+      template.name?.toLowerCase().includes(query.toLowerCase()) ||
+      template.tags?.some((tag) =>
+        tag.toLowerCase().includes(query.toLowerCase())
+      ) ||
+      template.crafterName?.toLowerCase().includes(query.toLowerCase());
 
-  const matchesPrice =
-    typeof template.price === "number" &&
-    template.price >= priceRange[0] &&
-    template.price <= priceRange[1];
+    const matchesPrice =
+      typeof template.price === "number" &&
+      template.price >= priceRange[0] &&
+      template.price <= priceRange[1];
 
-  return matchesCraft && matchesSearch && matchesPrice;
-});
-
+    return matchesCraft && matchesSearch && matchesPrice;
+  });
 
   return (
     <TemplateCard>
-      <SearchBar
-        query={query}
-        setQuery={setQuery}
-        onReset={handleReset}
-      />
+      <SearchBar query={query} setQuery={setQuery} onReset={handleReset} />
 
       <FilterBoxGroup>
         <CraftDropdown
@@ -115,28 +120,29 @@ const UserTemplates = () => {
           {isRecommended ? "All" : "Recommended"}
         </FilterBox>
       </FilterBoxGroup>
-        <FilterBoxGroup>
-                  <div style={{ width: "100%", marginTop: "1rem" }}>
-                  <label
-                    style={{
-                      fontWeight: "bold",
-                      display: "block",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    Price Range (${priceRange[0]} - ${priceRange[1]})
-                  </label>
-                  <Slider
-                    range
-                    min={0}
-                    max={1000}
-                    step={10}
-                    value={priceRange}
-                    onChange={(range) => setPriceRange(range)}
-                    allowCross={false}
-                  />
-                </div>
-        </FilterBoxGroup>
+
+      <FilterBoxGroup>
+        <div style={{ width: "100%", marginTop: "1rem" }}>
+          <label
+            style={{
+              fontWeight: "bold",
+              display: "block",
+              marginBottom: "0.5rem",
+            }}
+          >
+            Price Range (${priceRange[0]} - ${priceRange[1]})
+          </label>
+          <Slider
+            range
+            min={0}
+            max={1000}
+            step={10}
+            value={priceRange}
+            onChange={(range) => setPriceRange(range)}
+            allowCross={false}
+          />
+        </div>
+      </FilterBoxGroup>
 
       {isLoading ? (
         <p>Loading templates...</p>

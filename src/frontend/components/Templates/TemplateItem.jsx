@@ -10,7 +10,6 @@ import {
   LikesWrapper,
   HeartIcon,
   DeleteIconWrapper,
-  HeartIconWrapper,
   PriceLabel,
 } from "./CrafterTemplates.styled";
 
@@ -18,8 +17,9 @@ import UserAvatar from "../useravatar/UserAvatar";
 import PopUpPage from "../map/PopUpPage";
 import TemplateDetails from "./TemplateDetails";
 import { useUser } from "../../context/UserContext";
-import { FaTimes, FaHeart } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { toggleLike } from "../../api/likeService";
+import { motion } from "framer-motion";
 
 const TemplateItem = ({
   template,
@@ -54,10 +54,16 @@ const TemplateItem = ({
   const handleLikeToggle = async (e) => {
     e.stopPropagation();
     try {
-      const res = await toggleLike(user.email, template._id);
-      setLiked(res.liked);
-      setLocalLikesCount((prev) => prev + (res.liked ? 1 : -1));
-      if (onLikeChange) onLikeChange();
+      await toggleLike(user.email, template._id);
+
+      // Optimistically update local state
+      const newLiked = !liked;
+      setLiked(newLiked);
+      setLocalLikesCount((prev) => prev + (newLiked ? 1 : -1));
+
+      if (onLikeChange) {
+        onLikeChange(template._id, newLiked);
+      }
     } catch (err) {
       console.error("Failed to toggle like:", err);
     }
@@ -66,14 +72,27 @@ const TemplateItem = ({
   return (
     <>
       <SingleTemplateCard onClick={handleCardClick}>
-        {/* Customer like icon */}
+        {/* ❤️ Customer like emoji */}
         {isUser && (
-          <HeartIconWrapper onClick={handleLikeToggle}>
-            <FaHeart color={liked ? "red" : "#ccc"} size={18} />
-          </HeartIconWrapper>
+          <motion.div
+            onClick={handleLikeToggle}
+            whileTap={{ scale: 1.3 }}
+            whileHover={{ scale: 1.1 }}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              zIndex: 10,
+              cursor: "pointer",
+              fontSize: "1.5rem",
+              userSelect: "none",
+            }}
+          >
+            <span>{liked ? "❤️" : "🤍"}</span>
+          </motion.div>
         )}
 
-        {/* Crafter delete icon */}
+        {/* ❌ Delete icon for crafters */}
         {isCrafter && (
           <DeleteIconWrapper
             onClick={(e) => {
@@ -111,14 +130,10 @@ const TemplateItem = ({
           </ColorsWrapper>
         )}
 
-        {/* Price at the bottom */}
         {template.price && (
-          <PriceLabel>
-            {Number(template.price).toFixed(2)}$
-          </PriceLabel>
+          <PriceLabel>{Number(template.price).toFixed(2)}$</PriceLabel>
         )}
 
-        {/* Likes count for crafters */}
         {isCrafter && (
           <LikesWrapper>
             <HeartIcon />
