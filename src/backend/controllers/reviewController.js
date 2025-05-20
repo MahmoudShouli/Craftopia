@@ -11,10 +11,18 @@ export const addReview = async (req, res) => {
   }
 
   try {
-    const review = new ReviewModel({ email, message, rating, type, to });
-    await review.save();
-
     const result = await analyzeReview(message);
+
+    const review = new ReviewModel({
+      email,
+      message,
+      rating,
+      type,
+      to,
+      sentiment: result.sentiment,
+    });
+
+    await review.save();
 
     res.status(201).json({
       message: "Review saved",
@@ -23,7 +31,7 @@ export const addReview = async (req, res) => {
       translated: result.translatedText || null,
     });
   } catch (error) {
-    console.error("Save review error:", error); // changed from error.message to full error
+    console.error("Save review error:", error);
     res.status(500).json({ error: "Failed to save review" });
   }
 };

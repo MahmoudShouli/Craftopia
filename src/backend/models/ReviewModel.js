@@ -10,6 +10,11 @@ const ReviewSchema = new mongoose.Schema({
     required: true,
   },
   to: { type: String, required: false },
+  sentiment: {
+    type: String,
+    enum: ["positive", "negative"],
+    default: "positive",
+  },
 });
 
 const ReviewModel = mongoose.model("Reviews", ReviewSchema, "reviews");

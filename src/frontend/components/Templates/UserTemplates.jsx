@@ -76,23 +76,25 @@ const UserTemplates = () => {
   };
 
   const filteredTemplates = templates.filter((template) => {
-    const matchesCraft =
-      !selectedCraft || template.craftType === selectedCraft;
+  const matchesCraft =
+    !selectedCraft || template.craftType === selectedCraft;
 
-    const matchesSearch =
-      !query ||
-      template.name.toLowerCase().includes(query.toLowerCase()) ||
-      template.tags?.some((tag) =>
-        tag.toLowerCase().includes(query.toLowerCase())
-      );
+  const matchesSearch =
+    !query ||
+    template.name?.toLowerCase().includes(query.toLowerCase()) ||
+    template.tags?.some((tag) =>
+      tag.toLowerCase().includes(query.toLowerCase())
+    ) ||
+    template.crafterName?.toLowerCase().includes(query.toLowerCase()); 
 
-    const matchesPrice =
-      typeof template.price === "number" &&
-      template.price >= priceRange[0] &&
-      template.price <= priceRange[1];
+  const matchesPrice =
+    typeof template.price === "number" &&
+    template.price >= priceRange[0] &&
+    template.price <= priceRange[1];
 
-    return matchesCraft && matchesSearch && matchesPrice;
-  });
+  return matchesCraft && matchesSearch && matchesPrice;
+});
+
 
   return (
     <TemplateCard>
