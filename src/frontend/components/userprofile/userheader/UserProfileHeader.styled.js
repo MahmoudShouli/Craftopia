@@ -56,7 +56,7 @@ export const SearchInput = styled.input`
 `;
 
 export const IconWrapper = styled.div`
-  background-color: #f8f8f8;
+  background-color: ${({ $state }) => ($state ? "#f29b9b" : "#f8f8f8")};
   padding: 0.6rem;
   border-radius: 12px;
   display: flex;
@@ -65,10 +65,6 @@ export const IconWrapper = styled.div`
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s ease;
   cursor: pointer;
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
 `;
 
 export const Icon = styled.div`

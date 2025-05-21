@@ -50,8 +50,6 @@ const UserProfileHeader = ({ user, formattedDate }) => {
   });
 
 
-
-
   return (
     <HeaderSection>
       <HeaderLeft>
@@ -64,6 +62,7 @@ const UserProfileHeader = ({ user, formattedDate }) => {
         <IconWrapper
           onClick={() => setShowNotifications(!showNotifications)}
           style={{ position: "relative", cursor: "pointer" }}
+          $state = {unreadCount}
         >
           <Icon>🔔</Icon>
 
