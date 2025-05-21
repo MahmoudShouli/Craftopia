@@ -3,6 +3,7 @@ import { useEffect, useState, useRef} from "react";
 import { useUser } from "../../context/UserContext";
 import workshopService from "../../api/workshopService";
 import messageService from "../../api/messageService";
+import notificationService from "../../api/notificationService";
 import styledElements from "./Workshop.styled";
 import { FiMaximize, FiMinimize} from "react-icons/fi";
 import { FaArrowLeft } from "react-icons/fa";
@@ -111,8 +112,23 @@ const Workshop = () => {
         setSelectedWorkshop(saved);
         setCheckpoints(saved.checkpoints);
         toast.success("Workshop created!");
+
+        for (const crafterEmail of selectedCrafters){
+          const notification = {
+            text: `${user.name} invited you to join ${workshopName}.`,
+            linkTo: "Workshop", // or `/messages?with=${user.email}`
+            email: crafterEmail, // send email instead of _id
+          };
+          await notificationService.createNotification(notification);
+          socket.emit("notification", {
+            to: crafterEmail,
+            notification
+          });
+        }
+        
+
       } catch (err) {
-        toast.error("Don't leave empty fields.");
+        toast.error(err);
       }
   };
 
