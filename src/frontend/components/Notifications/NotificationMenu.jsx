@@ -8,7 +8,7 @@ import {
   NotificationRow,
 } from "./NotificationMenu.styled";
 
-const NotificationMenu = ({ notifications, setNotifications}) => {
+const NotificationMenu = ({ notifications, setNotifications, redirect = () => console.warn("Redirect function not provided")}) => {
  
   const handleClick = async (note) => {
     if (!note.isRead){
@@ -17,6 +17,7 @@ const NotificationMenu = ({ notifications, setNotifications}) => {
         prev.map((n) => (n._id === updated._id ? updated : n))
       );
     }
+    redirect(note.linkTo);
   }
   
 

@@ -18,7 +18,7 @@ import {
 } from "./UserProfileHeader.styled";
 import { socket } from "../../../../utils/socket";
 
-const UserProfileHeader = ({ user, formattedDate }) => {
+const UserProfileHeader = ({ user, formattedDate, redirect }) => {
   const [notifications, setNotifications] = useState([])
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -37,7 +37,7 @@ const UserProfileHeader = ({ user, formattedDate }) => {
     };
 
     loadNotifications();
-  });
+  },);
 
   useEffect(() => {
     socket.on("receive_notification", (notification) => {
@@ -49,7 +49,7 @@ const UserProfileHeader = ({ user, formattedDate }) => {
     };
   });
 
-
+  
   return (
     <HeaderSection>
       <HeaderLeft>
@@ -74,6 +74,7 @@ const UserProfileHeader = ({ user, formattedDate }) => {
             <NotificationMenu 
               notifications={notifications} 
               setNotifications={setNotifications}
+              redirect={redirect}
             />
           )}
         </IconWrapper>

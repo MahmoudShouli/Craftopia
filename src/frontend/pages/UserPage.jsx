@@ -144,7 +144,7 @@ const UserPage = () => {
     <PageWrapper>
       <Dashboard selectedIndex={selectedIndex} onItemSelect={handleViewChange} />
       <ProfileContainer>
-        <UserProfileHeader user={user} formattedDate={formattedDate} />
+        <UserProfileHeader user={user} formattedDate={formattedDate} redirect={handleViewChange} />
 
         {activeView === "profile" && (
           <UserProfileCard

@@ -156,10 +156,9 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
       setMessages((prev) => [...prev, newMessage]);
       socket.emit("send_message", newMessage);
 
-      const receiverUser = await getUserByEmail(receiver)
       const notification = {
         text: `${user.name} sent you a message.`,
-        linkTo: `/chat/${user.email}`, // or `/messages?with=${user.email}`
+        linkTo: "Chatting", // or `/messages?with=${user.email}`
         email: receiver, // send email instead of _id
       };
       await notificationService.createNotification(notification);
