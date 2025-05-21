@@ -39,6 +39,15 @@ const configureSocket = (server) => {
       socket.emit("take_online_users", Array.from(onlineUsers));
     });
 
+    socket.on("notification", ({ to, notification }) => {
+      // Find all sockets associated with the recipient
+      for (const [socketId, email] of socketIdToEmail.entries()) {
+        if (email === to) {
+          io.to(socketId).emit("receive_notification", notification);
+        }
+      }
+    });
+
     socket.on("disconnect", () => {
       const email = socketIdToEmail.get(socket.id);
       if (email) {

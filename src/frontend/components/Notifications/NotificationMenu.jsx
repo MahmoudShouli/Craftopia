@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import notificationService from "../../api/notificationService";
 import {
   NotificationPopup,
   NotificationItem,
@@ -7,39 +8,17 @@ import {
   NotificationRow,
 } from "./NotificationMenu.styled";
 
-const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
-  const longPressTimeout = useRef();
-  const wasLongPressed = useRef(false);
-
-  const handleMarkAsRead = (id) => {
-    if (!readIds.includes(id)) {
-      setReadIds((prev) => [...prev, id]);
+const NotificationMenu = ({ notifications, setNotifications}) => {
+ 
+  const handleClick = async (note) => {
+    if (!note.isRead){
+      const updated = await notificationService.markNotificationAsRead(note._id);
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === updated._id ? updated : n))
+      );
     }
-  };
-
-  const handleMarkAsUnread = (id) => {
-    setReadIds((prev) => prev.filter((readId) => readId !== id));
-  };
-
-  const isRead = (id) => readIds.includes(id);
-
-  const handleMouseDown = (id) => {
-    wasLongPressed.current = false;
-    longPressTimeout.current = setTimeout(() => {
-      handleMarkAsUnread(id);
-      wasLongPressed.current = true;
-    }, 800);
-  };
-
-  const handleClick = (id) => {
-    if (!wasLongPressed.current) {
-      handleMarkAsRead(id);
-    }
-  };
-
-  const cancelLongPress = () => {
-    clearTimeout(longPressTimeout.current);
-  };
+  }
+  
 
   return (
     <NotificationPopup onClick={(e) => e.stopPropagation()}>
@@ -47,11 +26,9 @@ const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
         notifications.map((note) => (
           <NotificationItem
             key={note.id}
-            $read={isRead(note.id)}
-            onClick={() => handleClick(note.id)}
-            onMouseDown={() => handleMouseDown(note.id)}
-            onMouseUp={cancelLongPress}
-            onMouseLeave={cancelLongPress}
+            $read={note.isRead}
+            onClick={() => handleClick(note)}
+      
           >
             <NotificationRow>
               <NotificationContent>{note.text}</NotificationContent>

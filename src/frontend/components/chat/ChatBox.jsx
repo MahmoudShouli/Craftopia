@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef } from "react";
 import messageService from "../../api/messageService";
+import notificationService from "../../api/notificationService";
 import { getUserByEmail } from "../../api/userService";
 import { useUser } from "../../context/UserContext";
 import styledElements from "./ChatBox.styled";
@@ -154,12 +155,18 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
       const newMessage = await messageService.sendMessage({ sender, receiver, content });
       setMessages((prev) => [...prev, newMessage]);
       socket.emit("send_message", newMessage);
-      // const notification = {
-      //   text: user.name + "sent you a message.",
-      //   linkTo: "" ,
-      //   user : await getUserByEmail(receiver)._id
-      // }
-      // socket.emit("notification", )
+
+      const receiverUser = await getUserByEmail(receiver)
+      const notification = {
+        text: `${user.name} sent you a message.`,
+        linkTo: `/chat/${user.email}`, // or `/messages?with=${user.email}`
+        email: receiver, // send email instead of _id
+      };
+      await notificationService.createNotification(notification);
+      socket.emit("notification", {
+        to: receiver,
+        notification
+      });
     } catch (error) {
       console.error("Error sending message:", error);
     }

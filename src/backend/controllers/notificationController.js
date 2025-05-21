@@ -33,3 +33,16 @@ export const postNotification = async (req, res) => {
       .json({ error: err.message || "Failed to create notification" });
   }
 };
+
+export const markAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await NotificationService.updateNotificationStatus(id);
+    if (!updated) {
+      return res.status(404).json({ error: "Notification not found" });
+    }
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update notification" });
+  }
+};

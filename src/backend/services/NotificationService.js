@@ -8,7 +8,12 @@ const createNotification = async (data) => {
   return await NotificationRepository.createNotification(data);
 };
 
+const updateNotificationStatus = async (id) => {
+  return await NotificationRepository.markNotificationAsRead(id);
+};
+
 export default {
   fetchNotificationsByEmail,
   createNotification,
+  updateNotificationStatus,
 };

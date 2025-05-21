@@ -76,3 +76,20 @@ export const Icon = styled.div`
   cursor: pointer;
   color: #999;
 `;
+
+export const NotificationBadge = styled.div`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+`;

@@ -22,7 +22,16 @@ const createNotification = async ({ email, text, linkTo }) => {
   return await notification.save();
 };
 
+const markNotificationAsRead = async (id) => {
+  return await NotificationModel.findByIdAndUpdate(
+    id,
+    { isRead: true },
+    { new: true }
+  );
+};
+
 export default {
   getNotificationsByUserEmail,
   createNotification,
+  markNotificationAsRead,
 };

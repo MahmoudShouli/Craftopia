@@ -18,7 +18,13 @@ const createNotification = async ({ email, text, linkTo }) => {
   return res.data;
 };
 
+const markNotificationAsRead = async (id) => {
+  const res = await axios.patch(`${API_URL}/${id}/read`);
+  return res.data;
+};
+
 export default {
   fetchNotifications,
   createNotification,
+  markNotificationAsRead,
 };

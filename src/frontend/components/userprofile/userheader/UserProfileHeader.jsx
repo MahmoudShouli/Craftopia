@@ -14,25 +14,43 @@ import {
   SearchInput,
   IconWrapper,
   Icon,
+  NotificationBadge
 } from "./UserProfileHeader.styled";
+import { socket } from "../../../../utils/socket";
 
 const UserProfileHeader = ({ user, formattedDate }) => {
   const [notifications, setNotifications] = useState([])
   const [showNotifications, setShowNotifications] = useState(false);
-  const [readIds, setReadIds] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+
 
   useEffect(() => {
-  const loadNotifications = async () => {
-    try {
-      const data = await notificationService.fetchNotifications(user.email);
-      setNotifications(data);
-    } catch (err) {
-      toast.error("Failed to load notifications");
-    }
-  };
+    const loadNotifications = async () => {
+      try {
+        const data = await notificationService.fetchNotifications(user.email);
+        setNotifications(data);
+        const count = data.filter((n) => !n.isRead).length;
+        setUnreadCount(count);
+      } catch (err) {
+        toast.error("Failed to load notifications");
+      }
+    };
 
-  loadNotifications();
-}, []);
+    loadNotifications();
+  });
+
+  useEffect(() => {
+    socket.on("receive_notification", (notification) => {
+      setNotifications((prev) => [...prev, notification]);
+    });
+
+    return () => {
+      socket.off("receive_notification");
+    };
+  });
+
+
+
 
   return (
     <HeaderSection>
@@ -42,20 +60,21 @@ const UserProfileHeader = ({ user, formattedDate }) => {
       </HeaderLeft>
 
       <HeaderRight>
-        <SearchBarWrapper>
-          <CiSearch className="icon" />
-          <SearchInput type="text" placeholder="Search" />
-        </SearchBarWrapper>
-
+      
         <IconWrapper
           onClick={() => setShowNotifications(!showNotifications)}
           style={{ position: "relative", cursor: "pointer" }}
         >
           <Icon>🔔</Icon>
+
+          {unreadCount > 0 && (
+            <NotificationBadge>{unreadCount}</NotificationBadge>
+          )}
+
           {showNotifications && (
-            <NotificationMenu notifications={notifications} 
-              readIds={readIds}
-              setReadIds={setReadIds}
+            <NotificationMenu 
+              notifications={notifications} 
+              setNotifications={setNotifications}
             />
           )}
         </IconWrapper>
