@@ -32,7 +32,7 @@ const UserProfileHeader = ({ user, formattedDate }) => {
         const count = data.filter((n) => !n.isRead).length;
         setUnreadCount(count);
       } catch (err) {
-        toast.error("Failed to load notifications");
+        //
       }
     };
 

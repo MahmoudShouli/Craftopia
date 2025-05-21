@@ -19,6 +19,12 @@ const notificationSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    readAt: {
+      type: Date,
+      default: null,
+      index: true, // 👈 important
+      expires: 60, // 5 seconds
+    },
   },
   { timestamps: true }
 );

@@ -25,7 +25,7 @@ const createNotification = async ({ email, text, linkTo }) => {
 const markNotificationAsRead = async (id) => {
   return await NotificationModel.findByIdAndUpdate(
     id,
-    { isRead: true },
+    { isRead: true, readAt: new Date() },
     { new: true }
   );
 };
