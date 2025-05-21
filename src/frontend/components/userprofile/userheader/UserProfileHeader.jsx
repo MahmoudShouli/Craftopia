@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
 import UserAvatar from "../../useravatar/UserAvatar";
 import NotificationMenu from "../../Notifications/NotificationMenu"; 
-
+import notificationService from "../../../api/notificationService";
+import { toast } from "react-toastify";
 import {
   HeaderSection,
   HeaderLeft,
@@ -16,19 +17,22 @@ import {
 } from "./UserProfileHeader.styled";
 
 const UserProfileHeader = ({ user, formattedDate }) => {
+  const [notifications, setNotifications] = useState([])
   const [showNotifications, setShowNotifications] = useState(false);
   const [readIds, setReadIds] = useState([]);
 
-  const notifications = [
-    { id: 1, message: "New message from admin" },
-    { id: 2, message: "New message from admin" },
-    { id: 3, message: "New message from admin" },
-    { id: 4, message: "New message from admin" },
-    { id: 5, message: "New message from admin" },
-    { id: 6, message: "New message from admin" },
-    
-    // empty array = no notifications
-  ];
+  useEffect(() => {
+  const loadNotifications = async () => {
+    try {
+      const data = await notificationService.fetchNotifications(user.email);
+      setNotifications(data);
+    } catch (err) {
+      toast.error("Failed to load notifications");
+    }
+  };
+
+  loadNotifications();
+}, []);
 
   return (
     <HeaderSection>

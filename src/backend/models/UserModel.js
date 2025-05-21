@@ -36,6 +36,6 @@ const UserSchema = new mongoose.Schema({
 // 🧭 Add the 2dsphere index for geospatial queries
 UserSchema.index({ location: "2dsphere" });
 
-const UserModel = mongoose.model("Users", UserSchema, "users");
+const UserModel = mongoose.model("User", UserSchema, "users");
 
 export default UserModel;

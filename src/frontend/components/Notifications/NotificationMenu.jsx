@@ -54,7 +54,7 @@ const NotificationMenu = ({ notifications, readIds, setReadIds }) => {
             onMouseLeave={cancelLongPress}
           >
             <NotificationRow>
-              <NotificationContent>{note.message}</NotificationContent>
+              <NotificationContent>{note.text}</NotificationContent>
             </NotificationRow>
           </NotificationItem>
         ))

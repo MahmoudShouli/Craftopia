@@ -154,6 +154,12 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
       const newMessage = await messageService.sendMessage({ sender, receiver, content });
       setMessages((prev) => [...prev, newMessage]);
       socket.emit("send_message", newMessage);
+      // const notification = {
+      //   text: user.name + "sent you a message.",
+      //   linkTo: "" ,
+      //   user : await getUserByEmail(receiver)._id
+      // }
+      // socket.emit("notification", )
     } catch (error) {
       console.error("Error sending message:", error);
     }
