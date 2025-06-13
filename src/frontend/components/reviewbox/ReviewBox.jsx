@@ -6,6 +6,8 @@ import { addReview } from "../../api/reviewService";
 import { deleteAppointment } from "../../api/appointmentService";
 import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
+import notificationService from "../../api/notificationService";
+import { socket } from "../../../utils/socket";
 
 const ReviewBox = ({ userEmail, crafterEmail, appointmentId, onSuccess }) => {
   const { user } = useUser();
@@ -46,6 +48,17 @@ const ReviewBox = ({ userEmail, crafterEmail, appointmentId, onSuccess }) => {
       setRating(0);
   
       onSuccess?.(appointmentId);
+
+      const notification = {
+                    text: `${user.name} submitted a review for you`,
+                    linkTo: "Profile", // or `/messages?with=${user.email}`
+                    email: crafterEmail, // send email instead of _id
+                  };
+                  await notificationService.createNotification(notification);
+                  socket.emit("notification", {
+                    to: crafterEmail,
+                    notification
+                  });
   
     } catch (error) {
       console.error(" Full error:", error.response?.data || error.message);

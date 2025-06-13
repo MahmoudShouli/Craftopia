@@ -20,6 +20,8 @@ import { useUser } from "../../context/UserContext";
 import { FaTimes } from "react-icons/fa";
 import { toggleLike } from "../../api/likeService";
 import { motion } from "framer-motion";
+import notificationService from "../../api/notificationService";
+import { socket } from "../../../utils/socket";
 
 const TemplateItem = ({
   template,
@@ -64,6 +66,21 @@ const TemplateItem = ({
       if (onLikeChange) {
         onLikeChange(template._id, newLiked);
       }
+
+      if (!liked && template.crafterEmail !== user.email) {
+          const notification = {
+            text: `${user.name} liked your template "${template.name}"`,
+            linkTo: "Templates",
+            email: template.crafterEmail, // send to the crafter
+          };
+
+          await notificationService.createNotification(notification);
+          socket.emit("notification", {
+            to: template.crafterEmail,
+            notification,
+          });
+        }
+
     } catch (err) {
       console.error("Failed to toggle like:", err);
     }

@@ -21,6 +21,8 @@ import {
 import messageService from "../../../../api/messageService";
 import { CANCELLATION_REASONS } from "../../../../constants/cancellationReasons";
 import { useUser } from "../../../../context/UserContext";
+import notificationService from "../../../../api/notificationService";
+import { socket } from "../../../../../utils/socket";
 
 const CrafterSchedulesPage = () => {
   const { user } = useUser();
@@ -107,24 +109,51 @@ const CrafterSchedulesPage = () => {
     }
   };
 
-const handleConfirmRequest = async ({ id, userEmail, date, newStatus = "confirmed" }) => {
-  try {
-    await updateAppointmentStatus(id, newStatus);
+  const handleConfirmRequest = async ({ id, userEmail, date, newStatus = "confirmed" }) => {
+    try {
+      await updateAppointmentStatus(id, newStatus);
 
-    await messageService.sendMessage({
-      sender: user.email,
-      receiver: userEmail,
-      content: `Your appointment on ${new Date(
-        date
-      ).toLocaleDateString()} has been ${newStatus}.`,
-    });
+      const formattedDate = new Date(date).toLocaleDateString();
 
-    toast.success(`Appointment ${newStatus}.`);
-    await loadCalendarData();
-  } catch (err) {
-    toast.error("Failed to update appointment.");
-  }
-};
+      // Chat message content
+      let chatMessage = "";
+      let notificationText = "";
+
+      if (newStatus === "confirmed") {
+        chatMessage = `Your appointment on ${formattedDate} has been confirmed.`;
+        notificationText = `${user.name} confirmed your appointment on ${formattedDate}`;
+      } else if (newStatus === "completed") {
+        chatMessage = `Your appointment on ${formattedDate} was completed. Please leave a review.`;
+        notificationText = `${user.name} marked your appointment on ${formattedDate} as completed`;
+      }
+
+      // Send chat message
+      await messageService.sendMessage({
+        sender: user.email,
+        receiver: userEmail,
+        content: chatMessage,
+      });
+
+      // Send toast
+      toast.success(`Appointment ${newStatus}.`);
+
+      // Send notification
+      const notification = {
+        text: notificationText,
+        linkTo: "Schedules",
+        email: userEmail,
+      };
+      await notificationService.createNotification(notification);
+      socket.emit("notification", {
+        to: userEmail,
+        notification,
+      });
+
+      await loadCalendarData();
+    } catch (err) {
+      toast.error("Failed to update appointment.");
+    }
+  };
 
   return (
     <SchedulesCard>

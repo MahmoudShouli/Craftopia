@@ -18,6 +18,8 @@ import { deleteAppointment } from "../../../api/appointmentService";
 import { toast } from "react-toastify";
 import ReviewBox from "../../reviewbox/ReviewBox";
 import { useUser } from "../../../context/UserContext";
+import notificationService from "../../../api/notificationService";
+import { socket } from "../../../../utils/socket";
 
 const AppointmentItem = ({
   id,
@@ -49,15 +51,23 @@ const AppointmentItem = ({
           toast.success("Appointment canceled");
           onDelete?.(id); // Just remove from UI
         }
+
       } catch (err) {
         toast.error(err.response?.data?.error || "Cannot cancel appointment.");
       }
     }
   };
 
-  const handleConfirm = () => {
-    onConfirm?.({ id, date, userEmail, crafterEmail });
-  };
+  const handleConfirm = async () => {
+  if (!isCrafter) return;
+
+  try {
+    await onConfirm?.({ id, date, userEmail, crafterEmail });
+
+  } catch (err) {
+    toast.error("Failed to confirm appointment.");
+  }
+};
 
   return (
     <AppointmentCard>

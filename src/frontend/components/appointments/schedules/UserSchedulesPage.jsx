@@ -4,7 +4,6 @@ import {
   SchedulesInnerWrapper,
   MiddleSection
 } from "./SchedulesPage.styled";
-
 import { useUser } from "../../../context/UserContext";
 import {
   createAppointment,
@@ -15,6 +14,8 @@ import { getUserByEmail } from "../../../api/userService";
 import CrafterInfoPanel from "./CrafterInfoPanel";
 import BookingSection from "./BookingSection";
 import AppointmentsPanel from "./AppointmentsPanel";
+import notificationService from "../../../api/notificationService";
+import { socket } from "../../../../utils/socket";
 
 const UserSchedulesPage = ({ crafter, setUserForChat, setView }) => {
   const { user } = useUser();
@@ -63,6 +64,17 @@ const UserSchedulesPage = ({ crafter, setUserForChat, setView }) => {
         crafterEmail: crafter.email,
         date
       });
+
+      const notification = {
+              text: `${user.name} book an appointment`,
+              linkTo: "Schedules", // or `/messages?with=${user.email}`
+              email: crafter.email, // send email instead of _id
+            };
+            await notificationService.createNotification(notification);
+            socket.emit("notification", {
+              to: crafter.email,
+              notification
+            });
 
       setStep(2);
       setAppointments((prev) => [
