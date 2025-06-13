@@ -1,4 +1,3 @@
-// ✅ Updated CrafterSchedulesPage.jsx with deferred cancellation
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import {
@@ -9,7 +8,7 @@ import {
 } from "./CrafterSchedulesPage.styled";
 
 import BookingCalendar from "../../calendar/BookingCalendar";
-import AppointmentItem from "../AppointmentItem"; 
+import AppointmentItem from "../AppointmentItem";
 import Modal from "../../../modals/Modal";
 import Button from "../../../button/Button";
 import {
@@ -17,6 +16,7 @@ import {
   getDisabledDates,
   getAppointmentsByEmail,
   deleteAppointment,
+  updateAppointmentStatus,
 } from "../../../../api/appointmentService";
 import messageService from "../../../../api/messageService";
 import { CANCELLATION_REASONS } from "../../../../constants/cancellationReasons";
@@ -97,13 +97,34 @@ const CrafterSchedulesPage = () => {
       });
 
       toast.success("Appointment canceled and user notified.");
-      setAppointments((prev) => prev.filter((a) => a._id !== appointmentToCancel._id));
+      setAppointments((prev) =>
+        prev.filter((a) => a._id !== appointmentToCancel._id)
+      );
       setShowReasonModal(false);
       setSelectedReason("");
     } catch (err) {
       toast.error("Failed to cancel appointment.");
     }
   };
+
+const handleConfirmRequest = async ({ id, userEmail, date, newStatus = "confirmed" }) => {
+  try {
+    await updateAppointmentStatus(id, newStatus);
+
+    await messageService.sendMessage({
+      sender: user.email,
+      receiver: userEmail,
+      content: `Your appointment on ${new Date(
+        date
+      ).toLocaleDateString()} has been ${newStatus}.`,
+    });
+
+    toast.success(`Appointment ${newStatus}.`);
+    await loadCalendarData();
+  } catch (err) {
+    toast.error("Failed to update appointment.");
+  }
+};
 
   return (
     <SchedulesCard>
@@ -128,6 +149,7 @@ const CrafterSchedulesPage = () => {
                 date={a.date}
                 status={a.status}
                 onDelete={handleCancelRequest}
+                onConfirm={handleConfirmRequest}
                 showBookedByName={true}
                 bookedByName={a.userName || a.userEmail}
                 userEmail={a.userEmail}
@@ -151,7 +173,9 @@ const CrafterSchedulesPage = () => {
                   onChange={() => setSelectedReason(reason)}
                   checked={selectedReason === reason}
                 />
-                <label htmlFor={reason} style={{ marginLeft: "0.5rem" }}>{reason}</label>
+                <label htmlFor={reason} style={{ marginLeft: "0.5rem" }}>
+                  {reason}
+                </label>
               </div>
             ))}
 

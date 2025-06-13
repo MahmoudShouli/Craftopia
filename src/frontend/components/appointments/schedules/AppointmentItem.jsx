@@ -14,7 +14,7 @@ import {
   FaClipboardList,
   FaCheckCircle,
 } from "react-icons/fa";
-import { deleteAppointment, updateAppointmentStatus } from "../../../api/appointmentService";
+import { deleteAppointment } from "../../../api/appointmentService";
 import { toast } from "react-toastify";
 import ReviewBox from "../../reviewbox/ReviewBox";
 import { useUser } from "../../../context/UserContext";
@@ -27,6 +27,7 @@ const AppointmentItem = ({
   crafterEmail,
   userEmail,
   onDelete,
+  onConfirm,
   showBookedByName = false,
   bookedByName = "",
   isCrafter = false,
@@ -35,7 +36,7 @@ const AppointmentItem = ({
 
   const handleCancel = async () => {
     if (isCrafter) {
-      onDelete?.({ id, date, userEmail }); // Crafter triggers reason modal
+      onDelete?.({ id, date, userEmail }); // Show cancel reason modal
     } else {
       if (status !== "pending") {
         toast.error("You can only cancel a pending appointment.");
@@ -46,7 +47,7 @@ const AppointmentItem = ({
         const res = await deleteAppointment(id, user.role);
         if (res.success) {
           toast.success("Appointment canceled");
-          onDelete?.(id);
+          onDelete?.(id); // Just remove from UI
         }
       } catch (err) {
         toast.error(err.response?.data?.error || "Cannot cancel appointment.");
@@ -54,16 +55,8 @@ const AppointmentItem = ({
     }
   };
 
-  const handleUpdateStatus = async (newStatus) => {
-    try {
-      const res = await updateAppointmentStatus(id, newStatus);
-      if (res.success) {
-        toast.success(`Marked as ${newStatus}`);
-        onDelete?.(id);
-      }
-    } catch (err) {
-      toast.error("Failed to update status.");
-    }
+  const handleConfirm = () => {
+    onConfirm?.({ id, date, userEmail, crafterEmail });
   };
 
   return (
@@ -72,12 +65,15 @@ const AppointmentItem = ({
         {isCrafter && (
           <>
             {status === "pending" && (
-              <ActionIcon title="Confirm" onClick={() => handleUpdateStatus("confirmed")}>
+              <ActionIcon title="Confirm" onClick={handleConfirm}>
                 <FaClipboardList />
               </ActionIcon>
             )}
             {status === "confirmed" && (
-              <CompleteIcon title="Complete" onClick={() => handleUpdateStatus("completed")}>
+              <CompleteIcon
+                title="Complete"
+                onClick={() => onConfirm?.({ id, date, userEmail, crafterEmail, newStatus: "completed" })}
+              >
                 <FaCheckCircle />
               </CompleteIcon>
             )}
