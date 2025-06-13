@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import express from "express";
 import http from "http";
 import cors from "cors";
@@ -11,6 +10,10 @@ import templateRoute from "./routes/templateRoute.js";
 import messageRouter from "./routes/messageRoute.js";
 import likeRoute from "./routes/likeRoutes.js";
 import workshopRouter from "./routes/workshopRoute.js";
+import path from "path";
+import { fileURLToPath } from "url"; // ✅
+const __filename = fileURLToPath(import.meta.url); // ✅
+const __dirname = path.dirname(__filename); // ✅
 
 const startServer = async () => {
   const app = express();
@@ -27,6 +30,16 @@ const startServer = async () => {
   app.use("/likes", likeRoute);
   app.use("/messages", messageRouter);
   app.use("/workshop", workshopRouter);
+
+  // ✅ Serve .glb files
+  console.log(
+    "Serving models from:",
+    path.resolve(__dirname, "../public/models")
+  );
+  app.use(
+    "/models",
+    express.static(path.resolve(__dirname, "../public/models"))
+  );
 
   const server = http.createServer(app);
   configureSocket(server);

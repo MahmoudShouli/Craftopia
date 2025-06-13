@@ -14,6 +14,7 @@ import Homepage from './pages/Homepage';
 import UserPage from './pages/UserPage';
 import CrafterPage from './pages/CrafterPage';
 import SetPreferencesPage from './pages/SetPreferencesPage';
+import ThreeDTemplate from './pages/ThreeDTemplate';
 
 
 createRoot(document.getElementById('root')).render(
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/userprofile" element={<UserPage />} />
           <Route path="/crafterprofile" element={<CrafterPage />} />
           <Route path="/setPreferences" element={<SetPreferencesPage />} />
+           <Route path="/3d-template" element={<ThreeDTemplate />} />
         </Routes>
         <ToastContainer 
           position="top-right"
