@@ -11,7 +11,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import MessageItem from "./MessageItem";
 import { socket } from "../../../utils/socket";
 
-const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
+const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null, members = null }) => {
   const { user } = useUser();
   const fileInputRef = useRef();
   const bottomRef = useRef(null);
@@ -25,6 +25,12 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const [senderDetailsMap, setSenderDetailsMap] = useState({});
+
+  const [mentionListVisible, setMentionListVisible] = useState(false);
+  const [filteredMentions, setFilteredMentions] = useState([]);
+  const [mentionQuery, setMentionQuery] = useState("");
+  const [caretPos, setCaretPos] = useState(0);
+
 
   useEffect(() => {
     const loadCrafters = async () => {
@@ -156,21 +162,48 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
       setMessages((prev) => [...prev, newMessage]);
       socket.emit("send_message", newMessage);
 
-      const notification = {
-        text: `${user.name} sent you a message.`,
-        linkTo: "Chatting", // or `/messages?with=${user.email}`
-        email: receiver, // send email instead of _id
-      };
-      await notificationService.createNotification(notification);
-      socket.emit("notification", {
-        to: receiver,
-        notification
-      });
+      // ✅ Mention detection (only in group mode)
+      if (mode === "group" && members?.length > 0) {
+        const mentionRegex = /@([A-Za-z]+\s?[A-Za-z]*)/g;
+        const mentionedNames = [...new Set((content.match(mentionRegex) || []).map(m => m.slice(1)))]; // remove '@'
+
+        mentionedNames.forEach(async (name) => {
+          const matchedUser = members.find((m) => m.name.toLowerCase() === name.toLowerCase());
+          if (matchedUser && matchedUser.email !== user.email) {
+            const notification = {
+              text: `${user.name} mentioned you in a message.`,
+              linkTo: "Workshop",
+              email: matchedUser.email,
+            };
+            await notificationService.createNotification(notification);
+            socket.emit("notification", {
+              to: matchedUser.email,
+              notification,
+            });
+          }
+        });
+      }
+
+      // ✅ Standard notification for private message
+      if (mode === "private") {
+        const notification = {
+          text: `${user.name} sent you a message.`,
+          linkTo: "Chatting",
+          email: receiver,
+        };
+        await notificationService.createNotification(notification);
+        socket.emit("notification", {
+          to: receiver,
+          notification,
+        });
+      }
     } catch (error) {
       console.error("Error sending message:", error);
     }
+
     setMessageInput("");
   };
+
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -221,6 +254,18 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
       console.error("Failed to delete:", err);
     }
   };
+
+  const insertMention = (mentionName) => {
+    const before = messageInput.slice(0, caretPos);
+    const after = messageInput.slice(caretPos);
+    const lastAtIndex = before.lastIndexOf(mentionQuery);
+    const newInput =
+      before.slice(0, lastAtIndex) + "@" + mentionName + " " + after;
+
+    setMessageInput(newInput);
+    setMentionListVisible(false);
+  };
+
 
   return (
     <styledElements.ChatCard fullscreen={isFullscreen} group={mode === "group"}>
@@ -290,6 +335,7 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
                         : senderDetailsMap[msg.sender]?.avatarUrl || "/default-avatar.png"
                   }
                   senderName={senderDetailsMap[msg.sender]?.name || msg.sender}
+                  mode={mode}
                 />
               ))}
               <div ref={bottomRef} />
@@ -299,7 +345,41 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
               <styledElements.MessageInput
                 placeholder="Type your message..."
                 value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setMessageInput(value);
+
+                 if (mode === "group") {
+                  const cursorIndex = e.target.selectionStart;
+                  const upToCursor = value.slice(0, cursorIndex);
+                  const mentionMatch = upToCursor.match(/@([^\s@]*)$/); // match last "@something"
+
+                  if (mentionMatch) {
+                    const query = mentionMatch[1].toLowerCase();
+                    const queryParts = query.split(" "); // to support "john doe"
+
+                    const filtered = members.filter((m) => {
+                      const fullName = m.name.toLowerCase();
+                      const [first, last] = fullName.split(" ");
+                      const firstMatch = first?.startsWith(queryParts[0]);
+                      const lastMatch = queryParts[1]
+                        ? last?.startsWith(queryParts[1])
+                        : true;
+                      return firstMatch && lastMatch && m.email !== user.email;
+                    });
+
+                    setFilteredMentions(filtered);
+                    setMentionListVisible(true);
+                    setMentionQuery("@" + query);
+                    setCaretPos(cursorIndex);
+                  } else {
+                    setMentionListVisible(false);
+                  }
+                }
+
+
+                }}
+
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -307,6 +387,38 @@ const ChatBox = ({ userToChatWith, mode = "private", workshopInfo = null }) => {
                   }
                 }}
               />
+
+              {mentionListVisible && filteredMentions.length > 0 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "60px",
+                    left: "20px",
+                    backgroundColor: "white",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                    borderRadius: "8px",
+                    zIndex: 10,
+                    width: "250px",
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                >
+                  {filteredMentions.map((m) => (
+                    <div
+                      key={m.email}
+                      onClick={() => insertMention(m.name)}
+                      style={{
+                        padding: "10px",
+                        cursor: "pointer",
+                        borderBottom: "1px solid #eee",
+                      }}
+                    >
+                      @{m.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+
 
               <input
                 type="file"

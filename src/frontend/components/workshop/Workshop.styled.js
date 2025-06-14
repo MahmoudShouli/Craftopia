@@ -171,6 +171,51 @@ const StatusLabel = styled.p`
   margin-top: 0.5rem;
 `;
 
+const MembersWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 2rem;
+`;
+
+const MembersContainer = styled.div`
+  width: 100%;
+  max-width: 500px;
+`;
+
+const MemberCard = styled.div`
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const Avatar = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #ccc;
+`;
+
+const MemberInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const MemberName = styled.span`
+  font-weight: bold;
+`;
+
+const MemberCraft = styled.span`
+  color: #666;
+`;
+
 const styledElements = {
   WorkshopCard,
   FullscreenToggle,
@@ -184,6 +229,15 @@ const styledElements = {
   CenteredWrapper,
   WorkshopName,
   StatusLabel,
+
+  // ✅ Members tab components
+  MembersWrapper,
+  MembersContainer,
+  MemberCard,
+  Avatar,
+  MemberInfo,
+  MemberName,
+  MemberCraft,
 };
 
 export default styledElements;
