@@ -42,4 +42,6 @@ templateRoute.post(
 
 templateRoute.post("/profile", TemplateController.handleTemplateImport);
 
+templateRoute.post("/byIds", TemplateController.getTemplatesByIds);
+
 export default templateRoute;

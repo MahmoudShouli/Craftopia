@@ -162,3 +162,14 @@ export const handleTemplateImport = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const getTemplatesByIds = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    const templates = await TemplateService.getTemplatesByIds(ids);
+    res.json(templates);
+  } catch (err) {
+    console.error("Failed to fetch templates by IDs:", err);
+    res.status(500).json({ error: "Failed to fetch templates" });
+  }
+};

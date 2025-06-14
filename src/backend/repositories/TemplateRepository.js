@@ -78,3 +78,7 @@ export const getTemplatesByFilter = async (filters = {}) => {
     })
   );
 };
+
+export const getTemplatesByIds = async (ids) => {
+  return await TemplateModel.find({ _id: { $in: ids } });
+};

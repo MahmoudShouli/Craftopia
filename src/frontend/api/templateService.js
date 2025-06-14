@@ -99,3 +99,10 @@ export const importTemplatesFromProfile = async (profileUrl, email) => {
   });
   return res.data;
 };
+
+export const getTemplatesByIds = async (ids) => {
+  const res = await axios.post("http://localhost:3000/templates/byIds", {
+    ids,
+  });
+  return res.data;
+};

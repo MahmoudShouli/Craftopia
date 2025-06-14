@@ -234,3 +234,7 @@ export const importTemplatesFromProfile = async (profileUrl, email) => {
     throw err;
   }
 };
+
+export const getTemplatesByIds = async (ids) => {
+  return await TemplateRepository.getTemplatesByIds(ids);
+};

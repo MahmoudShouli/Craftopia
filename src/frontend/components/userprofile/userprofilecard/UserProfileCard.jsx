@@ -1,9 +1,10 @@
-// components/UserProfileCard.jsx
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { useUser } from "../../../context/UserContext";
 import { toast } from "react-toastify";
 import UserAvatar from "../../useravatar/UserAvatar";
+import CrafterReviews from "./CrafterReviews";
+import LikedTemplates from "./LikedTemplates";
 import { FaUser, FaMapMarkerAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -26,7 +27,6 @@ import {
 } from "./UserProfileCard.styled";
 
 const UserProfileCard = ({ user }) => {
-
   const { setUser } = useUser();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -37,7 +37,6 @@ const UserProfileCard = ({ user }) => {
   const [city, setCity] = useState(user?.location.coordinates || '');
   const [uploading, setUploading] = useState(false);
   const [showMap, setShowMap] = useState(false);
-
 
   const fileInputRef = useRef();
 
@@ -99,100 +98,106 @@ const UserProfileCard = ({ user }) => {
     }
   };
 
-  
   return (
-    <UserCard>
-      <UserHeader>
-        <>
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            onChange={handleImageUpload}
-            style={{ display: "none" }}
+    <UserCard style={{ display: "flex", gap: "2rem" }}>
+      {/* LEFT COLUMN */}
+      <div style={{ flex: 1 }}>
+        <UserHeader>
+          <>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              style={{ display: "none" }}
+            />
+            <UserAvatar
+              previewUrl={previewUrl}
+              uploading={uploading}
+              user={user}
+              width={200}
+              height={200}
+              onClick={() => fileInputRef.current.click()}
+            />
+          </>
+          <UserDetails>
+            <Name>{user.name}</Name>
+            <Email>{user.email}</Email>
+          </UserDetails>
+          {!isEditing ? (
+            <EditButton onClick={handleEditToggle}>Edit</EditButton>
+          ) : (
+            <SaveButton onClick={handleSave}>Save</SaveButton>
+          )}
+        </UserHeader>
+
+        <FormGrid>
+          <Field>
+            <Label>Name</Label>
+            <InputWrapper>
+              <FaUser className="input-icon" />
+              <Input
+                type="text"
+                value={editedName}
+                onChange={(e) => setEditedName(e.target.value)}
+                disabled={!isEditing}
+              />
+            </InputWrapper>
+          </Field>
+
+          <Field>
+            <Label>Email</Label>
+            <InputWrapper>
+              <MdEmail className="input-icon" />
+              <Input
+                type="email"
+                value={user.email}
+                disabled
+              />
+            </InputWrapper>
+          </Field>
+
+          <Field>
+            <Label>Password</Label>
+            <InputWrapper>
+              <RiLockPasswordLine className="input-icon" />
+              <Input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                disabled={!isEditing}
+              />
+            </InputWrapper>
+          </Field>
+
+          <Field>
+            <Label>Location</Label>
+            <InputWrapper>
+              <FaMapMarkerAlt className="input-icon" onClick={() => setShowMap(true)} style={{ cursor: "pointer" }} />
+              <Input
+                type="text"
+                placeholder="Address"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                disabled={!isEditing}
+              />
+            </InputWrapper>
+          </Field>
+        </FormGrid>
+
+        {showMap && (
+          <MapPopup
+            onClose={() => setShowMap(false)}
+            onSelectCoordinates={(locationString) => setLocation(locationString)}
+            onSelectCity={(locationString) => setCity(locationString)}
           />
-          <UserAvatar
-            previewUrl={previewUrl}
-            uploading={uploading}
-            user={user}
-            width={200}
-            height={200}
-            onClick={() => fileInputRef.current.click()}
-          />
-        </>
-        <UserDetails>
-          <Name>{user.name}</Name>
-          <Email>{user.email}</Email>
-        </UserDetails>
-        {!isEditing ? (
-          <EditButton onClick={handleEditToggle}>Edit</EditButton>
-        ) : (
-          <SaveButton onClick={handleSave}>Save</SaveButton>
         )}
-      </UserHeader>
+      </div>
 
-      <FormGrid>
-        <Field>
-          <Label>Name</Label>
-          <InputWrapper>
-            <FaUser className="input-icon" />
-            <Input
-              type="text"
-              value={editedName}
-              onChange={(e) => setEditedName(e.target.value)}
-              disabled={!isEditing}
-            />
-          </InputWrapper>
-        </Field>
-
-        <Field>
-          <Label>Email</Label>
-          <InputWrapper>
-            <MdEmail className="input-icon" />
-            <Input
-              type="email"
-              value={user.email}
-              disabled
-            />
-          </InputWrapper>
-        </Field>
-
-        <Field>
-          <Label>Password</Label>
-          <InputWrapper>
-            <RiLockPasswordLine className="input-icon" />
-            <Input
-              type="password"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              disabled={!isEditing}
-            />
-          </InputWrapper>
-        </Field>
-
-        <Field>
-          <Label>Location</Label>
-          <InputWrapper>
-            <FaMapMarkerAlt className="input-icon" onClick={() => setShowMap(true)} style={{ cursor: "pointer" }} />
-            <Input
-              type="text"
-              placeholder="Address"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              disabled={!isEditing}
-            />
-          </InputWrapper>
-        </Field>
-      </FormGrid>
-
-      {showMap && (
-        <MapPopup
-          onClose={() => setShowMap(false)}
-          onSelectCoordinates={(locationString) => setLocation(locationString)}
-          onSelectCity={(locationString) => setCity(locationString)}
-        />
-      )}
+      {/* RIGHT COLUMN - Reviews or Liked Templates */}
+      {user.role === "crafter" && <CrafterReviews crafterEmail={user.email} />}
+      {user.role === "customer" && <LikedTemplates email={user.email} />}
     </UserCard>
   );
 };
