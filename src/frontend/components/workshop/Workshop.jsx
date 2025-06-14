@@ -3,6 +3,7 @@ import { useEffect, useState, useRef} from "react";
 import { useUser } from "../../context/UserContext";
 import workshopService from "../../api/workshopService";
 import messageService from "../../api/messageService";
+import { getUserByEmail } from "../../api/userService";
 import notificationService from "../../api/notificationService";
 import styledElements from "./Workshop.styled";
 import { FiMaximize, FiMinimize} from "react-icons/fi";
@@ -33,6 +34,7 @@ const Workshop = () => {
 
 
   const [chattedWithList, setChattedWithList] = useState([]);
+  const [members, setMembers] = useState([]);
   const [checkpoints, setCheckpoints] = useState();
 
   const colorMap = {
@@ -75,6 +77,16 @@ const Workshop = () => {
     if (user.role == "customer" || wp.crafters.find(c => c.email === user.email).status === "joined") {
       setSelectedWorkshop(wp);
       setCheckpoints(await workshopService.getCheckpointsByWorkshopId(wp._id));
+
+      const crafterData = await Promise.all(
+        wp.crafters.map(async (crafter) => {
+          const data = await getUserByEmail(crafter.email);
+          return data;
+        })
+      );
+
+      setMembers(crafterData);
+
       return;
     }
   
@@ -264,12 +276,17 @@ const Workshop = () => {
             >
               Progress
             </styledElements.NavItem>
-
+            <styledElements.NavItem
+              active={activeTab === "members"}
+              onClick={() => setActiveTab("members")}
+            >
+              Members
+            </styledElements.NavItem>
           </styledElements.Navbar>
 
           <styledElements.ContentWrapper>
             {activeTab === "chat" && (
-              <ChatBox mode="group" workshopInfo={selectedWorkshop} />
+              <ChatBox mode="group" workshopInfo={selectedWorkshop} members={members} />
             )}
 
             {activeTab === "progress" && (
@@ -278,12 +295,30 @@ const Workshop = () => {
                 setCheckpoints={setCheckpoints}
               />
             )}
+
+            {activeTab === "members" && (
+              <styledElements.MembersWrapper>
+                <styledElements.MembersContainer>
+                  {members.map((member, index) => (
+                    <styledElements.MemberCard key={index}>
+                      <styledElements.Avatar
+                        src={member.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}`}
+                        alt={member.name}
+                      />
+                      <styledElements.MemberInfo>
+                        <styledElements.MemberName>{member.name}</styledElements.MemberName>
+                        <styledElements.MemberCraft>{member.craft}</styledElements.MemberCraft>
+                      </styledElements.MemberInfo>
+                    </styledElements.MemberCard>
+                  ))}
+                </styledElements.MembersContainer>
+              </styledElements.MembersWrapper>
+            )}
+
           </styledElements.ContentWrapper>
-
-            
-
         </>
       )}
+
 
 
     </styledElements.WorkshopCard>
