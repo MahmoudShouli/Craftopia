@@ -17,11 +17,10 @@ import UserAvatar from "../useravatar/UserAvatar";
 import PopUpPage from "../map/PopUpPage";
 import TemplateDetails from "./TemplateDetails";
 import { useUser } from "../../context/UserContext";
-import { FaTimes, FaCube } from "react-icons/fa";
+import { FaTimes, FaCube, FaCartPlus } from "react-icons/fa";
 import { ImSpinner2 } from "react-icons/im";
 import { toggleLike } from "../../api/likeService";
 import { motion } from "framer-motion";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import notificationService from "../../api/notificationService";
@@ -68,42 +67,47 @@ const TemplateItem = ({
       }
 
       if (!liked && template.crafterEmail !== user.email) {
-          const notification = {
-            text: `${user.name} liked your template "${template.name}"`,
-            linkTo: "Templates",
-            email: template.crafterEmail, // send to the crafter
-          };
+        const notification = {
+          text: `${user.name} liked your template "${template.name}"`,
+          linkTo: "Templates",
+          email: template.crafterEmail,
+        };
 
-          await notificationService.createNotification(notification);
-          socket.emit("notification", {
-            to: template.crafterEmail,
-            notification,
-          });
-        }
-
+        await notificationService.createNotification(notification);
+        socket.emit("notification", {
+          to: template.crafterEmail,
+          notification,
+        });
+      }
     } catch (err) {
       console.error("Failed to toggle like:", err);
     }
   };
 
-const handleShow3D = (e) => {
-  e.stopPropagation();
+  const handleShow3D = (e) => {
+    e.stopPropagation();
 
-  const nameSlug = template.name
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "_")
-    .replace(/[^\w\-]/g, "");
+    const nameSlug = template.name
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "_")
+      .replace(/[^\w\-]/g, "");
 
-  const glbPath = `/models/${nameSlug}.glb`;
+    const glbPath = `/models/${nameSlug}.glb`;
 
-  navigate("/3d-template", {
-    state: {
-      modelUrl: glbPath,
-      templateName: template.name,
-    },
-  });
-};
+    navigate("/3d-template", {
+      state: {
+        modelUrl: glbPath,
+        templateName: template.name,
+      },
+    });
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    toast.success(`${template.name} added to cart!`);
+    // Optionally add cart API logic here
+  };
 
   if (!template) return null;
 
@@ -156,7 +160,12 @@ const handleShow3D = (e) => {
         {template.availableColors?.length > 0 && (
           <ColorsWrapper style={{ marginTop: "1rem" }}>
             {template.availableColors.map((color, idx) => (
-              <ColorDot key={idx} $color={color} title={color} style={{ width: "20px", height: "20px" }} />
+              <ColorDot
+                key={idx}
+                $color={color}
+                title={color}
+                style={{ width: "20px", height: "20px" }}
+              />
             ))}
           </ColorsWrapper>
         )}
@@ -172,7 +181,27 @@ const handleShow3D = (e) => {
           </LikesWrapper>
         )}
 
-        {/* 🧊 3D Icon or Spinner */}
+        {template.isPurchasable && (
+          <motion.div
+            onClick={handleAddToCart}
+            whileTap={{ scale: 1.2 }}
+            style={{
+              position: "absolute",
+              bottom: "10px",
+              left: "10px",
+              zIndex: 10,
+              background: "#fff",
+              borderRadius: "50%",
+              padding: "8px",
+              boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+              cursor: "pointer",
+            }}
+            title="Add to Cart"
+          >
+            <FaCartPlus size={16} color="#6a380f" />
+          </motion.div>
+        )}
+
         {isLoading3D ? (
           <motion.div
             animate={{ rotate: 360 }}
@@ -214,7 +243,11 @@ const handleShow3D = (e) => {
 
       {showDetails && (
         <PopUpPage onClose={() => setShowDetails(false)}>
-          <TemplateDetails template={template} mode="edit" onSave={handleSaveEdit} />
+          <TemplateDetails
+            template={template}
+            mode="edit"
+            onSave={handleSaveEdit}
+          />
         </PopUpPage>
       )}
     </>

@@ -11,7 +11,7 @@ import {
   FieldWrapper,
   FieldGroup,
   VerticalFieldWrapper,
- Label,
+  Label,
   StyledInput,
   StyledTextarea,
   InfoTitle,
@@ -26,6 +26,7 @@ import {
 } from "./CrafterTemplates.styled";
 import GalleryCarousel from "./GalleryCarousel";
 import Button from "../button/Button";
+import PurchasableToggle from "../button/PurchasableToggle";
 import {
   uploadImage,
   extractColorsFromImage,
@@ -42,6 +43,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
   const [newColor, setNewColor] = useState("#6a380f");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [lastUploadedImage, setLastUploadedImage] = useState(null);
+  const [isPurchasable, setIsPurchasable] = useState(false);
 
   const [localTemplate, setLocalTemplate] = useState({
     _id: "",
@@ -52,7 +54,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
     tags: [],
   });
 
-  const [isGenerating, setIsGenerating] = useState(false); // 🆕
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (template) {
@@ -65,6 +67,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
         tags: template.tags || [],
       });
       setGalleryImages(template.galleryImages || []);
+      setIsPurchasable(template.isPurchasable || false);
     } else {
       setLocalTemplate({
         _id: "",
@@ -75,6 +78,7 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
         tags: [],
       });
       setGalleryImages([]);
+      setIsPurchasable(false);
     }
   }, [template]);
 
@@ -112,9 +116,9 @@ const TemplateDetails = ({ template = null, mode = "add", onSave }) => {
     fileInputRef.current?.click();
   };
 
-const handleImageSelect = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const handleImageSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
     try {
       const uploaded = await uploadImage(file);
@@ -131,9 +135,7 @@ const handleImageSelect = async (e) => {
     if (!lastUploadedImage) return;
 
     try {
-      setIsGenerating(true); // 🆕 Show spinner & disable
-
-      // Fade out
+      setIsGenerating(true);
       document.getElementById("info-fields").style.opacity = "0.4";
 
       setLocalTemplate((prev) => ({
@@ -143,7 +145,7 @@ const handleImageSelect = async (e) => {
         availableColors: [],
       }));
 
-      await new Promise((r) => setTimeout(r, 400)); // Allow fade-out to complete
+      await new Promise((r) => setTimeout(r, 400));
 
       const colors = await extractColorsFromImage(lastUploadedImage);
       const { title, description } = await generateFromImage(lastUploadedImage);
@@ -161,8 +163,8 @@ const handleImageSelect = async (e) => {
       console.error(err);
     } finally {
       setTimeout(() => {
-        document.getElementById("info-fields").style.opacity = "1"; // Fade in
-        setIsGenerating(false); // Re-enable button
+        document.getElementById("info-fields").style.opacity = "1";
+        setIsGenerating(false);
       }, 300);
     }
   };
@@ -194,26 +196,26 @@ const handleImageSelect = async (e) => {
       mainImage: galleryImages[0],
       craftType: user.craft,
       crafterName: user.name,
+      isPurchasable,
     };
 
     onSave(updatedFormData);
   };
 
-  const userCraft =
-    user?.craft?.charAt(0).toUpperCase() + user?.craft?.slice(1);
+  const userCraft = user?.craft?.charAt(0).toUpperCase() + user?.craft?.slice(1);
   const availableTags = TagsByCraft[userCraft] || [];
 
   return (
     <DetailsWrapper>
       <TopContent>
         <LeftSection>
-  <div style={{ width: "100%" }}>
-    {galleryImages.length > 0 && (
-      <GalleryCarousel
-        images={galleryImages}
-        onImageRemove={isCrafter ? handleImageRemove : undefined}
-      />
-    )}
+          <div style={{ width: "100%" }}>
+            {galleryImages.length > 0 && (
+              <GalleryCarousel
+                images={galleryImages}
+                onImageRemove={isCrafter ? handleImageRemove : undefined}
+              />
+            )}
 
             {isCrafter && (
               <div style={{ marginTop: "1rem", textAlign: "center" }}>
@@ -233,13 +235,11 @@ const handleImageSelect = async (e) => {
                 {lastUploadedImage && (
                   <div style={{ marginTop: "0.5rem" }}>
                     <Button
-                      text={
-                        isGenerating ? "Generating..." : "Generate Info from Image"
-                      }
+                      text={isGenerating ? "Generating..." : "Generate Info from Image"}
                       size="small"
                       color="#4e2c0b"
                       onClick={handleGenerateInfo}
-                      disabled={isGenerating} // 🆕
+                      disabled={isGenerating}
                     />
                   </div>
                 )}
@@ -249,10 +249,7 @@ const handleImageSelect = async (e) => {
         </LeftSection>
 
         <RightSection>
-          <div
-            id="info-fields"
-            style={{ transition: "opacity 0.3s ease" }} // 🆕 Fade effect
-          >
+          <div id="info-fields" style={{ transition: "opacity 0.3s ease" }}>
             <FieldWrapper>
               <FieldGroup>
                 <Label>Name</Label>
@@ -286,6 +283,8 @@ const handleImageSelect = async (e) => {
                 />
               </FieldGroup>
             </FieldWrapper>
+
+            <PurchasableToggle value={isPurchasable} onChange={setIsPurchasable} />
 
             <VerticalFieldWrapper>
               <Label>Description</Label>

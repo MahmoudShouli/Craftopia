@@ -2,7 +2,10 @@ import TemplateModel from "../models/TemplateModel.js";
 
 // Create a new template
 export const createTemplate = async (templateData) => {
-  return await TemplateModel.create(templateData);
+  return await TemplateModel.create({
+    ...templateData,
+    isPurchasable: templateData.isPurchasable ?? false, // ensure boolean
+  });
 };
 
 // Get all templates created by a specific crafter

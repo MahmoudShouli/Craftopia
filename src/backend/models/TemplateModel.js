@@ -12,6 +12,10 @@ const TemplateSchema = new mongoose.Schema({
   tags: [{ type: String, required: true }],
   likes: { type: Number, default: 0 },
   price: { type: Number, default: 0 },
+  isPurchasable: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const TemplateModel = mongoose.model("Templates", TemplateSchema, "templates");
