@@ -104,7 +104,7 @@ const TemplateItem = ({
     });
   };
 
-  const handleAddToCart = async (e) => {
+const handleAddToCart = async (e) => {
   e.stopPropagation();
   try {
     const orderData = {
@@ -115,14 +115,20 @@ const TemplateItem = ({
       status: "pending",
       paymentStatus: "unpaid",
     };
+
     await createOrder(orderData);
-    toast.success(`${template.name} added to cart!`);
+
+    // ✅ Emit socket event
+    socket.emit("cart_updated", { userEmail: user.email });
+
+    // ✅ Fallback: dispatch global event to manually refresh
+    window.dispatchEvent(new CustomEvent("cart_force_refresh"));
+
   } catch (err) {
     toast.error("Failed to add to cart.");
     console.error("Order creation error:", err);
   }
 };
-
   if (!template) return null;
 
   return (

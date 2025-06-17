@@ -56,6 +56,11 @@ const configureSocket = (server) => {
         io.emit("online_users", Array.from(onlineUsers));
       }
     });
+
+    socket.on("join_cart", (email) => {
+      socket.join(email);
+      console.log(`🛒 Joined cart room: ${email}`);
+    });
   });
 };
 

@@ -16,8 +16,13 @@ export const updateOrder = async (id, status, paymentStatus) => {
   return await OrderRepo.updateOrderStatus(id, status, paymentStatus);
 };
 
+// ✅ updated deleteOrder to fetch order first
 export const deleteOrder = async (id) => {
-  return await OrderRepo.deleteOrder(id);
+  const order = await OrderRepo.getOrderById(id); // needed for email
+  if (!order) return null;
+
+  await OrderRepo.deleteOrder(id);
+  return order; // return the deleted order (with email)
 };
 
 export const fetchOrderById = async (id) => {

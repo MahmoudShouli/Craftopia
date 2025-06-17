@@ -27,36 +27,30 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
   const [showCart, setShowCart] = useState(false);
   const [cartOrders, setCartOrders] = useState([]);
 
-  // Join socket room for this user
+  // ✅ Join socket room for cart updates
   useEffect(() => {
     if (user?.email) {
-      socket.emit("join", user.email);
+      socket.emit("join_cart", user.email);
     }
   }, [user?.email]);
 
-  // Load notifications once
+  // ✅ Load cart count on mount (before clicking cart)
   useEffect(() => {
-    const loadNotifications = async () => {
+    const loadCart = async () => {
       try {
-        const data = await notificationService.fetchNotifications(user.email);
-        setNotifications(data);
-        setUnreadCount(data.filter((n) => !n.isRead).length);
+        const orders = await orderService.getCartOrders(user.email);
+        setCartOrders(orders);
       } catch {
-        toast.error("Failed to load notifications");
+        toast.error("Failed to load cart");
       }
     };
-    loadNotifications();
-  }, [user.email]);
 
-  // Listen for real-time notifications
-  useEffect(() => {
-    socket.on("receive_notification", (notification) => {
-      setNotifications((prev) => [...prev, notification]);
-    });
-    return () => socket.off("receive_notification");
-  }, []);
+    if (user?.role === "customer") {
+      loadCart();
+    }
+  }, [user?.email, user?.role]);
 
-  // Listen for real-time cart updates
+  // ✅ Real-time cart updates from socket
   useEffect(() => {
     const refreshCart = async () => {
       try {
@@ -76,6 +70,43 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     return () => socket.off("cart_updated");
   }, [user.email]);
 
+  useEffect(() => {
+  const forceRefresh = async () => {
+    try {
+      const updatedOrders = await orderService.getCartOrders(user.email);
+      setCartOrders(updatedOrders);
+    } catch {
+      toast.error("Failed to manually refresh cart");
+    }
+  };
+
+  window.addEventListener("cart_force_refresh", forceRefresh);
+  return () => window.removeEventListener("cart_force_refresh", forceRefresh);
+}, [user.email]);
+
+  // ✅ Load notifications
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const data = await notificationService.fetchNotifications(user.email);
+        setNotifications(data);
+        setUnreadCount(data.filter((n) => !n.isRead).length);
+      } catch {
+        toast.error("Failed to load notifications");
+      }
+    };
+    loadNotifications();
+  }, [user.email]);
+
+  // ✅ Real-time notifications from socket
+  useEffect(() => {
+    socket.on("receive_notification", (notification) => {
+      setNotifications((prev) => [...prev, notification]);
+    });
+    return () => socket.off("receive_notification");
+  }, []);
+
+  // Toggle cart popup
   const toggleCart = async () => {
     setShowCart((prev) => !prev);
     if (!showCart) {
@@ -88,20 +119,21 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     }
   };
 
+  // Handle cart item remove
   const handleRemoveOrder = async (orderId) => {
     try {
       await orderService.deleteOrder(orderId);
-      toast.success("Removed from cart");
       setCartOrders((prev) => prev.filter((o) => o._id !== orderId));
-      socket.emit("cart_updated", { userEmail: user.email }); // notify self and others
+      socket.emit("cart_updated", { userEmail: user.email });
     } catch (err) {
       toast.error("Failed to delete order");
     }
   };
 
+  // Handle purchase confirmation
   const handleConfirmPurchase = () => {
     toast.success("Purchase confirmed!");
-    socket.emit("cart_updated", { userEmail: user.email }); // trigger refresh
+    socket.emit("cart_updated", { userEmail: user.email });
   };
 
   return (
@@ -112,6 +144,7 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
       </HeaderLeft>
 
       <HeaderRight>
+        {/* 🛒 Cart icon */}
         {user?.role === "customer" && (
           <IconWrapper onClick={toggleCart} $highlight={cartOrders.length > 0}>
             <Icon>
@@ -143,6 +176,7 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
           </IconWrapper>
         )}
 
+        {/* 🔔 Notification icon */}
         <IconWrapper
           onClick={() => setShowNotifications(!showNotifications)}
           $state={unreadCount}
@@ -160,6 +194,7 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
           )}
         </IconWrapper>
 
+        {/* 🧑 User Avatar */}
         <IconWrapper style={{ padding: 0 }}>
           <UserAvatar
             previewUrl={user.avatarUrl}
