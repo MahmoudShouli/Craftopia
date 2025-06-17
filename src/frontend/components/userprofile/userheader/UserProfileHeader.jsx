@@ -7,6 +7,9 @@ import * as orderService from "../../../api/orderService";
 import { toast } from "react-toastify";
 import { socket } from "../../../../utils/socket";
 import CartMenu from "../../cart/CartMenu";
+import PaymentMethodModal from "../../cart/PaymentMethodModal";
+import CardPaymentSimulator from "../../cart/CardPaymentSimulator";
+import PopUpPage from "../../map/PopUpPage";
 
 import {
   HeaderSection,
@@ -27,14 +30,21 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
   const [showCart, setShowCart] = useState(false);
   const [cartOrders, setCartOrders] = useState([]);
 
-  // ✅ Join socket room for cart updates
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [cardInfo, setCardInfo] = useState({
+  name: "",
+  number: "",
+  expiry: "",
+  cvv: ""
+});
+
   useEffect(() => {
     if (user?.email) {
       socket.emit("join_cart", user.email);
     }
   }, [user?.email]);
 
-  // ✅ Load cart count on mount (before clicking cart)
   useEffect(() => {
     const loadCart = async () => {
       try {
@@ -44,13 +54,9 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
         toast.error("Failed to load cart");
       }
     };
-
-    if (user?.role === "customer") {
-      loadCart();
-    }
+    if (user?.role === "customer") loadCart();
   }, [user?.email, user?.role]);
 
-  // ✅ Real-time cart updates from socket
   useEffect(() => {
     const refreshCart = async () => {
       try {
@@ -62,29 +68,26 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     };
 
     socket.on("cart_updated", ({ userEmail }) => {
-      if (userEmail === user.email) {
-        refreshCart();
-      }
+      if (userEmail === user.email) refreshCart();
     });
 
     return () => socket.off("cart_updated");
   }, [user.email]);
 
   useEffect(() => {
-  const forceRefresh = async () => {
-    try {
-      const updatedOrders = await orderService.getCartOrders(user.email);
-      setCartOrders(updatedOrders);
-    } catch {
-      toast.error("Failed to manually refresh cart");
-    }
-  };
+    const forceRefresh = async () => {
+      try {
+        const updatedOrders = await orderService.getCartOrders(user.email);
+        setCartOrders(updatedOrders);
+      } catch {
+        toast.error("Failed to manually refresh cart");
+      }
+    };
 
-  window.addEventListener("cart_force_refresh", forceRefresh);
-  return () => window.removeEventListener("cart_force_refresh", forceRefresh);
-}, [user.email]);
+    window.addEventListener("cart_force_refresh", forceRefresh);
+    return () => window.removeEventListener("cart_force_refresh", forceRefresh);
+  }, [user.email]);
 
-  // ✅ Load notifications
   useEffect(() => {
     const loadNotifications = async () => {
       try {
@@ -98,7 +101,6 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     loadNotifications();
   }, [user.email]);
 
-  // ✅ Real-time notifications from socket
   useEffect(() => {
     socket.on("receive_notification", (notification) => {
       setNotifications((prev) => [...prev, notification]);
@@ -106,34 +108,38 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     return () => socket.off("receive_notification");
   }, []);
 
-  // Toggle cart popup
-  const toggleCart = async () => {
-    setShowCart((prev) => !prev);
-    if (!showCart) {
-      try {
-        const orders = await orderService.getCartOrders(user.email);
-        setCartOrders(orders);
-      } catch {
-        toast.error("Failed to load cart orders");
-      }
-    }
-  };
-
-  // Handle cart item remove
   const handleRemoveOrder = async (orderId) => {
     try {
       await orderService.deleteOrder(orderId);
       setCartOrders((prev) => prev.filter((o) => o._id !== orderId));
       socket.emit("cart_updated", { userEmail: user.email });
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete order");
     }
   };
 
-  // Handle purchase confirmation
   const handleConfirmPurchase = () => {
-    toast.success("Purchase confirmed!");
-    socket.emit("cart_updated", { userEmail: user.email });
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentSelect = (method) => {
+    setSelectedPaymentMethod(method);
+    setShowPaymentModal(false);
+    if (method === "cash") {
+      toast.success("Cash order placed successfully");
+      socket.emit("cart_updated", { userEmail: user.email });
+    }
+  };
+
+  const handlePayNow = () => {
+    if (cardInfo.number && cardInfo.expiry && cardInfo.cvv) {
+      toast.success("Payment successful");
+      setSelectedPaymentMethod(null);
+      setCardInfo({ number: "", expiry: "", cvv: "" });
+      socket.emit("cart_updated", { userEmail: user.email });
+    } else {
+      toast.error("Please fill all card fields");
+    }
   };
 
   return (
@@ -144,15 +150,12 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
       </HeaderLeft>
 
       <HeaderRight>
-        {/* 🛒 Cart icon */}
         {user?.role === "customer" && (
-          <IconWrapper onClick={toggleCart} $highlight={cartOrders.length > 0}>
+          <IconWrapper onClick={() => setShowCart((prev) => !prev)} $highlight={cartOrders.length > 0}>
             <Icon>
               <FaShoppingCart />
             </Icon>
-            {cartOrders.length > 0 && (
-              <NotificationBadge>{cartOrders.length}</NotificationBadge>
-            )}
+            {cartOrders.length > 0 && <NotificationBadge>{cartOrders.length}</NotificationBadge>}
             {showCart && (
               <MenuPopup>
                 <CartMenu
@@ -161,12 +164,7 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
                   onConfirm={handleConfirmPurchase}
                 />
                 <div
-                  style={{
-                    marginTop: "8px",
-                    cursor: "pointer",
-                    textAlign: "right",
-                    color: "#6a380f",
-                  }}
+                  style={{ marginTop: "8px", cursor: "pointer", textAlign: "right", color: "#6a380f" }}
                   onClick={() => setShowCart(false)}
                 >
                   Close
@@ -176,15 +174,9 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
           </IconWrapper>
         )}
 
-        {/* 🔔 Notification icon */}
-        <IconWrapper
-          onClick={() => setShowNotifications(!showNotifications)}
-          $state={unreadCount}
-        >
+        <IconWrapper onClick={() => setShowNotifications(!showNotifications)} $state={unreadCount}>
           <Icon>🔔</Icon>
-          {unreadCount > 0 && (
-            <NotificationBadge>{unreadCount}</NotificationBadge>
-          )}
+          {unreadCount > 0 && <NotificationBadge>{unreadCount}</NotificationBadge>}
           {showNotifications && (
             <NotificationMenu
               notifications={notifications}
@@ -194,7 +186,6 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
           )}
         </IconWrapper>
 
-        {/* 🧑 User Avatar */}
         <IconWrapper style={{ padding: 0 }}>
           <UserAvatar
             previewUrl={user.avatarUrl}
@@ -205,6 +196,23 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
           />
         </IconWrapper>
       </HeaderRight>
+
+      {showPaymentModal && (
+        <PaymentMethodModal
+          onSelect={handlePaymentSelect}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
+
+      {selectedPaymentMethod === "card" && (
+        <PopUpPage onClose={() => setSelectedPaymentMethod(null)}>
+          <CardPaymentSimulator
+              cardInfo={cardInfo}
+              setCardInfo={setCardInfo}
+              onPay={handlePayNow}
+            />
+        </PopUpPage>
+      )}
     </HeaderSection>
   );
 };
