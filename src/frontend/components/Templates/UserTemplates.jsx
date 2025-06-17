@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   TemplateCard,
   TemplatesGrid,
+  FloatingAIButton,
 } from "./CrafterTemplates.styled";
 import { FilterBoxGroup, FilterBox } from "../userprofile/search/Search.styled";
 import TemplateItem from "../Templates/TemplateItem";
@@ -10,6 +11,7 @@ import SearchBar from "../userprofile/search/SearchBar";
 import CraftDropdown from "../craftdropdown/CraftDropdown";
 import { useUser } from "../../context/UserContext";
 import { CraftValues } from "../../constants/craftsEnum";
+import { FaRobot } from "react-icons/fa";
 import {
   fetchSortedTemplates,
   fetchRecommendedTemplates,
@@ -18,6 +20,8 @@ import { getUserLikedTemplates } from "../../api/likeService";
 import { useLocation } from "react-router-dom";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
+import PopUpPage from "../map/PopUpPage"; // ✅ import your popup
+import AITemplateGenerator from "./AITemplateGenerator";
 
 const UserTemplates = () => {
   const { user } = useUser();
@@ -30,6 +34,7 @@ const UserTemplates = () => {
   const [isRecommended, setIsRecommended] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [showAIModal, setShowAIModal] = useState(false); // ✅
 
   const loadTemplates = useCallback(async () => {
     try {
@@ -72,18 +77,17 @@ const UserTemplates = () => {
     loadTemplates();
   };
 
-const handleTemplateLikeChanged = (templateId, newLiked) => {
-  setLikedTemplateIds((prev) =>
-    newLiked
-      ? [...prev, templateId]
-      : prev.filter((id) => id !== templateId)
-  );
+  const handleTemplateLikeChanged = (templateId, newLiked) => {
+    setLikedTemplateIds((prev) =>
+      newLiked
+        ? [...prev, templateId]
+        : prev.filter((id) => id !== templateId)
+    );
 
-  // Optional delayed refresh
-  setTimeout(() => {
-    loadTemplates();
-  }, 400);
-};
+    setTimeout(() => {
+      loadTemplates();
+    }, 400);
+  };
 
   const filteredTemplates = templates.filter((template) => {
     const matchesCraft =
@@ -115,7 +119,6 @@ const handleTemplateLikeChanged = (templateId, newLiked) => {
           selectedCraft={selectedCraft}
           onSelectCraft={(craft) => setSelectedCraft(craft)}
         />
-
         <FilterBox onClick={toggleView}>
           {isRecommended ? "All" : "Recommended"}
         </FilterBox>
@@ -157,6 +160,24 @@ const handleTemplateLikeChanged = (templateId, newLiked) => {
             />
           ))}
         </TemplatesGrid>
+      )}
+
+      {/* ✅ AI Floating Button */}
+      <FloatingAIButton
+        onClick={() => setShowAIModal(true)}
+        title="AI Assistant"
+      >
+        <FaRobot />
+      </FloatingAIButton>
+
+      {/* ✅ PopUpPage for AI */}
+      {showAIModal && (
+        <PopUpPage onClose={() => setShowAIModal(false)}>
+          <AITemplateGenerator onSendToChat={(data) => {
+            console.log("Send to chat with:", data);
+            // You will implement actual chat sending in the backend step
+          }} />
+        </PopUpPage>
       )}
     </TemplateCard>
   );

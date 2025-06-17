@@ -16,6 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import notificationRouter from "./routes/notificationRoute.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
 
 const startServer = async () => {
   const app = express();
@@ -44,6 +45,7 @@ const startServer = async () => {
     express.static(path.resolve(__dirname, "../public/models"))
   );
   app.use("/notifications", notificationRouter);
+  app.use("/ai", aiRoutes);
 
   const server = http.createServer(app);
   configureSocket(server);

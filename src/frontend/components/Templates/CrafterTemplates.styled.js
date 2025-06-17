@@ -520,3 +520,28 @@ export const PriceLabel = styled.div`
   font-weight: 600;
   color: #6a380f;
 `;
+
+export const FloatingAIButton = styled.button`
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #6a380f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 999;
+
+  &:hover {
+    background-color: #4a250a;
+    transform: scale(1.1);
+    transition: all 0.2s ease;
+  }
+`;

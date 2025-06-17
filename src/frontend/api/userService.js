@@ -69,3 +69,10 @@ export const updateCardInfo = async (email, cardNumber, expiryDate, cvv) => {
   });
   return res.data.user;
 };
+
+export const getCraftersByCraft = async (craft) => {
+  const res = await axios.get("http://localhost:3000/user/crafters-by-craft", {
+    params: { craft },
+  });
+  return res.data;
+};

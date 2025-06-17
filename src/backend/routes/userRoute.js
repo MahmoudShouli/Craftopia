@@ -8,6 +8,7 @@ import { updateUserProfile } from "../controllers/userController.js";
 import { searchCrafters } from "../controllers/userController.js";
 import { getUserByEmail } from "../controllers/userController.js";
 import { updateCardInfo } from "../controllers/userController.js";
+import { getCraftersByCraft } from "../controllers/userController.js";
 
 const userRouter = express.Router();
 
@@ -17,5 +18,6 @@ userRouter.get("/search", searchCrafters);
 userRouter.get("/email/:email", getUserByEmail);
 userRouter.put("/preferences", updatePreferences);
 userRouter.put("/card-info", updateCardInfo);
+userRouter.get("/crafters-by-craft", getCraftersByCraft);
 
 export default userRouter;

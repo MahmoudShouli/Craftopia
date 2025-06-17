@@ -154,3 +154,16 @@ export const updateCardInfo = async (req, res) => {
     res.status(500).json({ error: "Failed to save card info." });
   }
 };
+
+export const getCraftersByCraft = async (req, res) => {
+  const { craft } = req.query;
+  if (!craft) return res.status(400).json({ error: "Craft is required" });
+
+  try {
+    const crafters = await User.find({ role: "crafter", craft });
+    res.json(crafters);
+  } catch (err) {
+    console.error("Failed to fetch crafters:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
