@@ -4,7 +4,7 @@ import { FaMoneyBillWave } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { updateOrder } from "../../api/orderService";
 import UserAvatar from "../useravatar/UserAvatar";
-import { format } from "date-fns"; // ✅ for formatting createdAt
+import { format } from "date-fns";
 import notificationService from "../../api/notificationService";
 import { socket } from "../../../utils/socket";
 import { useUser } from "../../context/UserContext";
@@ -18,6 +18,13 @@ const OrderCard = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 16px;
+  transition: transform 0.2s ease, border 0.2s ease;
+  border: 1px solid transparent;
+
+  &:hover {
+    transform: scale(1.01);
+    border: 1px solid #c5a77a;
+  }
 `;
 
 const Section = styled.div`
@@ -85,16 +92,16 @@ const DateText = styled.small`
 `;
 
 const CrafterOrderItem = ({ order, onUpdate }) => {
-    const { user } = useUser();
+  const { user } = useUser();
+  const isCrafter = user?.role === "crafter";
+
   const handleMarkAsPaid = async () => {
     try {
-      // 1. Update order
       await updateOrder(order._id, order.status, "paid");
 
-      // 2. Notify customer
       const notification = {
         text: `${user.name} changed the payment status of your order to paid`,
-        linkTo: " ", // optional
+        linkTo: "Orders",
         email: order.customerEmail,
       };
 
@@ -104,9 +111,7 @@ const CrafterOrderItem = ({ order, onUpdate }) => {
         notification,
       });
 
-      // ✅ Only show success after all above succeeds
       toast.success("Marked as paid!");
-
       if (onUpdate) onUpdate();
     } catch (err) {
       console.error("Error marking as paid:", err);
@@ -127,31 +132,38 @@ const CrafterOrderItem = ({ order, onUpdate }) => {
           alt="template"
         />
         <Title>{order.template?.name || "Unnamed"}</Title>
-        <Price>{order.template?.price ? `$${order.template.price}` : "No price"}</Price>
+        <Price>
+          {order.template?.price ? `$${order.template.price}` : "No price"}
+        </Price>
       </Section>
 
-      {/* Center: Customer */}
-      <Section align="center">
-        <UserAvatar
-          previewUrl={order.customerAvatar}
-          user={{ name: order.customerName }}
-          width={120}
-          height={120}
-        />
-        <CustomerName>{order.customerName || order.customerEmail}</CustomerName>
-      </Section>
+      {/* Center: Customer (Only for Crafter) */}
+      {isCrafter && (
+        <Section align="center">
+          <UserAvatar
+            previewUrl={order.customerAvatar}
+            user={{ name: order.customerName }}
+            width={120}
+            height={120}
+          />
+          <CustomerName>{order.customerName || order.customerEmail}</CustomerName>
+        </Section>
+      )}
 
-      {/* Right: Status + Button + Date */}
-      <Section align="flex-end">
+      {/* Right: Status + Actions */}
+      <Section align={isCrafter ? "flex-end" : "flex-start"}>
         <DateText>Created: {createdAt}</DateText>
         <Status status={order.status}>Status: {order.status}</Status>
         <Payment paid={order.paymentStatus}>Payment: {order.paymentStatus}</Payment>
-        {order.status === "confirmed" && order.paymentStatus === "unpaid" && (
-          <ActionBtn onClick={handleMarkAsPaid}>
-            <FaMoneyBillWave style={{ marginRight: "6px" }} />
-            Mark as Paid
-          </ActionBtn>
-        )}
+
+        {isCrafter &&
+          order.status === "confirmed" &&
+          order.paymentStatus === "unpaid" && (
+            <ActionBtn onClick={handleMarkAsPaid}>
+              <FaMoneyBillWave style={{ marginRight: "6px" }} />
+              Mark as Paid
+            </ActionBtn>
+          )}
       </Section>
     </OrderCard>
   );

@@ -20,6 +20,7 @@ const customerSidebarItems = [
   { icon: "📅", label: "Schedules" },
   { icon: "💬", label: "Chatting" },
   { icon: "👥", label: "Workshop" },
+  { icon: "🛒", label: "Orders" },
   { icon: "↪", label: "Logout", route: "/" },
 ];
 
@@ -65,7 +66,7 @@ const Dashboard = ({ selectedIndex, onItemSelect }) => {
       } else if (item.label === "Workshop") {
         onItemSelect?.("Workshop");
       }else if (item.label === "Orders") {
-        onItemSelect?.("orders");
+        onItemSelect?.("Orders");
       } else if (item.route) {
         navigate(item.route);
       }

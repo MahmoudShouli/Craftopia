@@ -120,7 +120,7 @@ const CrafterPage = () => {
       case "Workshop":
         setSelectedIndex(5);
         break;
-      case "orders":
+      case "Orders":
         setSelectedIndex(6);
         break;
       default:
@@ -150,7 +150,7 @@ const CrafterPage = () => {
         {activeView === "Workshop" && (
           <Workshop/>
         )}
-        {activeView === "orders" && <CrafterOrders />}
+        {activeView === "Orders" && <CrafterOrders />}
       </ProfileContainer>
     </PageWrapper>
   );

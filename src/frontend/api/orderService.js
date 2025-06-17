@@ -37,3 +37,15 @@ export const getOrdersByCrafter = async (email) => {
     throw err;
   }
 };
+
+export const getOrdersByCustomer = async (email) => {
+  try {
+    const res = await axios.get(
+      `http://localhost:3000/orders/customer?email=${email}`
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch orders by customer:", err);
+    throw err;
+  }
+};

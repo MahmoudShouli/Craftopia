@@ -9,7 +9,7 @@ import Search from "../components/userprofile/search/Search";
 import UserSchedulesPage from "../components/appointments/schedules/UserSchedulesPage";
 import ChatBox from "../components/chat/ChatBox";
 import Workshop from "../components/workshop/Workshop";
-
+import UserOrders from "../components/orders/UserOrders";
 import {
   PageWrapper,
   ProfileContainer,
@@ -133,6 +133,9 @@ const UserPage = () => {
       case "Workshop":
         setSelectedIndex(6);
         break;
+      case "Orders":
+        setSelectedIndex(7);
+        break;
       default:
         setSelectedIndex(1);
     }
@@ -192,6 +195,7 @@ const UserPage = () => {
         )}
 
         {activeView === "Workshop" && <Workshop />}
+        {activeView === "Orders" && <UserOrders />}
 
       </ProfileContainer>
     </PageWrapper>

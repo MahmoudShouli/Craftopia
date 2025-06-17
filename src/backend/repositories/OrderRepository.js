@@ -4,10 +4,8 @@ export const createOrder = async (orderData) => {
   return await OrderModel.create(orderData);
 };
 
-export const getOrdersByCustomer = async (customerEmail) => {
-  return await OrderModel.find({ customerEmail, status: "pending" }).populate(
-    "templateId"
-  );
+export const getOrdersByCustomer = async (email) => {
+  return await OrderModel.find({ customerEmail: email }).populate("templateId");
 };
 
 export const getOrdersByCrafter = async (email) => {
