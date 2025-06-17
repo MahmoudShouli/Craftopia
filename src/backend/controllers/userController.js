@@ -2,6 +2,7 @@ import User from "../models/UserModel.js";
 import ReviewModel from "../models/ReviewModel.js";
 import { fetchUserByEmail } from "../services/UserService.js";
 import { updateUserPreferences } from "../services/UserService.js";
+import { saveCardInfo } from "../services/UserService.js";
 
 export const uploadAvatar = async (req, res) => {
   try {
@@ -134,5 +135,22 @@ export const updatePreferences = async (req, res) => {
   } catch (err) {
     console.error("Update preferences error:", err); // ⬅️ log the real error
     res.status(500).json({ error: "Failed to update preferences." });
+  }
+};
+
+export const updateCardInfo = async (req, res) => {
+  try {
+    const { email, cardNumber, expiryDate, cvv } = req.body;
+
+    if (!email || !cardNumber || !expiryDate || !cvv) {
+      return res.status(400).json({ error: "Missing card data." });
+    }
+
+    const updatedUser = await saveCardInfo(email, cardNumber, expiryDate, cvv);
+
+    res.status(200).json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error("Card info update error:", error);
+    res.status(500).json({ error: "Failed to save card info." });
   }
 };

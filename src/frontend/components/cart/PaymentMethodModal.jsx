@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { updateOrder } from "../../api/orderService";
+import { toast } from "react-toastify";
 
+// ---------- STYLES ----------
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -35,16 +38,38 @@ const Button = styled.button`
   cursor: pointer;
   font-weight: 600;
   color: white;
-  background-color: ${props => props.type === "card" ? "#6a380f" : "#777"};
+  background-color: ${(props) => (props.type === "card" ? "#6a380f" : "#777")};
 `;
 
-const PaymentMethodModal = ({ onSelect, onClose }) => {
+// ---------- COMPONENT ----------
+const PaymentMethodModal = ({ onSelect, onClose, orderIds = [], onPaymentDone }) => {
+  const handleCashPayment = async () => {
+    console.log("Cash payment for orders:", orderIds);
+    try {
+      await Promise.all(
+        orderIds.map((id) => updateOrder(id, "confirmed", "unpaid"))
+      );
+      toast.success("Order confirmed. Pay with cash on delivery.");
+
+      // 🔥 Ensure real-time cart refresh and clearing
+      if (onPaymentDone) await onPaymentDone();
+
+      onClose();
+    } catch (err) {
+      toast.error("Failed to process cash payment");
+    }
+  };
+
   return (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={(e) => e.stopPropagation()}>
         <Title>Select Payment Method</Title>
-        <Button type="card" onClick={() => onSelect("card")}>Pay with Card</Button>
-        <Button type="cash" onClick={() => onSelect("cash")}>Pay with Cash</Button>
+        <Button type="card" onClick={() => onSelect("card")}>
+          Pay with Card
+        </Button>
+        <Button type="cash" onClick={handleCashPayment}>
+          Pay with Cash
+        </Button>
       </ModalContent>
     </ModalOverlay>
   );

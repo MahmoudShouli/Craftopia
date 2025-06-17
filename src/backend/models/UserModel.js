@@ -31,6 +31,11 @@ const UserSchema = new mongoose.Schema({
       default: {},
     },
   },
+  cardInfo: {
+    cardNumber: { type: String },
+    expiryDate: { type: String },
+    cvv: { type: String },
+  },
 });
 
 // 🧭 Add the 2dsphere index for geospatial queries

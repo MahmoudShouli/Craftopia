@@ -59,3 +59,13 @@ export const saveUserPreferences = async ({
     throw err;
   }
 };
+
+export const updateCardInfo = async (email, cardNumber, expiryDate, cvv) => {
+  const res = await axios.put(`${API_URL}/card-info`, {
+    email,
+    cardNumber,
+    expiryDate,
+    cvv,
+  });
+  return res.data.user;
+};

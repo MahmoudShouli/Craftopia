@@ -32,12 +32,7 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  const [cardInfo, setCardInfo] = useState({
-  name: "",
-  number: "",
-  expiry: "",
-  cvv: ""
-});
+  const [cardInfo, setCardInfo] = useState({ number: "", expiry: "", cvv: "" });
 
   useEffect(() => {
     if (user?.email) {
@@ -45,28 +40,22 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     }
   }, [user?.email]);
 
+  const refreshCart = async () => {
+    try {
+      const updatedOrders = await orderService.getCartOrders(user.email);
+      setCartOrders(updatedOrders);
+    } catch {
+      toast.error("Failed to refresh cart");
+    }
+  };
+
   useEffect(() => {
-    const loadCart = async () => {
-      try {
-        const orders = await orderService.getCartOrders(user.email);
-        setCartOrders(orders);
-      } catch {
-        toast.error("Failed to load cart");
-      }
-    };
-    if (user?.role === "customer") loadCart();
+    if (user?.role === "customer") {
+      refreshCart();
+    }
   }, [user?.email, user?.role]);
 
   useEffect(() => {
-    const refreshCart = async () => {
-      try {
-        const updatedOrders = await orderService.getCartOrders(user.email);
-        setCartOrders(updatedOrders);
-      } catch {
-        toast.error("Failed to refresh cart");
-      }
-    };
-
     socket.on("cart_updated", ({ userEmail }) => {
       if (userEmail === user.email) refreshCart();
     });
@@ -75,13 +64,8 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
   }, [user.email]);
 
   useEffect(() => {
-    const forceRefresh = async () => {
-      try {
-        const updatedOrders = await orderService.getCartOrders(user.email);
-        setCartOrders(updatedOrders);
-      } catch {
-        toast.error("Failed to manually refresh cart");
-      }
+    const forceRefresh = () => {
+      refreshCart();
     };
 
     window.addEventListener("cart_force_refresh", forceRefresh);
@@ -118,27 +102,62 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     }
   };
 
+  const clearCartAfterPayment = async () => {
+    try {
+      await Promise.all(
+        cartOrders.map((order) => orderService.deleteOrder(order._id))
+      );
+      setCartOrders([]);
+      socket.emit("cart_updated", { userEmail: user.email });
+    } catch {
+      toast.error("Failed to clear cart after payment");
+    }
+  };
+
   const handleConfirmPurchase = () => {
     setShowPaymentModal(true);
   };
 
-  const handlePaymentSelect = (method) => {
+  const handlePaymentSelect = async (method) => {
     setSelectedPaymentMethod(method);
     setShowPaymentModal(false);
+
     if (method === "cash") {
-      toast.success("Cash order placed successfully");
-      socket.emit("cart_updated", { userEmail: user.email });
+      try {
+        await Promise.all(
+          cartOrders.map((order) =>
+            orderService.updateOrder(order._id, "confirmed", "unpaid")
+          )
+        );
+        toast.success("Cash order placed successfully");
+        await clearCartAfterPayment();
+        await refreshCart(); // 🔁 make sure UI updates instantly
+        setSelectedPaymentMethod(null);
+      } catch {
+        toast.error("Failed to process cash payment");
+      }
     }
   };
 
-  const handlePayNow = () => {
-    if (cardInfo.number && cardInfo.expiry && cardInfo.cvv) {
+  const handlePayNow = async () => {
+    if (!cardInfo.number || !cardInfo.expiry || !cardInfo.cvv) {
+      toast.error("Please fill all card fields");
+      return;
+    }
+
+    try {
+      await Promise.all(
+        cartOrders.map((order) =>
+          orderService.updateOrder(order._id, "confirmed", "paid")
+        )
+      );
       toast.success("Payment successful");
+      await clearCartAfterPayment();
+      await refreshCart(); // 🔁 for instant UI
       setSelectedPaymentMethod(null);
       setCardInfo({ number: "", expiry: "", cvv: "" });
-      socket.emit("cart_updated", { userEmail: user.email });
-    } else {
-      toast.error("Please fill all card fields");
+    } catch {
+      toast.error("Failed to process card payment");
     }
   };
 
@@ -199,18 +218,21 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
 
       {showPaymentModal && (
         <PaymentMethodModal
-          onSelect={handlePaymentSelect}
-          onClose={() => setShowPaymentModal(false)}
-        />
+            orderIds={cartOrders.map((order) => order._id)}
+            onSelect={handlePaymentSelect}
+            onClose={() => setShowPaymentModal(false)}
+            onPaymentDone={refreshCart} // ✅ Just refresh, don't clear
+          />
       )}
 
       {selectedPaymentMethod === "card" && (
         <PopUpPage onClose={() => setSelectedPaymentMethod(null)}>
           <CardPaymentSimulator
-              cardInfo={cardInfo}
-              setCardInfo={setCardInfo}
-              onPay={handlePayNow}
-            />
+            cardInfo={cardInfo}
+            setCardInfo={setCardInfo}
+            onPaymentDone={handlePayNow}
+            orderIds={cartOrders.map((order) => order._id)}
+          />
         </PopUpPage>
       )}
     </HeaderSection>

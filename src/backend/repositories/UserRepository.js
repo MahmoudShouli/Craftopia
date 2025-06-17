@@ -32,3 +32,15 @@ export const addToChattedWith = async (userEmail, crafterEmail) => {
     { $addToSet: { chattedWith: crafterEmail } } // avoids duplicates
   );
 };
+
+export const saveCardInfo = async (email, cardInfo) => {
+  return await UserModel.findOneAndUpdate(
+    { email },
+    {
+      $set: {
+        cardInfo,
+      },
+    },
+    { new: true }
+  );
+};

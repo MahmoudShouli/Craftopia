@@ -1,12 +1,22 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState, useEffect } from "react";
+import styled, { keyframes } from "styled-components";
+import { updateCardInfo } from "../../api/userService";
+import { useUser } from "../../context/UserContext";
+import { updateOrder } from "../../api/orderService"; 
+import { toast } from "react-toastify";
+
+// ----- Animations -----
+const typing = keyframes`
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+`;
 
 // ----- Styled Components -----
 const CardWrapper = styled.div`
   perspective: 1000px;
   margin: 0 auto 20px auto;
-  width: 300px;
-  height: 180px;
+  width: 320px;
+  height: 190px;
 `;
 
 const CardInner = styled.div`
@@ -110,6 +120,7 @@ const CardNumber = styled.div`
   font-size: 1.2rem;
   letter-spacing: 2px;
   margin-bottom: 20px;
+  animation: ${typing} 0.4s ease-in-out;
 `;
 
 const CardRow = styled.div`
@@ -123,10 +134,28 @@ const Label = styled.div`
   font-size: 0.7rem;
 `;
 
-// ----- Component -----
-const CardPaymentSimulator = ({ cardInfo, setCardInfo, onPay }) => {
-  const { number, expiry, cvv, name } = cardInfo;
+// ----- Main Component -----
+const CardPaymentSimulator = ({ cardInfo, setCardInfo, orderIds = [], onPaymentDone }) => {
+  const { user, setUser } = useUser();
   const [flipped, setFlipped] = useState(false);
+  const [animIndex, setAnimIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user?.cardInfo) {
+      setCardInfo({
+        name: user.name || "",
+        number: user.cardInfo.cardNumber || "",
+        expiry: user.cardInfo.expiryDate || "",
+        cvv: user.cardInfo.cvv || "",
+      });
+      setAnimIndex((user.cardInfo.cardNumber || "").length);
+    } else {
+      setCardInfo((prev) => ({ ...prev, name: user?.name || "" }));
+    }
+  }, [user]);
+
+  const { number, expiry, cvv, name } = cardInfo;
 
   const isValid =
     number.replace(/\s/g, "").length === 16 &&
@@ -138,6 +167,7 @@ const CardPaymentSimulator = ({ cardInfo, setCardInfo, onPay }) => {
     let val = e.target.value.replace(/\D/g, "");
     if (val.length > 16) val = val.slice(0, 16);
     const formatted = val.replace(/(.{4})/g, "$1 ").trim();
+    setAnimIndex(formatted.length);
     setCardInfo({ ...cardInfo, number: formatted });
   };
 
@@ -148,13 +178,55 @@ const CardPaymentSimulator = ({ cardInfo, setCardInfo, onPay }) => {
     setCardInfo({ ...cardInfo, expiry: val });
   };
 
+  const handlePay = async () => {
+    if (!user?.email) {
+      toast.error("No user email found.");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      // 1. Save card info to user
+      const updatedUser = await updateCardInfo(user.email, number, expiry, cvv);
+      setUser(updatedUser);
+      toast.success("Card info saved successfully!");
+
+      // 2. Mark all orders as confirmed & paid
+      await Promise.all(
+        orderIds.map((id) => updateOrder(id, "confirmed", "paid"))
+      );
+      toast.success("Payment confirmed!");
+
+      // 3. Callback
+      if (onPaymentDone) onPaymentDone();
+    } catch (err) {
+      toast.error("Payment failed. Try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div style={{ textAlign: "center", padding: "10px" }}>
+      {/* ... your card visual */}
       <CardWrapper>
         <CardInner flipped={flipped}>
           <CardFront>
             <CardName>{name || "CARDHOLDER NAME"}</CardName>
-            <CardNumber>{number || "•••• •••• •••• ••••"}</CardNumber>
+            <CardNumber>
+              {number
+                ? number.split("").map((ch, i) => (
+                    <span
+                      key={i}
+                      style={{
+                        opacity: i < animIndex ? 1 : 0.3,
+                        transition: "opacity 0.2s ease",
+                      }}
+                    >
+                      {ch}
+                    </span>
+                  ))
+                : "•••• •••• •••• ••••"}
+            </CardNumber>
             <CardRow>
               <div>
                 <Label>EXPIRY</Label>
@@ -162,12 +234,11 @@ const CardPaymentSimulator = ({ cardInfo, setCardInfo, onPay }) => {
               </div>
               <div>
                 <Label>CVV</Label>
-                <div>{cvv || "***"}</div>
+                <div>***</div>
               </div>
             </CardRow>
             <VisaLogo>VISA</VisaLogo>
           </CardFront>
-
           <CardBack>
             <Stripe />
             <CvvBox>{cvv || "•••"}</CvvBox>
@@ -176,12 +247,12 @@ const CardPaymentSimulator = ({ cardInfo, setCardInfo, onPay }) => {
         </CardInner>
       </CardWrapper>
 
+      {/* ... your input fields */}
       <NameInput
         placeholder="Cardholder Name"
         value={name}
         onChange={(e) => setCardInfo({ ...cardInfo, name: e.target.value })}
       />
-
       <InputWrapper>
         <input
           placeholder="Card Number"
@@ -205,8 +276,9 @@ const CardPaymentSimulator = ({ cardInfo, setCardInfo, onPay }) => {
         />
       </InputWrapper>
 
-      <PayButton disabled={!isValid} onClick={onPay}>
-        Pay Now
+      {/* Pay button */}
+      <PayButton disabled={!isValid || isSubmitting} onClick={handlePay}>
+        {isSubmitting ? "Processing..." : "Pay Now"}
       </PayButton>
     </div>
   );
