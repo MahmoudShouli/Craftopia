@@ -15,6 +15,7 @@ import { fileURLToPath } from "url"; // ✅
 const __filename = fileURLToPath(import.meta.url); // ✅
 const __dirname = path.dirname(__filename); // ✅
 import notificationRouter from "./routes/notificationRoute.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 const startServer = async () => {
   const app = express();
@@ -31,6 +32,7 @@ const startServer = async () => {
   app.use("/likes", likeRoute);
   app.use("/messages", messageRouter);
   app.use("/workshop", workshopRouter);
+  app.use("/orders", orderRoutes);
 
   // ✅ Serve .glb files
   console.log(

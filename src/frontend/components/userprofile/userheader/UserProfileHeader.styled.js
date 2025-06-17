@@ -26,51 +26,29 @@ export const HeaderRight = styled.div`
   gap: 1rem;
 `;
 
-export const SearchBarWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  background-color: white;
-  padding: 0.6rem 1rem;
-  border-radius: 12px;
-  gap: 0.6rem;
-  font-size: 0.95rem;
-  color: #aaa;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-
-  .icon {
-    font-size: 1.3rem;
-  }
-`;
-
-export const SearchInput = styled.input`
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 0.95rem;
-  width: 100%;
-  color: #333;
-
-  &::placeholder {
-    color: #aaa;
-  }
-`;
-
 export const IconWrapper = styled.div`
-  background-color: ${({ $state }) => ($state ? "#f29b9b" : "#f8f8f8")};
-  padding: 0.6rem;
-  border-radius: 12px;
+  background-color: ${({ $state, $highlight }) =>
+    $state || $highlight ? "#f29b9b" : "#f8f8f8"};
+  padding: 0.75rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s ease;
   cursor: pointer;
+  position: relative;
 `;
 
 export const Icon = styled.div`
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   cursor: pointer;
   color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const NotificationBadge = styled.div`
@@ -88,4 +66,16 @@ export const NotificationBadge = styled.div`
   justify-content: center;
   font-weight: bold;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+`;
+
+export const MenuPopup = styled.div`
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  padding: 12px;
+  min-width: 180px;
+  z-index: 999;
 `;

@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import notificationService from "../../api/notificationService";
 import { socket } from "../../../utils/socket";
+import { createOrder } from "../../api/orderService";
 
 const TemplateItem = ({
   template,
@@ -103,11 +104,24 @@ const TemplateItem = ({
     });
   };
 
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
+  const handleAddToCart = async (e) => {
+  e.stopPropagation();
+  try {
+    const orderData = {
+      customerEmail: user.email,
+      crafterEmail: template.crafterEmail,
+      templateId: template._id,
+      price: template.price,
+      status: "pending",
+      paymentStatus: "unpaid",
+    };
+    await createOrder(orderData);
     toast.success(`${template.name} added to cart!`);
-    // Optionally add cart API logic here
-  };
+  } catch (err) {
+    toast.error("Failed to add to cart.");
+    console.error("Order creation error:", err);
+  }
+};
 
   if (!template) return null;
 
@@ -181,7 +195,7 @@ const TemplateItem = ({
           </LikesWrapper>
         )}
 
-        {template.isPurchasable && (
+        {isUser && template.isPurchasable && (
           <motion.div
             onClick={handleAddToCart}
             whileTap={{ scale: 1.2 }}
