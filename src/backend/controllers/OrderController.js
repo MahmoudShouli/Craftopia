@@ -3,7 +3,6 @@ import { getSocketIO } from "../config/socket.js"; // ✅ import your socket get
 
 export const createOrder = async (req, res) => {
   try {
-    console.log("💡 Incoming order body:", req.body);
     const order = await OrderService.createOrder(req.body);
 
     // ✅ Emit cart update
@@ -70,8 +69,6 @@ export const deleteOrder = async (req, res) => {
 
     await OrderService.deleteOrder(id);
 
-    // 👇 Log and safely emit
-    console.log("Deleting order for:", orderToDelete.email);
     const io = getSocketIO();
     if (orderToDelete.email) {
       io.to(orderToDelete.email).emit("cart_updated", {

@@ -10,8 +10,8 @@ export const getOrdersByCustomer = async (customerEmail) => {
   );
 };
 
-export const getOrdersByCrafter = async (crafterEmail) => {
-  return await OrderModel.find({ crafterEmail });
+export const getOrdersByCrafter = async (email) => {
+  return await OrderModel.find({ crafterEmail: email }).populate("templateId");
 };
 
 export const updateOrderStatus = async (id, status, paymentStatus) => {

@@ -21,6 +21,7 @@ import {
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import { ClipLoader } from "react-spinners"; // ✅ Spinner component
+import { FaPlus, FaPinterestP } from "react-icons/fa";
 
 const ModalContent = styled.div`
   display: flex;
@@ -131,43 +132,67 @@ const CrafterTemplates = () => {
 
   return (
     <TemplateCard>
-      <TopSection style={{ marginTop: "1.5rem", marginBottom: "0" }}>
-          <Title
-            style={{
-              position: "absolute",
-              top: "2.5rem",
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-          >
-            Your Templates
-          </Title>
+      <TopSection
+        style={{
+          marginTop: "1.5rem",
+          marginBottom: "0",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "0.5rem",
+        }}
+      >
+        {/* 🏷️ Title */}
+        <Title>Your Templates</Title>
 
-          <div
-            style={{
-              position: "absolute",
-              top: "1.5rem",
-              right: "2rem",
-              display: "flex",
-              gap: "1rem",
-            }}
-          >
-            <AddButtonWrapper style={{ position: "static" }}>
-              <Button text="Add Template" size="medium" onClick={handleAddTemplate} />
-            </AddButtonWrapper>
-            <AddButtonWrapper style={{ position: "static" }}>
-              <Button
-                text="Scrape from Pinterest"
-                size="medium"
-                color="gray"
-                onClick={() => setShowScrapeModal(true)}
-              />
-            </AddButtonWrapper>
-          </div>
-        </TopSection>
+        {/* 🔢 Count Box BELOW title */}
+        <div
+          style={{
+            backgroundColor: "#F7E9D7",
+            color: "#6a380f",
+            padding: "6px 16px",
+            borderRadius: "25px",
+            fontWeight: "bold",
+            marginTop: "1rem",
+            fontSize: "1.2rem",
+          }}
+        >
+          Total Templates: {templates.length}
+        </div>
+
+        {/* ➕ Buttons RIGHT aligned */}
+       <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "flex-start",
+          gap: "1rem",
+          paddingRight: "2rem",
+          marginTop: "1rem",
+          marginLeft: "5rem",
+        }}
+      >
+        <AddButtonWrapper style={{ position: "static" }}>
+          <Button
+            text={<FaPlus size={20} />}
+            size="large"
+            onClick={handleAddTemplate}
+          />
+        </AddButtonWrapper>
+
+        <AddButtonWrapper style={{ position: "static" }}>
+          <Button
+            text={<FaPinterestP size={20} />}
+            size="large"
+            color="#E09F1D"
+            onClick={() => setShowScrapeModal(true)}
+          />
+        </AddButtonWrapper>
+      </div>
+      </TopSection>
 
 
-      <TemplatesGrid style={{ marginTop: "8rem" }}>
+      <TemplatesGrid style={{ marginTop: "2rem" }}>
         {templates.map((template) => (
           <TemplateItem
             key={template._id}

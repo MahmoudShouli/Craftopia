@@ -25,3 +25,15 @@ export const deleteOrder = async (id) => {
   const res = await axios.delete(`${BASE_URL}/delete/${id}`);
   return res.data;
 };
+
+export const getOrdersByCrafter = async (email) => {
+  try {
+    const res = await axios.get(
+      `http://localhost:3000/orders/crafter?email=${email}`
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Failed to fetch orders by crafter:", err);
+    throw err;
+  }
+};

@@ -58,7 +58,8 @@
     "socket.io-client": "^4.8.1",
     "streamifier": "^0.1.1",
     "styled-components": "^6.1.17",
-    "three": "^0.177.0"
+    "three": "^0.177.0",
+    "victory": "^37.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

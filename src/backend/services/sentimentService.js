@@ -52,7 +52,6 @@ const preprocessText = (text) => {
 
 export const analyzeReview = async (reviewText) => {
   let language = franc.franc(reviewText, { minLength: 1 });
-  console.log("📌 Detected language:", language);
 
   let textForAnalysis = reviewText;
 
@@ -86,7 +85,6 @@ export const analyzeReview = async (reviewText) => {
 
   const result = sentiment.analyze(adjustedText, customOptions);
   const finalScore = forcedScore !== null ? forcedScore : result.score;
-  console.log("🧠 Final Sentiment score:", finalScore);
 
   const sentimentLabel = finalScore >= 0 ? "positive" : "negative";
 

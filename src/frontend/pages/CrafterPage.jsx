@@ -10,7 +10,7 @@ import CrafterSchedulesPage from "../components/appointments/schedules/Crafter/C
 import CrafterTemplates from "../components/Templates/CrafterTemplates";
 import ChatBox from "../components/chat/ChatBox";
 import Workshop from "../components/workshop/Workshop";
-
+import CrafterOrders from "../components/orders/CrafterOrders";
 import {
   PageWrapper,
   ProfileContainer,
@@ -120,6 +120,9 @@ const CrafterPage = () => {
       case "Workshop":
         setSelectedIndex(5);
         break;
+      case "orders":
+        setSelectedIndex(6);
+        break;
       default:
         setSelectedIndex(1);
     }
@@ -147,6 +150,7 @@ const CrafterPage = () => {
         {activeView === "Workshop" && (
           <Workshop/>
         )}
+        {activeView === "orders" && <CrafterOrders />}
       </ProfileContainer>
     </PageWrapper>
   );

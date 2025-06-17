@@ -11,9 +11,9 @@ import messageRouter from "./routes/messageRoute.js";
 import likeRoute from "./routes/likeRoutes.js";
 import workshopRouter from "./routes/workshopRoute.js";
 import path from "path";
-import { fileURLToPath } from "url"; // ✅
-const __filename = fileURLToPath(import.meta.url); // ✅
-const __dirname = path.dirname(__filename); // ✅
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import notificationRouter from "./routes/notificationRoute.js";
 import orderRoutes from "./routes/orderRoutes.js";
 
@@ -34,7 +34,7 @@ const startServer = async () => {
   app.use("/workshop", workshopRouter);
   app.use("/orders", orderRoutes);
 
-  // ✅ Serve .glb files
+  //  Serve .glb files
   console.log(
     "Serving models from:",
     path.resolve(__dirname, "../public/models")

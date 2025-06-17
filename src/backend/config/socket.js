@@ -59,7 +59,6 @@ const configureSocket = (server) => {
 
     socket.on("join_cart", (email) => {
       socket.join(email);
-      console.log(`🛒 Joined cart room: ${email}`);
     });
   });
 };

@@ -124,6 +124,18 @@ const handleAddToCart = async (e) => {
     // ✅ Fallback: dispatch global event to manually refresh
     window.dispatchEvent(new CustomEvent("cart_force_refresh"));
 
+    const notification = {
+            text: `${user.name} add ${template.name} to his cart`,
+            linkTo: "Orders", // optional
+            email: template.crafterEmail,
+          };
+    
+          await notificationService.createNotification(notification);
+          socket.emit("notification", {
+            to: template.crafterEmail,
+            notification,
+          });
+
   } catch (err) {
     toast.error("Failed to add to cart.");
     console.error("Order creation error:", err);

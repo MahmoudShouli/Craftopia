@@ -47,7 +47,6 @@ export const uploadImage = async (file) => {
 
 export const fetchSortedTemplates = async () => {
   const response = await axios.get("http://localhost:3000/templates/sorted");
-  console.log("Fetched templates response:", response.data);
   return response.data;
 };
 
@@ -55,7 +54,6 @@ export const fetchRecommendedTemplates = async (email) => {
   const response = await axios.get(
     `http://localhost:3000/templates/recommended/${email}`
   );
-  console.log("Fetched recommended templates:", response.data);
   return response.data;
 };
 

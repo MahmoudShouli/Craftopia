@@ -44,7 +44,6 @@ const Button = styled.button`
 // ---------- COMPONENT ----------
 const PaymentMethodModal = ({ onSelect, onClose, orderIds = [], onPaymentDone }) => {
   const handleCashPayment = async () => {
-    console.log("Cash payment for orders:", orderIds);
     try {
       await Promise.all(
         orderIds.map((id) => updateOrder(id, "confirmed", "unpaid"))

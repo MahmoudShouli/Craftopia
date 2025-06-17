@@ -145,8 +145,6 @@ export const handleTemplateImport = async (req, res) => {
         .json({ success: false, message: "Missing profileUrl or email" });
     }
 
-    console.log("Scraping Pinterest for:", profileUrl, "by", email);
-
     const templates = await TemplateService.importTemplatesFromProfile(
       profileUrl,
       email

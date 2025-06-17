@@ -59,15 +59,11 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     socket.on("cart_updated", ({ userEmail }) => {
       if (userEmail === user.email) refreshCart();
     });
-
     return () => socket.off("cart_updated");
   }, [user.email]);
 
   useEffect(() => {
-    const forceRefresh = () => {
-      refreshCart();
-    };
-
+    const forceRefresh = () => refreshCart();
     window.addEventListener("cart_force_refresh", forceRefresh);
     return () => window.removeEventListener("cart_force_refresh", forceRefresh);
   }, [user.email]);
@@ -77,7 +73,6 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
       try {
         const data = await notificationService.fetchNotifications(user.email);
         setNotifications(data);
-        setUnreadCount(data.filter((n) => !n.isRead).length);
       } catch {
         toast.error("Failed to load notifications");
       }
@@ -92,26 +87,41 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
     return () => socket.off("receive_notification");
   }, []);
 
-  const handleRemoveOrder = async (orderId) => {
-    try {
-      await orderService.deleteOrder(orderId);
-      setCartOrders((prev) => prev.filter((o) => o._id !== orderId));
-      socket.emit("cart_updated", { userEmail: user.email });
-    } catch {
-      toast.error("Failed to delete order");
-    }
-  };
+  // 🔁 Real-time unread count update
+  useEffect(() => {
+    const unread = notifications.filter((n) => !n.isRead).length;
+    setUnreadCount(unread);
+  }, [notifications]);
 
-  const clearCartAfterPayment = async () => {
-    try {
-      await Promise.all(
-        cartOrders.map((order) => orderService.deleteOrder(order._id))
-      );
-      setCartOrders([]);
-      socket.emit("cart_updated", { userEmail: user.email });
-    } catch {
-      toast.error("Failed to clear cart after payment");
+ const handleRemoveOrder = async (orderId) => {
+  try {
+    const orderToDelete = cartOrders.find((o) => o._id === orderId);
+
+    await orderService.deleteOrder(orderId);
+    setCartOrders((prev) => prev.filter((o) => o._id !== orderId));
+    socket.emit("cart_updated", { userEmail: user.email });
+
+    if (orderToDelete) {
+      const notification = {
+        text: `${user.name} removed ${orderToDelete.templateName || "a template"} from their cart`,
+        linkTo: "Orders",
+        email: orderToDelete.crafterEmail,
+      };
+
+      await notificationService.createNotification(notification);
+      socket.emit("notification", {
+        to: orderToDelete.crafterEmail,
+        notification,
+      });
     }
+  } catch {
+    toast.error("Failed to delete order");
+  }
+};
+
+  const clearCartUIOnly = () => {
+    setCartOrders([]);
+    socket.emit("cart_updated", { userEmail: user.email });
   };
 
   const handleConfirmPurchase = () => {
@@ -130,8 +140,8 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
           )
         );
         toast.success("Cash order placed successfully");
-        await clearCartAfterPayment();
-        await refreshCart(); // 🔁 make sure UI updates instantly
+        clearCartUIOnly();
+        await refreshCart();
         setSelectedPaymentMethod(null);
       } catch {
         toast.error("Failed to process cash payment");
@@ -152,8 +162,8 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
         )
       );
       toast.success("Payment successful");
-      await clearCartAfterPayment();
-      await refreshCart(); // 🔁 for instant UI
+      clearCartUIOnly();
+      await refreshCart();
       setSelectedPaymentMethod(null);
       setCardInfo({ number: "", expiry: "", cvv: "" });
     } catch {
@@ -218,11 +228,11 @@ const UserProfileHeader = ({ user, formattedDate, redirect }) => {
 
       {showPaymentModal && (
         <PaymentMethodModal
-            orderIds={cartOrders.map((order) => order._id)}
-            onSelect={handlePaymentSelect}
-            onClose={() => setShowPaymentModal(false)}
-            onPaymentDone={refreshCart} // ✅ Just refresh, don't clear
-          />
+          orderIds={cartOrders.map((order) => order._id)}
+          onSelect={handlePaymentSelect}
+          onClose={() => setShowPaymentModal(false)}
+          onPaymentDone={refreshCart}
+        />
       )}
 
       {selectedPaymentMethod === "card" && (
