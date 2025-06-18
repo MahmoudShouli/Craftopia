@@ -165,7 +165,7 @@ const UserTemplates = () => {
       {/* ✅ AI Floating Button */}
       <FloatingAIButton
         onClick={() => setShowAIModal(true)}
-        title="AI Assistant"
+        title="AI Template Generater"
       >
         <FaRobot />
       </FloatingAIButton>
