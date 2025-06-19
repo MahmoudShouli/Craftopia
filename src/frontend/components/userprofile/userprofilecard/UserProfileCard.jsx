@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useUser } from "../../../context/UserContext";
 import { toast } from "react-toastify";
@@ -33,8 +33,7 @@ const UserProfileCard = ({ user }) => {
   const [editedName, setEditedName] = useState(user?.name || '');
   const [newPassword, setNewPassword] = useState('');
   const [previewUrl, setPreviewUrl] = useState(user?.avatarUrl || '');
-  const [location, setLocation] = useState(user?.location || '');
-  const [city, setCity] = useState(user?.location.coordinates || '');
+  const [location, setLocation] = useState(user?.location.coordinates || '');
   const [uploading, setUploading] = useState(false);
   const [showMap, setShowMap] = useState(false);
 
@@ -48,7 +47,7 @@ const UserProfileCard = ({ user }) => {
         `http://localhost:3000/user/update-profile/${user._id}`,
         {
           name: editedName,
-          location: city,
+          location: location,
           password: newPassword,
         }
       );
@@ -97,6 +96,21 @@ const UserProfileCard = ({ user }) => {
       setUploading(false);
     }
   };
+
+  useEffect(() => {
+     const reverseGeocode = async () => {
+      const lon = user.location.coordinates[0];
+      const lat = user.location.coordinates[1];
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+      const data = await res.json();
+     
+      const fullLocation = data.display_name;
+
+
+      setLocation(fullLocation);
+    };
+    reverseGeocode();
+  }, [location])
 
   return (
     <UserCard style={{ display: "flex", gap: "2rem" }}>
@@ -178,8 +192,8 @@ const UserProfileCard = ({ user }) => {
               <Input
                 type="text"
                 placeholder="Address"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
                 disabled={!isEditing}
               />
             </InputWrapper>
@@ -190,7 +204,7 @@ const UserProfileCard = ({ user }) => {
           <MapPopup
             onClose={() => setShowMap(false)}
             onSelectCoordinates={(locationString) => setLocation(locationString)}
-            onSelectCity={(locationString) => setCity(locationString)}
+            onSelectCity={(locationString) => setLocation(locationString)}
           />
         )}
       </div>
