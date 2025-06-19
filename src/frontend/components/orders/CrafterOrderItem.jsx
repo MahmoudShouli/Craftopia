@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import notificationService from "../../api/notificationService";
 import { socket } from "../../../utils/socket";
 import { useUser } from "../../context/UserContext";
+import SpecialRequestImg from "../../assets/SR.png";
+
 
 const OrderCard = styled.div`
   background: #fff;
@@ -128,12 +130,12 @@ const CrafterOrderItem = ({ order, onUpdate }) => {
       {/* Left: Template */}
       <Section align="flex-start">
         <TemplateImage
-          src={order.template?.mainImage || "/placeholder.jpg"}
+          src={order.template?.mainImage || SpecialRequestImg}
           alt="template"
         />
         <Title>{order.template?.name || order.name}</Title>
         <Price>
-          {order.template?.price ? `$${order.template.price}` : "No price"}
+          {order.template?.price ? `$${order.template.price}` : `$${order.price}`}
         </Price>
       </Section>
 
