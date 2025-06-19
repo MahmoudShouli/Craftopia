@@ -31,7 +31,7 @@ const Workshop = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [invitePopup, setInvitePopup] = useState(false);
-
+  const [admin, setAdmin] = useState([]);
 
   const [chattedWithList, setChattedWithList] = useState([]);
   const [members, setMembers] = useState([]);
@@ -84,8 +84,12 @@ const Workshop = () => {
           return data;
         })
       );
-
       setMembers(crafterData);
+
+      const adminEmail = wp.admin;
+      const admin = await getUserByEmail(adminEmail);
+      setAdmin(admin);
+      
 
       return;
     }
@@ -299,6 +303,16 @@ const Workshop = () => {
             {activeTab === "members" && (
               <styledElements.MembersWrapper>
                 <styledElements.MembersContainer>
+                  <styledElements.MemberCard>
+                    <styledElements.Avatar
+                        src={admin.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(admin.name)}`}
+                        alt={admin.name}
+                      />
+                      <styledElements.MemberInfo>
+                        <styledElements.MemberName>{admin.name}</styledElements.MemberName>
+                        <styledElements.MemberCraft>admin</styledElements.MemberCraft>
+                      </styledElements.MemberInfo>
+                  </styledElements.MemberCard>
                   {members.map((member, index) => (
                     <styledElements.MemberCard key={index}>
                       <styledElements.Avatar
