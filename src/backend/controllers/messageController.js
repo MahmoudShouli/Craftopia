@@ -1,6 +1,9 @@
 /* eslint-disable no-unused-vars */
 import MessageService from "../services/MessageService.js";
 import { getSocketIO } from "../config/socket.js";
+import { v2 as cloudinary } from "cloudinary";
+import streamifier from "streamifier";
+import axios from "axios";
 
 export const getChat = async (req, res) => {
   try {
@@ -52,6 +55,29 @@ export const cloudinaryImageUpload = async (req, res) => {
   } catch (error) {
     console.error("Cloudinary upload failed:", error);
     res.status(500).json({ error: "Failed to upload image" });
+  }
+};
+
+export const cloudinaryImageUploadFromUrl = async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: "messages" },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload failed:", error);
+          return res.status(500).json({ error: "Upload failed" });
+        }
+        res.status(200).json({ url: result.secure_url });
+      }
+    );
+
+    streamifier.createReadStream(response.data).pipe(uploadStream);
+  } catch (err) {
+    console.error("❌ Failed to process image URL:", err.message);
+    res.status(500).json({ error: "Server error during upload" });
   }
 };
 

@@ -9,8 +9,10 @@ import { generateFromDescription } from "../../api/aiService";
 import { toast } from "react-toastify";
 import axios from "axios";
 import messageService from "../../api/messageService";
+import notificationService from "../../api/notificationService";
 import { useUser } from "../../context/UserContext";
 import UserAvatar from "../useravatar/UserAvatar"; // ✅ Make sure this path is correct
+import { socket } from "../../../utils/socket";
 
 // Styled Components
 const Container = styled.div`
@@ -199,27 +201,58 @@ const AITemplateGenerator = () => {
     }
   };
 
-  const handleCrafterSelect = async (crafterEmail) => {
-  try {
-    const content = `Hello! I'm interested in this template:\n\n🖼️ ${generatedImage} can you make it with this Price Range: $${priceRange[0]} - $${priceRange[1]}  ?`;
+  
 
-    // 1. Record chat on both sides
-    await messageService.recordChat(user.email, crafterEmail);
+const handleCrafterSelect = async (crafterEmail) => {
+    const sender = user.email;
+    const receiver = crafterEmail;
 
-    // 2. Send the message
-    await messageService.sendMessage({
-      sender: user.email,
-      receiver: crafterEmail,
-      content,
-    });
+    try {
+      // Upload OpenAI image URL via backend
+      const uploadResponse = await axios.post(
+        "http://localhost:3000/messages/upload-image-from-url",
+        { imageUrl: generatedImage }
+      );
 
-    toast.success("Message sent to crafter!");
-    setShowCrafterModal(false);
-  } catch (err) {
-    console.error("❌ Failed to send message:", err);
-    toast.error("Failed to send message.");
-  }
-};
+      const uploadedImageUrl = uploadResponse.data.url;
+
+      // Send the image as a first message
+      const imageMessage = await messageService.sendMessage({
+        sender,
+        receiver,
+        content: uploadedImageUrl,
+      });
+      socket.emit("send_message", imageMessage);
+
+      // Send the text message as second
+      const textContent = `Hello! I'm interested in this template above 👆\nCan you make it with this price range: $${priceRange[0]} - $${priceRange[1]}?`;
+      const textMessage = await messageService.sendMessage({
+        sender,
+        receiver,
+        content: textContent,
+      });
+      socket.emit("send_message", textMessage);
+
+      // Send a notification
+      const notification = {
+        text: `${user.name} sent you a message.`,
+        linkTo: "Chatting",
+        email: receiver,
+      };
+      await notificationService.createNotification(notification);
+      socket.emit("notification", {
+        to: receiver,
+        notification,
+      });
+
+      toast.success("Message and image sent to crafter!");
+      setShowCrafterModal(false);
+    } catch (err) {
+      console.error("❌ Failed to send message:", err);
+      toast.error("Failed to send message.");
+    }
+  };
+
 
 
   return (

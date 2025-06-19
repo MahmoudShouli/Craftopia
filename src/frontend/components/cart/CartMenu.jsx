@@ -82,7 +82,7 @@ const CartMenu = ({ cartOrders, onRemove, onConfirm }) => {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {template.name || "Unnamed Template"}
+                  {template.name || order.name}
                 </div>
                 <div style={{ fontSize: "0.9rem", color: "#6a380f" }}>
                   ${Number(template.price || order.price || 0).toFixed(2)}

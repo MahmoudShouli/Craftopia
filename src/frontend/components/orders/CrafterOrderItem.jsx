@@ -131,7 +131,7 @@ const CrafterOrderItem = ({ order, onUpdate }) => {
           src={order.template?.mainImage || "/placeholder.jpg"}
           alt="template"
         />
-        <Title>{order.template?.name || "Unnamed"}</Title>
+        <Title>{order.template?.name || order.name}</Title>
         <Price>
           {order.template?.price ? `$${order.template.price}` : "No price"}
         </Price>

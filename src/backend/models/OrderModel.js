@@ -5,7 +5,7 @@ const OrderSchema = new mongoose.Schema(
     templateId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Templates",
-      required: true,
+      required: false,
     },
     customerEmail: {
       type: String,
@@ -28,6 +28,14 @@ const OrderSchema = new mongoose.Schema(
       type: String,
       enum: ["unpaid", "paid"],
       default: "unpaid",
+    },
+    name: {
+      type: String,
+      required: false,
+    },
+    url: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true }
