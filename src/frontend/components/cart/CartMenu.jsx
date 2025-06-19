@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { FaTimes } from "react-icons/fa";
+import img from "../../assets/SR.png"
 
 const Container = styled.div`
   padding: 12px;
@@ -70,7 +71,7 @@ const CartMenu = ({ cartOrders, onRemove, onConfirm }) => {
           return (
             <CartItem key={order._id}>
               <ItemImage
-                src={template.mainImage || "/placeholder.jpg"}
+                src={template.mainImage || img}
                 alt="template"
               />
               <Info>
