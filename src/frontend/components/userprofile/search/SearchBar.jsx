@@ -6,7 +6,7 @@ const SearchBar = ({ query, setQuery, onReset }) => {
     <SearchInputGroup>
       <SearchInput
         type="text"
-        placeholder="Search by name or tag..."
+        placeholder="Search by name ..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
