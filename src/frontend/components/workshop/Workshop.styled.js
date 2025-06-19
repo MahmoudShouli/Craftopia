@@ -185,7 +185,7 @@ const MembersContainer = styled.div`
 `;
 
 const MemberCard = styled.div`
-  background-color: #f9f9f9;
+  background-color: rgba(229, 231, 233, 0.77);
   border-radius: 12px;
   padding: 1rem;
   margin-bottom: 1rem;

@@ -4,6 +4,7 @@ import { getOrdersByCrafter, createOrder } from "../../api/orderService";
 import CrafterOrderItem from "./CrafterOrderItem";
 import CrafterStats from "./CrafterStats";
 import styled from "styled-components";
+import { socket } from "../../../utils/socket";
 
 export const OrderCard = styled.div`
   background-color: white;
@@ -127,6 +128,7 @@ const CrafterOrders = () => {
         name: name,
         price: parseFloat(price),
       });
+      socket.emit("join_cart", customerEmail);
       setShowModal(false);
       setName("");
       setCustomerEmail("");
