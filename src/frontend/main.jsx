@@ -21,6 +21,18 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <UserProvider>
       <SocketManager />
+      <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />
@@ -29,20 +41,8 @@ createRoot(document.getElementById('root')).render(
           <Route path="/userprofile" element={<UserPage />} />
           <Route path="/crafterprofile" element={<CrafterPage />} />
           <Route path="/setPreferences" element={<SetPreferencesPage />} />
-           <Route path="/3d-template" element={<ThreeDTemplate />} />
+          <Route path="/3d-template" element={<ThreeDTemplate />} />
         </Routes>
-        <ToastContainer 
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
       </BrowserRouter>
     </UserProvider>
   </StrictMode>

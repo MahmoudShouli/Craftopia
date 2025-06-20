@@ -47,7 +47,7 @@ const UserProfileCard = ({ user }) => {
         `http://localhost:3000/user/update-profile/${user._id}`,
         {
           name: editedName,
-          location: location,
+          location: location.coordinates,
           password: newPassword,
         }
       );
