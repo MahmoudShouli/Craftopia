@@ -15,7 +15,7 @@ import UserPage from './pages/UserPage';
 import CrafterPage from './pages/CrafterPage';
 import SetPreferencesPage from './pages/SetPreferencesPage';
 import ThreeDTemplate from './pages/ThreeDTemplate';
-
+import AdminPage from "./pages/AdminPage";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -42,6 +42,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/crafterprofile" element={<CrafterPage />} />
           <Route path="/setPreferences" element={<SetPreferencesPage />} />
           <Route path="/3d-template" element={<ThreeDTemplate />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </UserProvider>

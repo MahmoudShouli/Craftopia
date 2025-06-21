@@ -34,16 +34,25 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { setUser} = useUser()
   const togglePassword = () => setShowPassword(prev => !prev);
-  const handleNormalLogin = async () => {
-    const data = await login(email, password);
-    setUser(
-      data.user
-    );
   
-     socket.emit("user_online", data.user.email);
-     navigate('/');
+  const handleNormalLogin = async () => {
+  try {
+    const data = await login(email, password);
+    const user = data.user;
 
-  };
+    setUser(user);
+    socket.emit("user_online", user.email);
+
+    if (user.role === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/");
+    }
+  } catch (err) {
+    console.error("Login failed:", err);
+    // Optionally show a toast here
+  }
+};
 
   return (
     <PageWrapper>
