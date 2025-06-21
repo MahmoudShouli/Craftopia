@@ -70,7 +70,7 @@ const data = [
 
 const TemplateTrendsChart = () => (
   <ChartWrapper>
-    <Title>📈 Template Interactions Over Time</Title>
+    <Title>Template Interactions Over Time</Title>
 
     <ResponsiveContainer width="100%" height={260}>
       <LineChart data={data}>

@@ -44,7 +44,7 @@ const data = [
 
 const OrdersBarChart = () => (
   <ChartWrapper>
-    <Title>🧾 Monthly Orders (Paid vs Unpaid)</Title>
+    <Title>Monthly Orders (Paid vs Unpaid)</Title>
 
     <ResponsiveContainer width="100%" height={250}>
       <BarChart data={data} barGap={8}>

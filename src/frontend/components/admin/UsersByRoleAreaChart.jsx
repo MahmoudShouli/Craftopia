@@ -44,7 +44,7 @@ const data = [
 
 const UsersByRoleAreaChart = () => (
   <ChartWrapper>
-    <Title>👥 Users Joined Per Role</Title>
+    <Title>Users Joined Per Role</Title>
 
     <ResponsiveContainer width="100%" height={250}>
       <AreaChart data={data}>

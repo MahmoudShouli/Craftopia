@@ -70,7 +70,7 @@ const TemplateCategoryPieChart = () => {
 
   return (
     <ChartWrapper>
-      <Title>📊 Template Category Distribution</Title>
+      <Title>Template Category Distribution</Title>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
