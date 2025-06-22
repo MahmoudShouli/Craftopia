@@ -7,7 +7,7 @@ import UserProfileHeader from "../components/userprofile/userheader/UserProfileH
 import UserTable from "../components/admin/tables/UserTable"
 import OrdersTable from "../components/admin/tables/OrdersTable"
 import TemplatesTable from "../components/admin/tables/TemplatesTable"
-import WorkshopList from "../components/admin/WorkshopList"
+import ReviewsTable from "../components/admin/tables/ReviewsTable"
 import { PageWrapper, ProfileContainer } from "../styles/UserProfilePage.styled";
 
 const AdminPage = () => {
@@ -39,7 +39,7 @@ const AdminPage = () => {
       case "templates":
         setSelectedIndex(3);
         break;
-      case "workshop":
+      case "reviews":
         setSelectedIndex(4);
         break;
       default:
@@ -68,7 +68,7 @@ const AdminPage = () => {
         {activeView === "users" && <UserTable />}
         {activeView === "orders" && <OrdersTable/>}
         {activeView === "templates" && <TemplatesTable/>}
-        {activeView === "workshop" && <WorkshopList />}
+        {activeView === "reviews" && <ReviewsTable/>}
         </ProfileContainer>
     </PageWrapper>
   );

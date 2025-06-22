@@ -28,3 +28,15 @@ export const getReviewsByEmail = async (email) => {
   );
   return res.data;
 };
+
+export const fetchAllReviewsAdmin = async () => {
+  try {
+    const res = await axios.get(
+      "http://localhost:3000/reviews/admin/getAllReviews"
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Failed to fetch admin reviews:", error);
+    return [];
+  }
+};

@@ -43,7 +43,7 @@ const adminSidebarItems = [
   { icon: "👥", label: "Users" },
   { icon: "📦", label: "Orders" },
   { icon: "🛠️", label: "Templates" },
-  { icon: "🏭", label: "Workshop" },
+  { icon: "⭐️", label: "Reviews" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
 

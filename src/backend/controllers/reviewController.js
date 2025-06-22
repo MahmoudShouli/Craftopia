@@ -100,3 +100,41 @@ export const getReviewsByEmail = async (req, res) => {
     res.status(500).json({ error: "Server error while fetching reviews" });
   }
 };
+
+export const getAllReviewsAdmin = async (req, res) => {
+  try {
+    const reviews = await ReviewModel.find();
+
+    const enrichedReviews = await Promise.all(
+      reviews.map(async (review) => {
+        const user = await UserModel.findOne({ email: review.email });
+        const crafter = review.to
+          ? await UserModel.findOne({ email: review.to })
+          : null;
+
+        return {
+          ...review.toObject(),
+          user: user
+            ? {
+                name: user.name,
+                role: user.role,
+                avatarUrl: user.avatarUrl || "",
+              }
+            : { name: "User", role: "Customer", avatarUrl: "" },
+
+          crafter: crafter
+            ? {
+                name: crafter.name,
+                avatarUrl: crafter.avatarUrl || "",
+              }
+            : null,
+        };
+      })
+    );
+
+    res.status(200).json(enrichedReviews);
+  } catch (error) {
+    console.error("Get all reviews (admin) error:", error);
+    res.status(500).json({ error: "Failed to get all reviews" });
+  }
+};
