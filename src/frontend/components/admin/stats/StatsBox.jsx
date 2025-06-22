@@ -82,17 +82,15 @@ const StatsBox = () => {
       {showFlash && <FlashOverlay />}
       <Box>
         <Header>
-          <div>
-            <Title>Today's Sales</Title>
-            <Subtext>Sales Summary</Subtext>
-          </div>
           <button
             style={{
               background: "#f7f7f7",
               border: "1px solid #ccc",
               padding: "0.5rem 1rem",
               borderRadius: "8px",
-              cursor: "pointer"
+              cursor: "pointer",
+              position: "relative",
+              left: "900px",
             }}
             onClick={handleExport}
           >
