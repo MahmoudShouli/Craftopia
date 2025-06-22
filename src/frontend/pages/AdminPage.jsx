@@ -4,7 +4,10 @@ import { useUser } from "../context/UserContext";
 import Dashboard from "../components/dashboard/Dashboard";
 import AdminDashboard from "../components/admin/AdminDashboard";
 import UserProfileHeader from "../components/userprofile/userheader/UserProfileHeader";
-
+import UserTable from "../components/admin/tables/UserTable"
+import OrdersTable from "../components/admin/tables/OrdersTable"
+import TemplatesTable from "../components/admin/tables/TemplatesTable"
+import WorkshopList from "../components/admin/WorkshopList"
 import { PageWrapper, ProfileContainer } from "../styles/UserProfilePage.styled";
 
 const AdminPage = () => {
@@ -36,7 +39,7 @@ const AdminPage = () => {
       case "templates":
         setSelectedIndex(3);
         break;
-      case "appointments":
+      case "workshop":
         setSelectedIndex(4);
         break;
       default:
@@ -62,10 +65,10 @@ const AdminPage = () => {
         />
 
         {activeView === "dashboard" && <AdminDashboard />}
-        {activeView === "users" && <div>users View (coming soon)</div>}
-        {activeView === "orders" && <div>orders View (coming soon)</div>}
-        {activeView === "templates" && <div>Templates View (coming soon)</div>}
-        {activeView === "appointments" && <div>Appointments View (coming soon)</div>}
+        {activeView === "users" && <UserTable />}
+        {activeView === "orders" && <OrdersTable/>}
+        {activeView === "templates" && <TemplatesTable/>}
+        {activeView === "workshop" && <WorkshopList />}
         </ProfileContainer>
     </PageWrapper>
   );

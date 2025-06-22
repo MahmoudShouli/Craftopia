@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Calendar } from "react-date-range";
+import { enUS } from "date-fns/locale"; // ✅ locale import
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { CalendarWrapper } from "./BookingCalendar.styled";
@@ -24,16 +25,25 @@ const BookingCalendar = ({
     );
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", height: "100%", width: "100%" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        height: "100%",
+        width: "100%",
+      }}
+    >
       <CalendarWrapper>
         <Calendar
           date={selectedDate}
           onChange={handleDateChange}
           minDate={new Date()}
-          disabledDates={disabledDates} // ✅ key prop here
+          disabledDates={disabledDates}
           months={1}
           direction="horizontal"
           className="booking-calendar"
+          locale={enUS} // ✅ fix here
         />
       </CalendarWrapper>
 

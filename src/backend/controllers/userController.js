@@ -2,7 +2,9 @@ import User from "../models/UserModel.js";
 import ReviewModel from "../models/ReviewModel.js";
 import { fetchUserByEmail } from "../services/UserService.js";
 import { updateUserPreferences } from "../services/UserService.js";
+import { removeUser } from "../services/UserService.js";
 import { saveCardInfo } from "../services/UserService.js";
+import { getAllUsers } from "../services/UserService.js";
 
 export const uploadAvatar = async (req, res) => {
   try {
@@ -165,5 +167,29 @@ export const getCraftersByCraft = async (req, res) => {
   } catch (err) {
     console.error("Failed to fetch crafters:", err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await removeUser(id);
+    if (!deleted) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Delete User Error:", error);
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+};
+
+export const fetchAllUsers = async (req, res) => {
+  try {
+    const users = await getAllUsers();
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error("Fetch all users error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch users" });
   }
 };

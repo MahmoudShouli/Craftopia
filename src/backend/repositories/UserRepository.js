@@ -44,3 +44,11 @@ export const saveCardInfo = async (email, cardInfo) => {
     { new: true }
   );
 };
+
+export const deleteUserById = async (id) => {
+  return await UserModel.findByIdAndDelete(id);
+};
+
+export const getAllUsers = async () => {
+  return await UserModel.find().select("-password");
+};

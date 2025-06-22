@@ -27,3 +27,7 @@ export const deleteOrder = async (id) => {
 export const getOrderById = async (id) => {
   return await OrderModel.findById(id);
 };
+
+export const getAllOrders = async () => {
+  return await OrderModel.find().populate("templateId");
+};

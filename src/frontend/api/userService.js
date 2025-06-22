@@ -76,3 +76,26 @@ export const getCraftersByCraft = async (craft) => {
   });
   return res.data;
 };
+
+export const deleteUser = async (userId) => {
+  try {
+    const response = await axios.delete(`${API_URL}/${userId}`);
+    return response.data; // { message: "User deleted successfully" }
+  } catch (error) {
+    console.error(
+      "Error deleting user:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const fetchAllUsers = async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/user/all");
+    return res.data.users;
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    return [];
+  }
+};

@@ -84,3 +84,13 @@ export const deleteOrder = async (req, res) => {
       .json({ error: "Failed to delete order", message: err.message });
   }
 };
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await OrderService.fetchAllOrders();
+    res.status(200).json(orders);
+  } catch (err) {
+    console.error("Failed to fetch all orders:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};

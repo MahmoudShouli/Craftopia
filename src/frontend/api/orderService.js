@@ -49,3 +49,8 @@ export const getOrdersByCustomer = async (email) => {
     throw err;
   }
 };
+
+export const fetchAllOrders = async () => {
+  const response = await axios.get(`${BASE_URL}/all`);
+  return response.data;
+};

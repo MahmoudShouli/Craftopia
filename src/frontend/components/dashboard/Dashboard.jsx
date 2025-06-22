@@ -20,7 +20,7 @@ const customerSidebarItems = [
   { icon: "🛠️", label: "Templates" },
   { icon: "📅", label: "Schedules" },
   { icon: "💬", label: "Chatting" },
-  { icon: "👥", label: "Workshop" },
+  { icon: "🏭", label: "Workshop" },
   { icon: "🛒", label: "Orders" },
   { icon: "↪", label: "Logout", route: "/" },
 ];
@@ -32,7 +32,7 @@ const crafterSidebarItems = [
   { icon: "📅", label: "Schedules" },
   { icon: "🛠️", label: "Templates" },
   { icon: "💬", label: "Chatting" },
-  { icon: "👥", label: "Workshop" },
+  { icon: "🏭", label: "Workshop" },
   { icon: "🛒", label: "Orders" },
   { icon: "↪", label: "Logout", route: "/" },
 ];
@@ -43,7 +43,7 @@ const adminSidebarItems = [
   { icon: "👥", label: "Users" },
   { icon: "📦", label: "Orders" },
   { icon: "🛠️", label: "Templates" },
-  { icon: "📅", label: "Appointments" },
+  { icon: "🏭", label: "Workshop" },
   { icon: "🚪", label: "Logout", route: "/" },
 ];
 

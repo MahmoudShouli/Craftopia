@@ -1,6 +1,8 @@
 import { updatePreferencesInDb } from "../repositories/UserRepository.js";
 import { getUserByEmail } from "../repositories/UserRepository.js";
 import { saveCardInfo as saveCardInfoToDb } from "../repositories/UserRepository.js";
+import { deleteUserById } from "../repositories/UserRepository.js";
+import { getAllUsers as getAllUsersFromDb } from "../repositories/UserRepository.js";
 
 export const updateUserPreferences = async (email, colorsArray, tagsArray) => {
   const colorMap = {};
@@ -27,4 +29,12 @@ export const saveCardInfo = async (email, cardNumber, expiryDate, cvv) => {
     expiryDate,
     cvv,
   });
+};
+
+export const removeUser = async (id) => {
+  return await deleteUserById(id);
+};
+
+export const getAllUsers = async () => {
+  return await getAllUsersFromDb();
 };

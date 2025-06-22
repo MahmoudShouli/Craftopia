@@ -1,5 +1,6 @@
 import * as OrderRepo from "../repositories/OrderRepository.js";
 import UserModel from "../models/UserModel.js";
+import TemplateModel from "../models/TemplateModel.js";
 
 export const createOrder = async (orderData) => {
   return await OrderRepo.createOrder(orderData);
@@ -47,4 +48,36 @@ export const fetchOrdersByCrafter = async (email) => {
   );
 
   return enrichedOrders;
+};
+
+export const fetchAllOrders = async () => {
+  const orders = await OrderRepo.getAllOrders();
+
+  const enrichedOrders = await Promise.all(
+    orders.map(async (order) => {
+      if (!order || typeof order.toObject !== "function") return null;
+
+      const customer = await UserModel.findOne({ email: order.customerEmail });
+      const template = await TemplateModel.findById(order.templateId).lean();
+
+      let crafterName = "Unknown";
+      if (template?.crafterEmail) {
+        const crafter = await UserModel.findOne({
+          email: template.crafterEmail,
+        });
+        crafterName = crafter?.name || template.crafterEmail;
+      }
+
+      return {
+        ...order.toObject(),
+        template: {
+          ...template,
+          crafterName,
+        },
+        customerName: customer?.name || order.customerEmail,
+      };
+    })
+  );
+
+  return enrichedOrders.filter(Boolean);
 };
