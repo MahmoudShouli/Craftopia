@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ReviewType } from "./Enums/ReviewType";
+import { ReviewType } from "./Enums/ReviewType.js";
 const ReviewSchema = new mongoose.Schema({
   email: { type: String, required: true },
   message: { type: String, required: true },
