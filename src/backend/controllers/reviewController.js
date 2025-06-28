@@ -1,6 +1,6 @@
 import ReviewModel from "../models/ReviewModel.js";
 import UserModel from "../models/UserModel.js";
-import { ReviewType } from "../models/enums/reviewType.js";
+import { ReviewType } from "../models/Enums/ReviewType.js";
 import { analyzeReview } from "../services/sentimentService.js";
 
 export const addReview = async (req, res) => {
