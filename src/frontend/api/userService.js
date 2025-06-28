@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API_URL = "http://localhost:3000/user";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_URL = `${BASE_URL}/user`;
 
 export const fetchUsers = async ({
   query,
@@ -71,7 +71,7 @@ export const updateCardInfo = async (email, cardNumber, expiryDate, cvv) => {
 };
 
 export const getCraftersByCraft = async (craft) => {
-  const res = await axios.get("http://localhost:3000/user/crafters-by-craft", {
+  const res = await axios.get(`${BASE_URL}/user/crafters-by-craft`, {
     params: { craft },
   });
   return res.data;
@@ -92,7 +92,7 @@ export const deleteUser = async (userId) => {
 
 export const fetchAllUsers = async () => {
   try {
-    const res = await axios.get("http://localhost:3000/user/all");
+    const res = await axios.get(`${BASE_URL}/user/all`);
     return res.data.users;
   } catch (error) {
     console.error("Error fetching all users:", error);

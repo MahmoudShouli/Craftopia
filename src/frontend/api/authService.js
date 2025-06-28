@@ -1,8 +1,9 @@
 import axios from "axios";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const login = async (email, password) => {
   try {
-    const response = await axios.post("http://localhost:3000/auth/login", {
+    const response = await axios.post(`${BASE_URL}/auth/login`, {
       email,
       password,
     });
@@ -22,7 +23,7 @@ export const register = async (
   avatarUrl
 ) => {
   try {
-    const response = await axios.post("http://localhost:3000/auth/register", {
+    const response = await axios.post(`${BASE_URL}/auth/register`, {
       name,
       email,
       password,

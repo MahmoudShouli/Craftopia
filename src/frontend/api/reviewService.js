@@ -1,7 +1,8 @@
 import axios from "axios";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const fetchReviews = async () => {
-  const res = await axios.get("http://localhost:3000/reviews/getAllReviews");
+  const res = await axios.get(`${BASE_URL}/reviews/getAllReviews`);
   return res.data;
 };
 
@@ -12,7 +13,7 @@ export const addReview = async ({
   type,
   to = null,
 }) => {
-  const response = await axios.post("http://localhost:3000/reviews/addReview", {
+  const response = await axios.post(`${BASE_URL}/reviews/addReview`, {
     email,
     rating,
     message,
@@ -23,17 +24,13 @@ export const addReview = async ({
 };
 
 export const getReviewsByEmail = async (email) => {
-  const res = await axios.get(
-    `http://localhost:3000/reviews/getByEmail?email=${email}`
-  );
+  const res = await axios.get(`${BASE_URL}/reviews/getByEmail?email=${email}`);
   return res.data;
 };
 
 export const fetchAllReviewsAdmin = async () => {
   try {
-    const res = await axios.get(
-      "http://localhost:3000/reviews/admin/getAllReviews"
-    );
+    const res = await axios.get(`${BASE_URL}/reviews/admin/getAllReviews`);
     return res.data;
   } catch (error) {
     console.error("Failed to fetch admin reviews:", error);

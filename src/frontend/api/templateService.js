@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API_URL = "http://localhost:3000/templates";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_URL = `${BASE_URL}/templates`;
 
 // Create a new template
 export const createTemplate = async (templateData) => {
@@ -46,19 +46,19 @@ export const uploadImage = async (file) => {
 };
 
 export const fetchSortedTemplates = async () => {
-  const response = await axios.get("http://localhost:3000/templates/sorted");
+  const response = await axios.get(`${BASE_URL}/templates/sorted`);
   return response.data;
 };
 
 export const fetchRecommendedTemplates = async (email) => {
   const response = await axios.get(
-    `http://localhost:3000/templates/recommended/${email}`
+    `${BASE_URL}/templates/recommended/${email}`
   );
   return response.data;
 };
 
 export const extractColorsFromImage = async (imageUrl) => {
-  const res = await fetch("http://localhost:3000/templates/extract-colors", {
+  const res = await fetch(`${BASE_URL}/templates/extract-colors`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ imageUrl }),
@@ -73,14 +73,11 @@ export const extractColorsFromImage = async (imageUrl) => {
 };
 
 export const generateFromImage = async (imageUrl) => {
-  const res = await fetch(
-    "http://localhost:3000/templates/generate-description",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ imageUrl }),
-    }
-  );
+  const res = await fetch(`${BASE_URL}/templates/generate-description`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ imageUrl }),
+  });
 
   if (!res.ok) {
     throw new Error("Failed to generate from image");
@@ -91,7 +88,7 @@ export const generateFromImage = async (imageUrl) => {
 };
 
 export const importTemplatesFromProfile = async (profileUrl, email) => {
-  const res = await axios.post("http://localhost:3000/templates/profile", {
+  const res = await axios.post(`${BASE_URL}/templates/profile`, {
     profileUrl,
     email,
   });
@@ -99,7 +96,7 @@ export const importTemplatesFromProfile = async (profileUrl, email) => {
 };
 
 export const getTemplatesByIds = async (ids) => {
-  const res = await axios.post("http://localhost:3000/templates/byIds", {
+  const res = await axios.post(`${BASE_URL}/templates/byIds`, {
     ids,
   });
   return res.data;

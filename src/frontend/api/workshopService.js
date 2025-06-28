@@ -1,6 +1,6 @@
 import axios from "axios";
-
-const API_URL = "http://localhost:3000/workshop";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_URL = `${BASE_URL}/workshop`;
 
 const createWorkshop = async (workshopData) => {
   const response = await axios.post(`${API_URL}/create`, workshopData);

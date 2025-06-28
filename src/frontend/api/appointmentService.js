@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE = "http://localhost:3000/appointments";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE = `${BASE_URL}/appointments`;
 
 export const createAppointment = async ({ userEmail, crafterEmail, date }) => {
   const response = await axios.post(`${API_BASE}/create`, {

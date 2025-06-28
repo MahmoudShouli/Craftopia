@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/notifications";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_URL = `${BASE_URL}/notifications`;
 
 const fetchNotifications = async (email) => {
   const res = await axios.get(`${API_URL}/`, {
