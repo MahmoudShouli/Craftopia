@@ -154,6 +154,8 @@ const SendButton = styled.button`
   }
 `;
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const AITemplateGenerator = () => {
   const { user } = useUser();
   const [craftType, setCraftType] = useState("");
@@ -188,7 +190,7 @@ const AITemplateGenerator = () => {
     if (!generatedImage) return;
 
     try {
-      const res = await axios.get("http://localhost:3000/user/crafters-by-craft", {
+      const res = await axios.get(`${BASE_URL}/user/crafters-by-craft`, {
         params: { craft: craftType },
       });
 
@@ -210,7 +212,7 @@ const handleCrafterSelect = async (crafterEmail) => {
     try {
       // Upload OpenAI image URL via backend
       const uploadResponse = await axios.post(
-        "http://localhost:3000/messages/upload-image-from-url",
+        `${BASE_URL}/messages/upload-image-from-url`,
         { imageUrl: generatedImage }
       );
 

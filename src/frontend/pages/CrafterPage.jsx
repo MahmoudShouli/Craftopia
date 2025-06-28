@@ -16,6 +16,8 @@ import {
   ProfileContainer,
 } from "../styles/UserProfilePage.styled";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const CrafterPage = () => {
   const { user, setUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
@@ -42,7 +44,7 @@ const CrafterPage = () => {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:3000/user/update-profile/${user._id}`,
+        `${BASE_URL}/user/update-profile/${user._id}`,
         {
           name: editedName,
           location,
@@ -73,7 +75,7 @@ const CrafterPage = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/user/uploadAvatar",
+        `${BASE_URL}/user/uploadAvatar`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

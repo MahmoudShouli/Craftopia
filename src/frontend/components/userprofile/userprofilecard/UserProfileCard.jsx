@@ -26,6 +26,8 @@ import {
   Input
 } from "./UserProfileCard.styled";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const UserProfileCard = ({ user }) => {
   const { setUser } = useUser();
 
@@ -44,7 +46,7 @@ const UserProfileCard = ({ user }) => {
   const handleSave = async () => {
     try {
       const res = await axios.put(
-        `http://localhost:3000/user/update-profile/${user._id}`,
+        `${BASE_URL}/user/update-profile/${user._id}`,
         {
           name: editedName,
           location: location.coordinates,
@@ -75,7 +77,7 @@ const UserProfileCard = ({ user }) => {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/user/uploadAvatar",
+        `${BASE_URL}/user/uploadAvatar`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
