@@ -20,9 +20,10 @@ import aiRoutes from "./routes/aiRoutes.js";
 
 const startServer = async () => {
   const app = express();
+  // eslint-disable-next-line no-undef
   const PORT = process.env.PORT || 3000;
 
-  app.use(cors({ origin: ["http://localhost:5173", "http://localhost:5174"] }));
+  app.use(cors());
   app.use(express.json());
 
   app.use("/auth", authRouter);
